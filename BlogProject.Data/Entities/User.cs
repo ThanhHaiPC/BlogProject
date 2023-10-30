@@ -1,4 +1,5 @@
 ﻿using BlogProject.Data.Enum;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace BlogProject.Data.Entities
 {
-    public class User
+    public class User : IdentityUser<Guid>
     {
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         public string? Image { get; set; }
         public string? Description { get; set; }
         //   public string PhoneNumber { get; set; }

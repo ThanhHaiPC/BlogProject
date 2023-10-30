@@ -42,6 +42,8 @@ namespace BlogProject.Data.EF
             modelBuilder.Entity<IdentityUserToken<Guid>>().ToTable("AppUserTokens").HasKey(x => x.UserId);
 
             base.OnModelCreating(modelBuilder);
+
+            new SeedData(modelBuilder).Seed();
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoriesDetail> CategoriesDetail { get; set; }

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlogProject.Data.Entities
+namespace BlogProject.ViewModel.Catalog.Categories
 {
-    public class Category
+    public class CategoryRequest
     {
         public int CategoriesID { get; set; }
+        [Display(Name = "Tên danh mục")]
         public string? Name { get; set; }
-        // Relationship
-        public List<CategoriesDetail>? CategoriesDetail { get; set; }
     }
 }

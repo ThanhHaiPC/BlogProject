@@ -10,8 +10,10 @@ namespace BlogProject.ViewModel.System.Users
 {
     public class RegisterRequest
     {
-        [Display(Name = "Họ và Tên")]
-        public string Name { get; set; }
+        [Display(Name = "Tên")]
+        public string FirstName { get; set; }
+        [Display(Name = "Họ")]
+        public string LastName { get; set; }
 
         [Display(Name = "Tên tài khoản")]
         public string UserName { get; set; }

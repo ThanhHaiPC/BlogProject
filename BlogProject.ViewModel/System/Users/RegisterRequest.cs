@@ -29,6 +29,10 @@ namespace BlogProject.ViewModel.System.Users
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DateOfBir { get; set; }
 
+
+        [Display(Name = "Số điện thoại")]
+        public string PhoneNumber { get; set; }
+
         [Display(Name = "Email")]
         public string Email { get; set; }
 

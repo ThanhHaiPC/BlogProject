@@ -87,7 +87,8 @@ namespace BlogProject.Application.System.Users
                 LastName = request.LastName,
                 Image = request.Image,
                 UserName = request.UserName,
-                Gender = request.Gender
+                Gender = request.Gender,
+                PhoneNumber = request.PhoneNumber
             };
 
             // Lưu mật khẩu

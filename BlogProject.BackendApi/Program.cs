@@ -1,4 +1,5 @@
 ﻿using BlogProject.Application.Catalog.Categories;
+using BlogProject.Application.Catalog.Comments;
 using BlogProject.Application.System.Roles;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
@@ -30,6 +31,7 @@ builder.Services.AddTransient<RoleManager<Role>, RoleManager<Role>>();
 builder.Services.AddTransient<IRoleService, RoleService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddSwaggerGen(c =>
 {
 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Swagger eShop Solution", Version = "v1" });

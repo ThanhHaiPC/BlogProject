@@ -62,9 +62,10 @@ namespace BlogProject.Application.System.Users
             return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
-        public Task<Guid> GetIdByUserName(string username)
+        public async  Task<Guid> GetIdByUserName(string username)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(username);
+            return user.Id;
         }
 
         public async  Task<ApiResult<bool>> Register(RegisterRequest request)

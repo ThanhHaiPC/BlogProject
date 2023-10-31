@@ -12,8 +12,8 @@ namespace BlogProject.Application.Catalog.Post
     public interface IPostService
     {
         Task<ApiResult<List<PostVm>>> GetAll();
-        Task<ApiResult<bool>> Create();
-        Task<ApiResult<bool>> Update(int Id);
+        Task<ApiResult<bool>> Create(PostRequest request);
+        Task<ApiResult<bool>> Update(PostRequest request, int Id);
         Task<ApiResult<bool>> Delete(int Id);
     }
 }

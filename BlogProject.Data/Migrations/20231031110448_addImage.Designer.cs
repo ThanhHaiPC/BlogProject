@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231031110448_addImage")]
+    partial class addImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,31 +219,6 @@ namespace BlogProject.Data.Migrations
                     b.ToTable("Followings", (string)null);
                 });
 
-            modelBuilder.Entity("BlogProject.Data.Entities.Images", b =>
-                {
-                    b.Property<int>("ImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"), 1L, 1);
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ImageId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Images", (string)null);
-                });
-
             modelBuilder.Entity("BlogProject.Data.Entities.Like", b =>
                 {
                     b.Property<int>("LikeID")
@@ -418,7 +395,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "2191fbe4-b48f-4192-ab71-5aa01e5821ae",
+                            ConcurrencyStamp = "46eb8a05-ad3f-4a7e-ae11-5fc1192bbf3f",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -426,7 +403,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "3a4f71ed-8cdb-4712-a1c8-6648b9bcbf8e",
+                            ConcurrencyStamp = "a2e54f47-2a85-42cd-9206-ca1d31cdca6a",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -555,7 +532,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "37d0f65b-ca2a-4ec5-8381-f625c0b6ba86",
+                            ConcurrencyStamp = "381c5a9e-b229-472e-bd82-8d1bc1920fa3",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -565,7 +542,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEH7AZ0ZNPyh37MIiSHMo7gi71uChjqi/HtI/ZoyRtOKYO0xf78zdy6akzcfSnKcWQg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJPtcfIvg4Rbk1Rh9DZsa4O71OvBjL5v8srKbGWcTe2PpZRcsGw6iKgQT4sxGmXzgw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -781,15 +758,6 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Follower");
                 });
 
-            modelBuilder.Entity("BlogProject.Data.Entities.Images", b =>
-                {
-                    b.HasOne("BlogProject.Data.Entities.Posts", "Posts")
-                        .WithMany("Images")
-                        .HasForeignKey("PostId");
-
-                    b.Navigation("Posts");
-                });
-
             modelBuilder.Entity("BlogProject.Data.Entities.Like", b =>
                 {
                     b.HasOne("BlogProject.Data.Entities.Posts", "Post")
@@ -954,8 +922,6 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("CategoriesDetail");
 
                     b.Navigation("Comment");
-
-                    b.Navigation("Images");
 
                     b.Navigation("Likes");
 

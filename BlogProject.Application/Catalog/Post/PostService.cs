@@ -22,14 +22,48 @@ namespace BlogProject.Application.Catalog.Post
         {
             _context = context;
         }
-        public Task<ApiResult<bool>> Create()
+        public async Task<ApiResult<bool>> Create(PostRequest request)
         {
-            throw new NotImplementedException();
+            if(request.Title == null) 
+            {
+                return new ApiErrorResult<bool>("Tiêu đề trống");
+            }
+            if (request.Desprition == null)
+            {
+                return new ApiErrorResult<bool>("Mô tả trống");
+            }
+            if (request.Content == null)
+            {
+                return new ApiErrorResult<bool>("Chưa nhập nội dung");
+            }
+            if (request.Image == null)
+            {
+                return new ApiErrorResult<bool>("Chưa có hình ảnh");
+            }
+
+            List<Posts> posts = await _context.Posts.Where(x=>x.Title == request.Title).ToListAsync();
+            if (posts.Count != 0)
+            {
+                return new ApiErrorResult<bool>("Bài viết đã tồn tại");
+            }
+            var add = new Posts
+            { 
+                Title = request.Title,
+                Content = request.Content,
+                Desprition = request.Desprition,
+                Image = request.Image,
+            };
+            _context.Posts.Add(add);
+            _context.SaveChangesAsync();
+            return new ApiSuccessResult<bool>();
         }
 
-        public Task<ApiResult<bool>> Delete(int Id)
+        public async Task<ApiResult<bool>> Delete(int Id)
         {
-            throw new NotImplementedException();
+            var post = await _context.Posts.FirstOrDefaultAsync(a=>a.PostID == Id);
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+            return new ApiSuccessResult<bool>();
         }
 
         public async Task<ApiResult<List<PostVm>>> GetAll()
@@ -45,13 +79,14 @@ namespace BlogProject.Application.Catalog.Post
                 UploadDate = post.UploadDate,
                 View = post.View,
                 Desprition = post.Desprition,
+                Image = post.Image,
                 
                 
             }).ToList();
             return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
         }
 
-        public Task<ApiResult<bool>> Update(int Id)
+        public Task<ApiResult<bool>> Update(PostRequest request,int Id)
         {
             throw new NotImplementedException();
         }

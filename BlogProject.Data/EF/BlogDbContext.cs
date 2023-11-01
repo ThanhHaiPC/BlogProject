@@ -24,8 +24,7 @@ namespace BlogProject.Data.EF
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new CategoriesDetailConfiguration());
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
-            modelBuilder.ApplyConfiguration(new LikeConfiguration());
-            modelBuilder.ApplyConfiguration(new ImageConfiguration());
+            modelBuilder.ApplyConfiguration(new LikeConfiguration());         
             modelBuilder.ApplyConfiguration(new VideoConfiguration());
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new TagConfiguration());
@@ -49,7 +48,6 @@ namespace BlogProject.Data.EF
         public DbSet<CategoriesDetail> CategoriesDetail { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Follow> Follows { get; set; }
-        public DbSet<Images> Images { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<Posts> Posts { get; set; }
         public DbSet<Rating> Ratings { get; set; }

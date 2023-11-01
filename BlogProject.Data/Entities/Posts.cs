@@ -1,4 +1,5 @@
 ﻿using BlogProject.Data.Enum;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,7 +17,8 @@ namespace BlogProject.Data.Entities
         public string Title { get; set; }
         public string Content { get; set; }
         public string Desprition { get; set; }
-        public string Image { get;set; }
+   
+        
         public Active Active { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
@@ -24,7 +26,7 @@ namespace BlogProject.Data.Entities
         public int View { get; set; }
         
         public int OrderNo { get; set; }
-
+        public byte[] Image { get; set; }
 
 
 
@@ -32,7 +34,7 @@ namespace BlogProject.Data.Entities
         public User User { get; set; }     
         public List<CategoriesDetail> CategoriesDetail { get; set; }
         public List<Comment> Comment { get; set; }
-        public List<Image> Images { get; set; }
+       
         public List<Like> Likes { get; set; }
         public List<Video> Video { get; set; }
         public List<Tag> Tag { get; set; }

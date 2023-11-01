@@ -1,10 +1,12 @@
 ﻿using BlogProject.Application.Catalog.Categories;
+using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Post;
 using BlogProject.ViewModel.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +19,12 @@ namespace BlogProject.Application.Catalog.Post
     {
         private readonly BlogDbContext _context;
         private readonly UserManager<User> _userManager;
-        
-        public PostService(BlogDbContext context)
+        private readonly IUserService _userService;
+        public PostService(BlogDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
+           
         }
         public async Task<ApiResult<bool>> Create(PostRequest request)
         {
@@ -36,25 +40,34 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Chưa nhập nội dung");
             }
-            if (request.Image == null)
-            {
-                return new ApiErrorResult<bool>("Chưa có hình ảnh");
-            }
+           
 
             List<Posts> posts = await _context.Posts.Where(x=>x.Title == request.Title).ToListAsync();
             if (posts.Count != 0)
             {
                 return new ApiErrorResult<bool>("Bài viết đã tồn tại");
             }
+            var user = await _userService.GetIdByUserName(request.UserName);
             var add = new Posts
             { 
                 Title = request.Title,
                 Content = request.Content,
                 Desprition = request.Desprition,
-                Image = request.Image,
+                UploadDate = DateTime.Now,
+                UserId = user,
+                
             };
+             if (request.Image.Length > 0)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    await request.Image.CopyToAsync(stream);
+                    add.Image = stream.ToArray(); // Lưu trữ dữ liệu hình ảnh dưới dạng mảng byte trong trường Image
+                }
+            }
             _context.Posts.Add(add);
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
+           
             return new ApiSuccessResult<bool>();
         }
 
@@ -79,7 +92,7 @@ namespace BlogProject.Application.Catalog.Post
                 UploadDate = post.UploadDate,
                 View = post.View,
                 Desprition = post.Desprition,
-                Image = post.Image,
+
                 
                 
             }).ToList();

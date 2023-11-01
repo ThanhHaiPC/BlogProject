@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,10 @@ namespace BlogProject.ViewModel.Catalog.Post
 {
     public class PostRequest
     {
-        public int PostID { get; set; }
+        public string UserName { get; set; }
         public string Desprition { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public string Image { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

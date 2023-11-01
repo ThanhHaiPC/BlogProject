@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231101065204_deleteImageInPost")]
+    partial class deleteImageInPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,6 +219,31 @@ namespace BlogProject.Data.Migrations
                     b.ToTable("Followings", (string)null);
                 });
 
+            modelBuilder.Entity("BlogProject.Data.Entities.Image", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"), 1L, 1);
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("Images", (string)null);
+                });
+
             modelBuilder.Entity("BlogProject.Data.Entities.Like", b =>
                 {
                     b.Property<int>("LikeID")
@@ -265,10 +292,6 @@ namespace BlogProject.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("OrderNo")
                         .HasColumnType("int");
@@ -393,7 +416,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "59d766e7-6221-44f0-b5e5-1dc6f42b780b",
+                            ConcurrencyStamp = "3f0d5b84-4400-452a-8355-1ff2eb102741",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -401,7 +424,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "0463d9a5-4ba1-43f3-aeb1-57514347d5f9",
+                            ConcurrencyStamp = "a8f3409e-8f09-4510-97c8-547a0029576f",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -530,7 +553,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "8a687896-8022-4c63-a9da-8dd47f5e73cc",
+                            ConcurrencyStamp = "60de06c3-5218-4f26-a2dc-2daf6250597f",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -540,7 +563,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJSPnFBi+JT8y8QxL8NmHQ0iB3nSFNWX8icc9fJmCl8QwYcDLFFuKBJIjExLELcG5A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPGRBIVCcd2Jyel3ebCrQA91yMRWjwLsdlP3aPlT5cOBZ9KiBB3msL+Z7CMWGkmCHw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -756,6 +779,15 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Follower");
                 });
 
+            modelBuilder.Entity("BlogProject.Data.Entities.Image", b =>
+                {
+                    b.HasOne("BlogProject.Data.Entities.Posts", "Posts")
+                        .WithMany("Images")
+                        .HasForeignKey("PostId");
+
+                    b.Navigation("Posts");
+                });
+
             modelBuilder.Entity("BlogProject.Data.Entities.Like", b =>
                 {
                     b.HasOne("BlogProject.Data.Entities.Posts", "Post")
@@ -920,6 +952,8 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("CategoriesDetail");
 
                     b.Navigation("Comment");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Likes");
 

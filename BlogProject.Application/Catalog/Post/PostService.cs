@@ -16,6 +16,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BlogProject.Application.Catalog.Post
 {
@@ -80,6 +81,7 @@ namespace BlogProject.Application.Catalog.Post
                 UserId = user.Id, // Thiết lập UserId dựa trên thông tin đăng nhập
                 UploadDate = DateTime.Now,
                 Desprition = request.Desprition,
+                CategoryId = request.CategoryId,
                 Image = "/images/" + uniqueFileName,
             };
             
@@ -110,17 +112,46 @@ namespace BlogProject.Application.Catalog.Post
                 Content = post.Content,
                 UploadDate = post.UploadDate,
                 View = post.View,
+                CategoryId = post.CategoryId,
                 Desprition = post.Desprition,
-
-                
-                
+                Image = post.Image,
             }).ToList();
             return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
         }
 
-        public Task<ApiResult<bool>> Update(PostRequest request,int Id)
+        public async Task<ApiResult<bool>> Update(PostUpdateRequest request,int id)
         {
-            throw new NotImplementedException();
+            if (id == null)
+            {
+                return new ApiErrorResult<bool>("Lỗi cập nhập");
+            }
+            var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
+            // Lấy thông tin người dùng đăng nhập
+
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.FileImage.FileName;
+
+            // Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+
+            // Tạo đường dẫn đầy đủ tới tệp hình ảnh
+            string imagePath = Path.Combine(uploadPath, uniqueFileName);
+
+            // Lưu tệp hình ảnh
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                request.FileImage.CopyTo(stream);
+            }
+          
+            
+            post.Desprition = request.Desprition;
+            post.Title = request.Title;
+            post.Content = request.Content;
+            post.CategoryId = request.CategoryId;
+            post.Image = "/images/" + uniqueFileName;
+
+            _context.Posts.Update(post);
+            _context.SaveChanges();
+            return new ApiSuccessResult<bool>(true);
         }
     }
 }

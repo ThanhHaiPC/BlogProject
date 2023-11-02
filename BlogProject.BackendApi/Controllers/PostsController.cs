@@ -46,14 +46,26 @@ namespace BlogProject.BackendApi.Controllers
 
             return Ok(post);
         }
-        [HttpDelete("/Post/Delete/{postId}")]
-        public async Task<IActionResult> Delete([FromForm] int Id)
+        [HttpDelete("/Post/Delete/{Id}")]
+        public async Task<IActionResult> Delete(int Id)
         {
             if(!ModelState.IsValid) 
             {
                 return BadRequest(ModelState);
             }
             var post = await _postService.Delete(Id);
+            if (!post.IsSuccessed)
+                return BadRequest(post);
+            return Ok(post);
+        }
+        [HttpPut("/Post/Update/{Id}")]
+        public async Task<IActionResult> Update([FromForm] PostUpdateRequest request, int Id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var post = await _postService.Update(request,Id);
             if (!post.IsSuccessed)
                 return BadRequest(post);
             return Ok(post);

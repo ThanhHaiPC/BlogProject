@@ -11,6 +11,6 @@ namespace BlogProject.Data.Entities
         public int CategoriesID { get; set; }
         public string? Name { get; set; }
         // Relationship
-        public List<CategoriesDetail>? CategoriesDetail { get; set; }
+        public List<Posts>? Posts { get; set; }
     }
 }

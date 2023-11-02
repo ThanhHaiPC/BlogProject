@@ -13,6 +13,7 @@ namespace BlogProject.Data.Entities
     {
         public int PostID { get; set; }
         public Guid UserId { get; set; }
+        public int CategoryId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string Desprition { get; set; }
@@ -29,9 +30,8 @@ namespace BlogProject.Data.Entities
 
         // relationship
         public AppUser User { get; set; }     
-        public List<CategoriesDetail> CategoriesDetail { get; set; }
-        public List<Comment> Comment { get; set; }
-       
+        public Category Categories { get; set; }
+        public List<Comment> Comment { get; set; }  
         public List<Like> Likes { get; set; }
         public List<Video> Video { get; set; }
         public List<Tag> Tag { get; set; }

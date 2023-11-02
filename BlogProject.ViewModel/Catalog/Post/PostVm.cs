@@ -19,7 +19,7 @@ namespace BlogProject.ViewModel.Catalog.Post
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UploadDate { get; set; }
         public int View { get; set; }
-        
+        public int CategoryId { get; set; }
         public string Image { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace BlogProject.Data.Entities
 
         // Relationship
         public Posts Post { get; set; }
-        public User User { get; set; }
+        public AppUser User { get; set; }
         public ICollection<Reply> Replies { get; set; }
 
     }

@@ -19,7 +19,7 @@ namespace BlogProject.BackendApi.Controllers
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        public async Task<IActionResult> Authencate([FromBody] LoginRequest request)
+        public async Task<IActionResult> Authencate([FromForm] LoginRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -47,12 +47,15 @@ namespace BlogProject.BackendApi.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
+        
         [HttpGet("setting/{username}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetIdByUserName(string username)
         {
             var user = await _userService.GetIdByUserName(username);
             return Ok(user);
         }
+
+
     }
 }

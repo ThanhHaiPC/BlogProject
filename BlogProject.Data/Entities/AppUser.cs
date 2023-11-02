@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BlogProject.Data.Entities
 {
-    public class User : IdentityUser<Guid>
+    public class AppUser : IdentityUser<Guid>
     {
         public string? FirstName { get; set; }
 

@@ -7,9 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.18" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BlogProject.Application\BlogProject.Application.csproj" />
     <ProjectReference Include="..\BlogProject.Data\BlogProject.Data.csproj" />
     <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

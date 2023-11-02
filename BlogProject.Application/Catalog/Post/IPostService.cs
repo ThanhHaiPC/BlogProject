@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace BlogProject.Application.Catalog.Post
 {
-    public interface IPostService
+    public interface IPostService 
     {
         Task<ApiResult<List<PostVm>>> GetAll();
-        Task<ApiResult<bool>> Create(PostRequest request);
+        Task<ApiResult<bool>> Create(PostRequest request, string userId);
         Task<ApiResult<bool>> Update(PostRequest request, int Id);
         Task<ApiResult<bool>> Delete(int Id);
     }

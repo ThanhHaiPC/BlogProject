@@ -9,10 +9,12 @@ namespace BlogProject.ViewModel.Catalog.Post
 {
     public class PostRequest
     {
-        public string UserName { get; set; }
+
+       
         public string Desprition { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public IFormFile Image { get; set; }
+        public IFormFile FileImage { get; set; }
+        
     }
 }

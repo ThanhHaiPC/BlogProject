@@ -4,29 +4,37 @@ using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Post;
 using BlogProject.ViewModel.Common;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BlogProject.Application.Catalog.Post
 {
-    public class PostService : IPostService
+   
+    public class PostService : IPostService 
     {
         private readonly BlogDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IUserService _userService;
-        public PostService(BlogDbContext context, UserManager<User> userManager)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public PostService(BlogDbContext context, UserManager<AppUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
-           
+            _webHostEnvironment = webHostEnvironment;
         }
-        public async Task<ApiResult<bool>> Create(PostRequest request)
+        
+        public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
         {
             if(request.Title == null) 
             {
@@ -47,26 +55,37 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Bài viết đã tồn tại");
             }
-            var user = await _userService.GetIdByUserName(request.UserName);
+            // Lấy thông tin người dùng đăng nhập
+            
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.FileImage.FileName;
+
+            // Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+
+            // Tạo đường dẫn đầy đủ tới tệp hình ảnh
+            string imagePath = Path.Combine(uploadPath, uniqueFileName);
+
+            // Lưu tệp hình ảnh
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                request.FileImage.CopyTo(stream);
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            // Tạo một đối tượng Post từ dữ liệu PostViewModel
             var add = new Posts
-            { 
+            {
+
                 Title = request.Title,
                 Content = request.Content,
-                Desprition = request.Desprition,
+                UserId = user.Id, // Thiết lập UserId dựa trên thông tin đăng nhập
                 UploadDate = DateTime.Now,
-                UserId = user,
-                
+                Desprition = request.Desprition,
+                Image = "/images/" + uniqueFileName,
             };
-             if (request.Image.Length > 0)
-            {
-                using (var stream = new MemoryStream())
-                {
-                    await request.Image.CopyToAsync(stream);
-                    add.Image = stream.ToArray(); // Lưu trữ dữ liệu hình ảnh dưới dạng mảng byte trong trường Image
-                }
-            }
+            
+            
             _context.Posts.Add(add);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
            
             return new ApiSuccessResult<bool>();
         }

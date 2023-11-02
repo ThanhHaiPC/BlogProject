@@ -18,6 +18,6 @@ namespace BlogProject.Data.Entities
 
         // RelationShip
         public Comment Comment { get; set; }
-        public User User { get; set; }
+        public AppUser User { get; set; }
     }
 }

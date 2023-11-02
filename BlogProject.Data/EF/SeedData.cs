@@ -120,8 +120,8 @@ namespace BlogProject.Data.EF
                 });
 
 
-            var hasher = new PasswordHasher<User>();
-            modelBuilder.Entity<User>().HasData(new User
+            var hasher = new PasswordHasher<AppUser>();
+            modelBuilder.Entity<AppUser>().HasData(new AppUser
             {
                 Id = adminId,
                 UserName = "admin",

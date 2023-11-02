@@ -12,26 +12,23 @@ namespace BlogProject.Data.Entities
     public class Posts
     {
         public int PostID { get; set; }
-
         public Guid UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string Desprition { get; set; }
-   
-        
         public Active Active { get; set; }
-
+        public string Image { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UploadDate { get; set; }
         public int View { get; set; }
         
         public int OrderNo { get; set; }
-        public byte[] Image { get; set; }
+
 
 
 
         // relationship
-        public User User { get; set; }     
+        public AppUser User { get; set; }     
         public List<CategoriesDetail> CategoriesDetail { get; set; }
         public List<Comment> Comment { get; set; }
        

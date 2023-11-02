@@ -18,13 +18,13 @@ namespace BlogProject.Application.System.Users
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly BlogDbContext _dataContext;
         private readonly IConfiguration _config;
 
-        public UserService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<Role> roleManager, BlogDbContext dataContext, IConfiguration config)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<Role> roleManager, BlogDbContext dataContext, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -46,6 +46,7 @@ namespace BlogProject.Application.System.Users
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new[]
             {
+                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.GivenName,user.FirstName),
                 new Claim(ClaimTypes.Role, string.Join(";",roles)),
@@ -80,7 +81,7 @@ namespace BlogProject.Application.System.Users
                 return new ApiErrorResult<bool>("Emai đã tồn tại");
             }
 
-            user = new User()
+            user = new AppUser()
             {
                 DateOfBir = request.DateOfBir,
                 Email = request.Email,

@@ -1,36 +1,61 @@
 ﻿using BlogProject.Application.Catalog.Post;
+using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Post;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 
 namespace BlogProject.BackendApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PostsController : ControllerBase
     {
         private readonly IPostService _postService;
-        public PostsController(IPostService postService)
+   
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public PostsController(IPostService postService,  IHttpContextAccessor httpContextAccessor)
         {
             _postService = postService;
+            
+            _httpContextAccessor = httpContextAccessor;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllPost()
         {
+           
             var post = await _postService.GetAll();
             return Ok(post);
         }
-        [HttpPost("/Post/create")]
-        public async Task<IActionResult> Create([FromForm]PostRequest request)
+        [HttpPost("/Post/Create")]
+        public async Task<IActionResult> Create([FromForm] PostRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var post = await _postService.Create(request);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var post = await _postService.Create(request, userId);
             if (!post.IsSuccessed)
                 return BadRequest(post);
 
+            return Ok(post);
+        }
+        [HttpDelete("/Post/Delete/{postId}")]
+        public async Task<IActionResult> Delete([FromForm] int Id)
+        {
+            if(!ModelState.IsValid) 
+            {
+                return BadRequest(ModelState);
+            }
+            var post = await _postService.Delete(Id);
+            if (!post.IsSuccessed)
+                return BadRequest(post);
             return Ok(post);
         }
     }

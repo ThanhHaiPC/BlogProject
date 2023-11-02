@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BlogProject.Data.EF
 {
-    public class BlogDbContext : IdentityDbContext<User, Role, Guid>
+    public class BlogDbContext : IdentityDbContext<AppUser, Role, Guid>
     {
         public BlogDbContext(DbContextOptions options) : base(options)
         {
@@ -57,7 +57,7 @@ namespace BlogProject.Data.EF
         public DbSet<Tag> Tags { get; set; }
 
         public DbSet<Reply> Replies { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<AppUser> Users { get; set; }
         public DbSet<Role> Roles { get; set; }       
 
         public DbSet<AppConfig> AppConfigs { get; set; }

@@ -15,7 +15,7 @@ namespace BlogProject.Data.Entities
         public Guid FolloweeId { get; set; }
         public DateTime? Date { get; set; }
 
-        public User Follower { get; set; }
-        public User Followee { get; set; }
+        public AppUser Follower { get; set; }
+        public AppUser Followee { get; set; }
     }
 }

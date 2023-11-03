@@ -1,4 +1,7 @@
 ﻿using BlogProject.Application.Catalog.Categories;
+using BlogProject.Application.Catalog.Comments;
+using BlogProject.Application.Catalog.Post;
+using BlogProject.Application.Catalog.Replies;
 using BlogProject.Application.System.Roles;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
@@ -34,6 +37,9 @@ builder.Services.AddTransient<RoleManager<Role>, RoleManager<Role>>();
 builder.Services.AddTransient<IRoleService, RoleService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IPostService, PostService>();
+builder.Services.AddTransient<ICommentService, CommentService>();
+builder.Services.AddTransient<IRepliesService, RepliesService>();
 
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
 

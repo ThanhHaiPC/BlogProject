@@ -16,18 +16,25 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Create(CommentCreateRequest request)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var categoryId = await _commentService.Create(request);
-            if (!categoryId.IsSuccessed)
-                return BadRequest(categoryId);
 
-            return Ok(categoryId);
+            var result = await _commentService.Create(request);
+
+            if (result.IsSuccessed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                // Handle the case when the creation was not successful
+                return BadRequest(result);
+            }
         }
 
         [HttpDelete("{commentId}")]

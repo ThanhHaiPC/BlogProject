@@ -20,7 +20,7 @@ namespace BlogProject.Data.Configurations
             builder.Property(x => x.Title).IsRequired().HasMaxLength(250);
             builder.Property(x => x.Desprition).IsRequired().HasMaxLength(500);
             builder.Property(x => x.View).HasDefaultValue(0);
-
+            builder.Property(x => x.Content).IsRequired().HasMaxLength(5000);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace BlogProject.Data.Entities
     {
         public int PostID { get; set; }
 
+        public int CategoryId { get; set; }
         public Guid UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -25,18 +26,19 @@ namespace BlogProject.Data.Entities
         public int View { get; set; }
 
         public int OrderNo { get; set; }
-        public byte[] Image { get; set; }
+        public string Image { get; set; }
 
 
 
         // relationship
         public User User { get; set; }
-        public List<CategoriesDetail> CategoriesDetail { get; set; }
+        public Category Categories { get; set; }
         public List<Comment> Comment { get; set; }
 
         public List<Like> Likes { get; set; }
         public List<Video> Video { get; set; }
         public List<Tag> Tag { get; set; }
+        
 
         public Posts(Guid userId, string title)
         {

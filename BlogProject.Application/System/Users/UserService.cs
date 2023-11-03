@@ -46,6 +46,7 @@ namespace BlogProject.Application.System.Users
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.GivenName,user.FirstName),
                 new Claim(ClaimTypes.Role, string.Join(";",roles)),
@@ -62,9 +63,10 @@ namespace BlogProject.Application.System.Users
             return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
-        public Task<Guid> GetIdByUserName(string username)
+        public async Task<Guid> GetIdByUserName(string username)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByNameAsync(username);
+            return user.Id;
         }
 
         public async  Task<ApiResult<bool>> Register(RegisterRequest request)

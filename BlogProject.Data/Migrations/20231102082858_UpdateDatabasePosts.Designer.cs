@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231102082858_UpdateDatabasePosts")]
+    partial class UpdateDatabasePosts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,6 +53,28 @@ namespace BlogProject.Data.Migrations
                             Key = "HomeDescription",
                             Value = "Đây là mô tả của Web_Blog"
                         });
+                });
+
+            modelBuilder.Entity("BlogProject.Data.Entities.CategoriesDetail", b =>
+                {
+                    b.Property<int>("CategoriesID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoriesDetailID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("CategoriesID", "PostID");
+
+                    b.HasIndex("PostID");
+
+                    b.ToTable("CategoriesDetails", (string)null);
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.Category", b =>
@@ -234,12 +258,8 @@ namespace BlogProject.Data.Migrations
                     b.Property<int>("Active")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Desprition")
@@ -247,9 +267,9 @@ namespace BlogProject.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Image")
+                    b.Property<byte[]>("Image")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<int>("OrderNo")
                         .HasColumnType("int");
@@ -271,8 +291,6 @@ namespace BlogProject.Data.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("PostID");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
 
@@ -376,7 +394,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "3aae5716-48a5-48fd-941d-5fad8bef20b9",
+                            ConcurrencyStamp = "febb105e-5140-4dd9-bf9b-c685275afbad",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -384,7 +402,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "a2f1f37c-a82b-4aca-8c39-ffea9c7bcd1b",
+                            ConcurrencyStamp = "24524df4-866c-4109-9f45-9d3944956042",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -513,7 +531,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "8b1ff63f-8e26-409a-b15a-7d7c85f95c69",
+                            ConcurrencyStamp = "2076694f-fba2-4ecd-bcf7-f3f93762b1b0",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -523,7 +541,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAELUCHX5FRS11wnRT7hevOR7QmNMuu6d9zLpnvT7ZN+RZFW07uy8OG8ZlQj0D9GBnwQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECTz0LzemRtrW1M79+xYEFt5jTyfxodvkjUm9ul1njKtyXEN/5tcqylZsWEmT3niNw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -682,6 +700,25 @@ namespace BlogProject.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BlogProject.Data.Entities.CategoriesDetail", b =>
+                {
+                    b.HasOne("BlogProject.Data.Entities.Category", "Category")
+                        .WithMany("CategoriesDetail")
+                        .HasForeignKey("CategoriesID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlogProject.Data.Entities.Posts", "Post")
+                        .WithMany("CategoriesDetail")
+                        .HasForeignKey("PostID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("BlogProject.Data.Entities.Comment", b =>
                 {
                     b.HasOne("BlogProject.Data.Entities.Posts", "Post")
@@ -741,19 +778,11 @@ namespace BlogProject.Data.Migrations
 
             modelBuilder.Entity("BlogProject.Data.Entities.Posts", b =>
                 {
-                    b.HasOne("BlogProject.Data.Entities.Category", "Categories")
-                        .WithMany("Posts")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BlogProject.Data.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Categories");
 
                     b.Navigation("User");
                 });
@@ -879,7 +908,7 @@ namespace BlogProject.Data.Migrations
 
             modelBuilder.Entity("BlogProject.Data.Entities.Category", b =>
                 {
-                    b.Navigation("Posts");
+                    b.Navigation("CategoriesDetail");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.Comment", b =>
@@ -889,6 +918,8 @@ namespace BlogProject.Data.Migrations
 
             modelBuilder.Entity("BlogProject.Data.Entities.Posts", b =>
                 {
+                    b.Navigation("CategoriesDetail");
+
                     b.Navigation("Comment");
 
                     b.Navigation("Likes");

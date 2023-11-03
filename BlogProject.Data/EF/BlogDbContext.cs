@@ -22,7 +22,6 @@ namespace BlogProject.Data.EF
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
-            modelBuilder.ApplyConfiguration(new CategoriesDetailConfiguration());
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
             modelBuilder.ApplyConfiguration(new LikeConfiguration());         
             modelBuilder.ApplyConfiguration(new VideoConfiguration());
@@ -44,8 +43,7 @@ namespace BlogProject.Data.EF
 
             new SeedData(modelBuilder).Seed();
         }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<CategoriesDetail> CategoriesDetail { get; set; }
+        public DbSet<Category> Categories { get; set; }      
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Follow> Follows { get; set; }
         public DbSet<Like> Likes { get; set; }

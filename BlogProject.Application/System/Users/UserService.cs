@@ -33,15 +33,15 @@ namespace BlogProject.Application.System.Users
             _config = config;
         }
 
-        public async Task<ApiResult<string>> Authencate(LoginRequest request)
+        public async Task<string> Authencate(LoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user == null) return new ApiErrorResult<string>("Tài khoản không tồn tại");
+            if (user == null) return null;
 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
             if (!result.Succeeded)
             {
-                return new ApiErrorResult<string>("Sai mật khẩu");
+                return null;
             }
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new[]
@@ -60,7 +60,7 @@ namespace BlogProject.Application.System.Users
                 claims,
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
-            return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public async Task<Guid> GetIdByUserName(string username)

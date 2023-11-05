@@ -24,6 +24,7 @@ namespace BlogProject.Data.Entities
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UploadDate { get; set; }
         public int View { get; set; }
+        public int Like { get; set; }    
 
         public int OrderNo { get; set; }
         public string Image { get; set; }

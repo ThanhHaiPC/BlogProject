@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.Data", "BlogPro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.Application", "BlogProject.Application\BlogProject.Application.csproj", "{C05B10D7-8AE8-4B1A-AF6B-36245627624F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogProject.ViewModel", "BlogProject.ViewModel\BlogProject.ViewModel.csproj", "{F897AF0C-822C-4531-980D-60BFCB7C45E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.ViewModel", "BlogProject.ViewModel\BlogProject.ViewModel.csproj", "{F897AF0C-822C-4531-980D-60BFCB7C45E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogProject.BackendApi", "BlogProject.BackendApi\BlogProject.BackendApi.csproj", "{E4E30E26-25D4-4F8E-A4C1-2E467A4E4310}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.BackendApi", "BlogProject.BackendApi\BlogProject.BackendApi.csproj", "{E4E30E26-25D4-4F8E-A4C1-2E467A4E4310}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogProject.Admin", "BlogProject.Admin\BlogProject.Admin.csproj", "{D7412651-9469-4E48-AD63-CAF18EF678D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{E4E30E26-25D4-4F8E-A4C1-2E467A4E4310}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4E30E26-25D4-4F8E-A4C1-2E467A4E4310}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4E30E26-25D4-4F8E-A4C1-2E467A4E4310}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7412651-9469-4E48-AD63-CAF18EF678D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7412651-9469-4E48-AD63-CAF18EF678D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7412651-9469-4E48-AD63-CAF18EF678D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7412651-9469-4E48-AD63-CAF18EF678D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

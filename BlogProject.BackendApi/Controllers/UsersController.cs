@@ -19,7 +19,7 @@ namespace BlogProject.BackendApi.Controllers
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        public async Task<IActionResult> Authencate([FromForm] LoginRequest request)
+        public async Task<IActionResult> Authencate([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -30,11 +30,11 @@ namespace BlogProject.BackendApi.Controllers
             {
                 return BadRequest(result);
             }
-            return Ok(result);
+            return Ok(new { token = result });
         }
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromForm] RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

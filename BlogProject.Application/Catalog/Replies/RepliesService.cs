@@ -22,7 +22,7 @@ namespace BlogProject.Application.Catalog.Replies
             _context = context;
             _userService = userService;
         }
-        public async  Task<ApiResult<bool>> Create(ReplyCreateRequest request)
+        public async Task<ApiResult<bool>> Create(ReplyCreateRequest request)
         {
             // Tìm userId dựa trên userName
             Guid userId = await _userService.GetIdByUserName(request.UserName);
@@ -31,10 +31,13 @@ namespace BlogProject.Application.Catalog.Replies
             var comment = new Comment
             {
                 UserId = userId,
-                CommentID = request.CommentID ?? 0,
                 Date = DateTime.Now,
-                Content = request.Content,               
+                Content = request.Content,
             };
+
+            // Set the CommentID to the parent comment's ID if it exists
+            comment.CommentID = request.CommentID ?? 0; // Use the null-coalescing operator to handle nullable int
+
             // Lưu đối tượng Comment vào cơ sở dữ liệu 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
@@ -43,7 +46,7 @@ namespace BlogProject.Application.Catalog.Replies
             var cm = await _context.Comments.Where(x => x.CommentID == request.CommentID).FirstOrDefaultAsync();
 
             // Tạo nội dung thông báo
-            var content = $"{request.UserName} vừa trả lời bình luận  của bạn lúc {DateTime.Now.ToString("HH:mm, dd/MM/yyyy")}";
+            var content = $"{request.UserName} vừa trả lời bình luận của bạn lúc {DateTime.Now.ToString("HH:mm, dd/MM/yyyy")}";
             return new ApiSuccessResult<bool>();
         }
 

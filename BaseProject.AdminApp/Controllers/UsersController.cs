@@ -20,10 +20,18 @@ namespace BaseProject.AdminApp.Controllers
             _userApiClient = userApiClient;
             _configuration = configuration;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagesize= 10)
         {
-			
-            return View();
+			var session = HttpContext.Session.GetString("Token");
+			var request = new GetUserPagingRequest()
+			{
+				BearerToken = session,
+				Keyword = keyword,	
+				PageIndex = pageindex,
+				PageSize = pagesize
+			};
+			var data =await _userApiClient.GetUsersPagings(request);
+            return View(data);
         }
         [HttpGet] 
         public async Task<IActionResult> Login()
@@ -49,7 +57,7 @@ namespace BaseProject.AdminApp.Controllers
 				CookieAuthenticationDefaults.AuthenticationScheme,
 				userPrincipal,
 				authProperties);
-
+			HttpContext.Session.SetString("Token",token );
 			return RedirectToAction("Index", "Home");
 		}
 		[HttpPost]

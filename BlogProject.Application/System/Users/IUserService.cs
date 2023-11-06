@@ -14,8 +14,9 @@ namespace BlogProject.Application.System.Users
         Task<string> Authencate(LoginRequest request);
 
         Task<ApiResult<bool>> Register(RegisterRequest request);
-      
-
+        
+        Task<PagedResult<UserVm>> GetUsersPaging(GetUserPagingRequest request);
+    
         Task<Guid> GetIdByUserName(string username);
       
     }

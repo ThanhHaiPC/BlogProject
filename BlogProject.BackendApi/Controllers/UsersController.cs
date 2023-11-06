@@ -30,6 +30,7 @@ namespace BlogProject.BackendApi.Controllers
             {
                 return BadRequest("Username or password is incorrect.");
             }
+            
             return Ok(result);
         }
         [HttpPost("register")]
@@ -46,9 +47,16 @@ namespace BlogProject.BackendApi.Controllers
             }
             return Ok(result);
         }
-
+		[HttpGet("paging")]
         
-        [HttpGet("setting/{username}")]
+		public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
+		{
+            
+			var users = await _userService.GetUsersPaging(request);
+			return Ok(users);
+		}
+
+		[HttpGet("setting/{username}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetIdByUserName(string username)
         {

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.ViewModel", "Bl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.BackendApi", "BlogProject.BackendApi\BlogProject.BackendApi.csproj", "{E4E30E26-25D4-4F8E-A4C1-2E467A4E4310}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseProject.AdminApp", "BaseProject.AdminApp\BaseProject.AdminApp.csproj", "{79BE4E31-2BC9-4909-A5ED-E5B814EBE143}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseProject.AdminApp", "BaseProject.AdminApp\BaseProject.AdminApp.csproj", "{79BE4E31-2BC9-4909-A5ED-E5B814EBE143}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,7 +14,7 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Users/Login/";
+        options.LoginPath = "/Login/Index";
         options.AccessDeniedPath = "/Users/Forbidden/";
     });
 builder.Services.AddSession(options =>

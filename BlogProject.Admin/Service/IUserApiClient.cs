@@ -7,5 +7,6 @@ namespace BlogProject.Admin.Service
     {
         Task<string> Authencate(LoginRequest request);
         Task<PagedResult<UserVm>> GetUserPaging(GetUserPagingRequest request);
+        Task<bool> RegisterUser(RegisterRequest registerRequest);
     }
 }

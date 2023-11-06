@@ -33,15 +33,15 @@ namespace BlogProject.Application.System.Users
             _config = config;
         }
 
-        public async Task<ApiResult<string>> Authencate(LoginRequest request)
+        public async Task<string> Authencate(LoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user == null) return new ApiErrorResult<string>("Tài khoản không tồn tại");
+            if (user == null) return null;
 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
             if (!result.Succeeded)
             {
-                return new ApiErrorResult<string>("Sai mật khẩu");
+                return null ;
             }
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new[]
@@ -60,13 +60,49 @@ namespace BlogProject.Application.System.Users
                 claims,
                 expires: DateTime.Now.AddHours(3),
                 signingCredentials: creds);
-            return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public async Task<Guid> GetIdByUserName(string username)
         {
             var user = await _userManager.FindByNameAsync(username);
             return user.Id;
+        }
+
+        public async  Task<PagedResult<UserVm>> GetUserPaging(GetUserPagingRequest request)
+        {
+            var query = _userManager.Users;
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.UserName.Contains(request.Keyword)
+                 || x.PhoneNumber.Contains(request.Keyword));
+            }
+
+            //3. Paging
+            int totalRow = await query.CountAsync();
+
+            var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new UserVm()
+                {
+                    Id = x.Id,                 
+                    Email = x.Email,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    DateOfBir = x.DateOfBir,
+                    Gender = x.Gender,
+                    UserName = x.UserName,
+                    Address =x.Address,
+                    PhoneNumber = x.PhoneNumber,
+                }).ToListAsync();
+
+            //4. Select and projection
+            var pagedResult = new PagedResult<UserVm>()
+            {
+                TotalRecord = totalRow,
+                Items = data
+            };
+            return pagedResult;
         }
 
         public async  Task<ApiResult<bool>> Register(RegisterRequest request)

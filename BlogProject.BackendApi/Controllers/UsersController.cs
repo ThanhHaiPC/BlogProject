@@ -8,6 +8,7 @@ namespace BlogProject.BackendApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+  
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -26,11 +27,11 @@ namespace BlogProject.BackendApi.Controllers
 
             var result = await _userService.Authencate(request);
 
-            if (string.IsNullOrEmpty(result.ResultObj))
+            if (string.IsNullOrEmpty(result))
             {
-                return BadRequest(result);
-            }
-            return Ok(new { token = result });
+                return BadRequest("Username or password is incorrect.");
+            }       
+            return Ok(result);
         }
         [HttpPost("register")]
         [AllowAnonymous]
@@ -54,5 +55,14 @@ namespace BlogProject.BackendApi.Controllers
             var user = await _userService.GetIdByUserName(username);
             return Ok(user);
         }
+
+        [HttpGet("paging")]
+        [Authorize]
+        public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
+        {
+            var listuser = await _userService.GetUserPaging(request);
+            return Ok(listuser);
+        }
+
     }
 }

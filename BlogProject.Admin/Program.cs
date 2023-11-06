@@ -2,7 +2,7 @@
 using BlogProject.Admin.Service;
 using BlogProject.ViewModel.System.Users;
 using FluentValidation.AspNetCore;
-
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +10,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews()
  .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
+// Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Users/Login/";
+        options.AccessDeniedPath = "/Users/Forbidden/";
+    });
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+});
+
 builder.Services.AddTransient<IUserApiClient, UserApiClient>();
 IMvcBuilder mvcBuilder = builder.Services.AddRazorPages();
 var envirment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -30,9 +42,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseAuthentication();
+
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

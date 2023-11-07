@@ -26,7 +26,6 @@ namespace BlogProject.ViewModel.System.Users
 
         [Display(Name = "Ngày sinh")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime DateOfBir { get; set; }
 
 

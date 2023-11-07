@@ -8,23 +8,31 @@ namespace BlogProject.Admin.Service
 {
     public class UserApiClient : IUserApiClient
     {
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+
         public UserApiClient(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
-            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
-        public async Task<string> Authencate(LoginRequest request)
+
+        public async  Task<string> Authencate(LoginRequest request)
         {
             var json = JsonConvert.SerializeObject(request);
-            var http = new StringContent(json, Encoding.UTF8, "application/json");
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
-            var respone = await client.PostAsync("/api/users/authenticate", http);
-            var token = await respone.Content.ReadAsStringAsync();
+            var response = await client.PostAsync("/api/users/authenticate", httpContent);
+            var token = await response.Content.ReadAsStringAsync();
+
             return token;
         }
+
+       
+
         public async Task<PagedResult<UserVm>> GetUserPaging(GetUserPagingRequest request)
         {
             var client = _httpClientFactory.CreateClient();
@@ -37,6 +45,8 @@ namespace BlogProject.Admin.Service
             return users;
         }
 
+       
+
         public async Task<bool> RegisterUser(RegisterRequest registerRequest)
         {
             var client = _httpClientFactory.CreateClient();
@@ -45,7 +55,7 @@ namespace BlogProject.Admin.Service
             var json = JsonConvert.SerializeObject(registerRequest);
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"/api/users", httpContent);
+            var response = await client.PostAsync($"/api/users/register", httpContent);
             return response.IsSuccessStatusCode;
         }
     }

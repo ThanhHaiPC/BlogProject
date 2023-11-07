@@ -57,7 +57,7 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [HttpGet("paging")]
-        [Authorize]
+        
         public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
         {
             var listuser = await _userService.GetUserPaging(request);

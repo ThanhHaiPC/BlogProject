@@ -16,7 +16,7 @@ namespace BlogProject.Application.Catalog.Likes
     {
         private readonly BlogDbContext _context;
         private readonly IStorageService _storageService;
-        private readonly IUserService _userService;
+        private readonly IUserService _userService; 
 
         public LikeService(BlogDbContext context, IUserService userService)
         {

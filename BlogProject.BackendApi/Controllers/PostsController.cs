@@ -1,5 +1,6 @@
 ﻿using BlogProject.Application.Catalog.Post;
 using BlogProject.ViewModel.Catalog.Posts;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -22,10 +23,16 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllPost()
+        public async Task<IActionResult> GetAllPost([FromQuery] GetUserPagingRequest request)
         {
 
-            var post = await _postService.GetAll();
+            var post = await _postService.GetAllPaging(request);
+            return Ok(post);
+        }
+        [HttpGet("getbyId")]
+        public async Task<IActionResult> GetById( int postId ) 
+        {
+            var post = await _postService.GetById(postId);
             return Ok(post);
         }
         [HttpPost("/Post/Create")]

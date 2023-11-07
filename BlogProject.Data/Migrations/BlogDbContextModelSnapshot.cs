@@ -252,7 +252,9 @@ namespace BlogProject.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Like")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("OrderNo")
                         .HasColumnType("int");
@@ -379,7 +381,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "d77b05f7-d31e-48bd-b101-60bef34e434d",
+                            ConcurrencyStamp = "0586181a-fe4e-41f0-ba5c-7924937fb8e5",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -387,7 +389,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "b4e66282-6678-4b1c-ba5a-ff128a557444",
+                            ConcurrencyStamp = "381a7545-d5e5-46b4-a15e-53b6a2da2a39",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -516,7 +518,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "4ce9ea59-df90-43d9-8498-edc30358dff1",
+                            ConcurrencyStamp = "82e6ef14-806d-47ef-9e35-404c078d9e1a",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -526,7 +528,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBR9a+ouWyCq+Mz4h5BvMHvxD8MtnbBgXwG7Hop5Qrj27LojfXEviTtyj3MsY6NCRQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOKwPIKYx3FiKitjn4uQ0EaH5hckY16wK/60OfYOsricPwIxCqJaLB0/DE+KoXkUDA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

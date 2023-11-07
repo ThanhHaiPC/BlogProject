@@ -2,8 +2,10 @@
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Categories;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +18,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace BlogProject.Application.Catalog.Post
@@ -27,12 +30,13 @@ namespace BlogProject.Application.Catalog.Post
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
-        public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
+        private readonly ICategoryService _categoryService;
+        public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment, ICategoryService categoryService)
         {
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
+            _categoryService = categoryService;
         }
 
         public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
@@ -100,23 +104,63 @@ namespace BlogProject.Application.Catalog.Post
             return new ApiSuccessResult<bool>();
         }
 
-        public async Task<ApiResult<List<PostVm>>> GetAll()
+        public async Task<ApiResult<PagedResult<PostVm>>> GetAllPaging(GetUserPagingRequest request)
         {
-            var posts = await _context.Posts.Include(p => p.User).ToListAsync();
+            var query = from p in _context.Posts
 
-            var postsWithUsernames = posts.Select(post => new PostVm
+                        select new {p};
+
+            if (!string.IsNullOrEmpty(request.Keyword))
+                query = query.Where(x => x.p.Title.Contains(request.Keyword));
+
+
+            int totalRow = await query.CountAsync();
+
+            var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new PostVm()
+                {
+                    Desprition = x.p.Desprition,
+                    Title = x.p.Title,
+                    CategoryId = x.p.CategoryId,
+                    Image = x.p.Image,
+                    Content = x.p.Content,
+                    Like = x.p.Like,
+                    UploadDate =x.p.UploadDate,
+                    View = x.p.View
+                }).ToListAsync();
+
+            
+            var pagedResult = new PagedResult<PostVm>()
             {
-                PostID = post.PostID,
-                Name = post.User.UserName,
-                Title = post.Title,
-                Content = post.Content,
-                UploadDate = post.UploadDate,
-                View = post.View,
-                CategoryId = post.CategoryId,
-                Desprition = post.Desprition,
-                Image = post.Image,
-            }).ToList();
-            return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
+                TotalRecord = totalRow,
+
+                Items = data
+            };
+            return new ApiSuccessResult<PagedResult<PostVm>>(pagedResult);
+
+        }
+
+        public async Task<ApiResult<PostVm>> GetById(int postId)
+        {
+            var posts = await _context.Posts.Where(x => x.PostID == postId).FirstOrDefaultAsync();
+            if (posts == null)
+            {
+                return new ApiErrorResult<PostVm>("Danh mục không tồn tại");
+            }
+
+            var post = new PostVm()
+            {
+                Desprition = posts.Desprition,
+                Title = posts.Title,
+                CategoryId = posts.CategoryId,
+                Image = posts.Image,
+                Content = posts.Content,
+                Like = posts.Like,
+                UploadDate = posts.UploadDate,
+                View = posts.View
+            };
+            return new ApiSuccessResult<PostVm>(post);
         }
 
         public async Task<ApiResult<bool>> Update(PostUpdateRequest request, int id)

@@ -85,7 +85,7 @@ namespace BlogProject.Application.System.Users
                 .Take(request.PageSize)
                 .Select(x => new UserVm()
                 {
-                    Id = x.Id,                 
+                                   
                     Email = x.Email,
                     FirstName = x.FirstName,
                     LastName = x.LastName,

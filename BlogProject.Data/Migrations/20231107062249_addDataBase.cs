@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BlogProject.Data.Migrations
 {
-    public partial class database : Migration
+    public partial class addDataBase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -99,7 +99,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -120,7 +120,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,7 +140,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,13 +158,13 @@ namespace BlogProject.Data.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -184,7 +184,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,16 +218,17 @@ namespace BlogProject.Data.Migrations
                 {
                     PostID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageID = table.Column<int>(type: "int", nullable: false),
-                    AuthorID = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
                     Desprition = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Active = table.Column<int>(type: "int", nullable: false),
                     UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     View = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    OrderNo = table.Column<int>(type: "int", nullable: false)
+                    Like = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    OrderNo = table.Column<int>(type: "int", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -237,33 +238,13 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CategoriesDetails",
-                columns: table => new
-                {
-                    PostID = table.Column<int>(type: "int", nullable: false),
-                    CategoriesID = table.Column<int>(type: "int", nullable: false),
-                    CategoriesDetailID = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategoriesDetails", x => new { x.CategoriesID, x.PostID });
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_CategoriesDetails_Categories_CategoriesID",
-                        column: x => x.CategoriesID,
+                        name: "FK_Posts_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoriesID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategoriesDetails_Posts_PostID",
-                        column: x => x.PostID,
-                        principalTable: "Posts",
-                        principalColumn: "PostID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -286,35 +267,13 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Comments_Posts_PostID",
                         column: x => x.PostID,
                         principalTable: "Posts",
                         principalColumn: "PostID",
                         onDelete: ReferentialAction.NoAction);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Images",
-                columns: table => new
-                {
-                    ImageID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PostID = table.Column<int>(type: "int", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Des = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Active = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Images", x => x.ImageID);
-                    table.ForeignKey(
-                        name: "FK_Images_Posts_PostID",
-                        column: x => x.PostID,
-                        principalTable: "Posts",
-                        principalColumn: "PostID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -335,7 +294,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Likes_Posts_PostID",
                         column: x => x.PostID,
@@ -363,7 +322,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_RatingPost_Posts_PostID",
                         column: x => x.PostID,
@@ -389,7 +348,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.PostID,
                         principalTable: "Posts",
                         principalColumn: "PostID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -414,7 +373,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Videos_Posts_PostID",
                         column: x => x.PostID,
@@ -442,7 +401,7 @@ namespace BlogProject.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Replys_Comments_CommentID",
                         column: x => x.CommentID,
@@ -450,6 +409,56 @@ namespace BlogProject.Data.Migrations
                         principalColumn: "CommentID",
                         onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AppConfigs",
+                columns: new[] { "Key", "Value" },
+                values: new object[,]
+                {
+                    { "HomeDescription", "Đây là mô tả của Web_Blog" },
+                    { "HomeKeyWord", "Đây là từ khóa của Web_Blog" },
+                    { "HomeTitle", "Đây là trang chủ của Web_Blog" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Description", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"), "381a7545-d5e5-46b4-a15e-53b6a2da2a39", "User Role", "user", "user" },
+                    { new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"), "0586181a-fe4e-41f0-ba5c-7924937fb8e5", "Administrator Role", "admin", "admin" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "ConcurrencyStamp", "DateOfBir", "Description", "Email", "EmailConfirmed", "FirstName", "Image", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"), 0, "Biên Hòa Đồng Nai", "82e6ef14-806d-47ef-9e35-404c078d9e1a", new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "abcd@gmail.com", true, "Hai", "", "Pham", false, null, "abcd@gmail.com", "admin", "AQAAAAEAACcQAAAAEOKwPIKYx3FiKitjn4uQ0EaH5hckY16wK/60OfYOsricPwIxCqJaLB0/DE+KoXkUDA==", null, false, "", false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoriesID", "Name" },
+                values: new object[,]
+                {
+                    { 1, "BÓNG ĐÁ" },
+                    { 2, "THẾ GIỚI" },
+                    { 3, "XÃ HỘI" },
+                    { 4, "VĂN HÓA" },
+                    { 5, "KINH TẾ" },
+                    { 6, "GIÁO DỤC" },
+                    { 7, "THỂ THAO" },
+                    { 8, "GIẢI TRÍ" },
+                    { 9, "PHÁP LUẬT" },
+                    { 10, "CÔNG NGHỆ" },
+                    { 11, "KHOA HỌC" },
+                    { 12, "ĐỜI SỐNG " },
+                    { 13, "XE CỘ" },
+                    { 14, "NHÀ ĐẤT" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"), new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -491,11 +500,6 @@ namespace BlogProject.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CategoriesDetails_PostID",
-                table: "CategoriesDetails",
-                column: "PostID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostID",
                 table: "Comments",
                 column: "PostID");
@@ -511,11 +515,6 @@ namespace BlogProject.Data.Migrations
                 column: "FolloweeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_PostID",
-                table: "Images",
-                column: "PostID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Likes_PostID",
                 table: "Likes",
                 column: "PostID");
@@ -524,6 +523,11 @@ namespace BlogProject.Data.Migrations
                 name: "IX_Likes_UserId",
                 table: "Likes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_CategoryId",
+                table: "Posts",
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
@@ -587,13 +591,7 @@ namespace BlogProject.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CategoriesDetails");
-
-            migrationBuilder.DropTable(
                 name: "Followings");
-
-            migrationBuilder.DropTable(
-                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Likes");
@@ -614,9 +612,6 @@ namespace BlogProject.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Categories");
-
-            migrationBuilder.DropTable(
                 name: "Comments");
 
             migrationBuilder.DropTable(
@@ -624,6 +619,9 @@ namespace BlogProject.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
         }
     }
 }

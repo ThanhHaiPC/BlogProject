@@ -70,5 +70,14 @@ namespace BlogProject.Application.Catalog.Comments
         {
             return await _context.Comments.Where(x => x.CommentID == id).ToListAsync();
         }
+
+        public async Task<List<Comment>> GetCommentsByPost(int postId)
+        {
+            var comments = await _context.Comments
+            .Where(c => c.PostID == postId)
+            .ToListAsync();
+
+            return comments;
+        }
     }
 }

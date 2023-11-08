@@ -12,11 +12,10 @@ namespace BlogProject.Application.Catalog.Ratingss
     public interface IRatingService
     {
       
-            Task<bool> Create(Guid userID, int postId, int ratingValue);
-            Task<bool> Rating(int ratingId, int star_number);
-        /*    Task<ApiResult<PagedResult<Posts>>> GetPostsPaging(GetUserPagingRequest request);
-            Task<ApiResult<Posts>> GetPostById(int postId);
-            Task<ApiResult<PagedResult<Rating>>> GetRatingsByUserName(GetUserPagingRequest request);*/
-        
+            Task<bool> Create(string userID, int postId);
+        /* Task<bool> Rating(int ratingId, int star_number);*/
+        Task<int> GetRatingForPostByUser(string userID, int postId);
+        /*Task<double> GetAverageRatingForPost(int postId);*/
+        Task<List<Rating>> GetRatingsByPost(int postId);
     }
 }

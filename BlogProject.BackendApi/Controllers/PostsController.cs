@@ -1,5 +1,6 @@
 ﻿using BlogProject.Application.Catalog.Post;
 using BlogProject.ViewModel.Catalog.Posts;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -64,6 +65,13 @@ namespace BlogProject.BackendApi.Controllers
             var post = await _postService.Update(request, Id);
             if (!post.IsSuccessed)
                 return BadRequest(post);
+            return Ok(post);
+        }
+        [HttpGet("get-all-paging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
+        {
+
+            var post = await _postService.GetPaged(request);
             return Ok(post);
         }
     }

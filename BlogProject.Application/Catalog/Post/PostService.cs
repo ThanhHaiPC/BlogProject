@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -107,7 +108,7 @@ namespace BlogProject.Application.Catalog.Post
             var postsWithUsernames = posts.Select(post => new PostVm
             {
                 PostID = post.PostID,
-                Name = post.User.UserName,
+                UserName = post.User.UserName,
                 Title = post.Title,
                 Content = post.Content,
                 UploadDate = post.UploadDate,
@@ -119,6 +120,44 @@ namespace BlogProject.Application.Catalog.Post
             return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
         }
 
+       
+
+       
+
+        public async Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request)
+        {
+            var query = from p in _context.Posts
+                        select new { p };
+
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword));
+            }
+
+            int totalRow = await query.CountAsync();
+
+            var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new PostVm()
+                {
+                    Title = x.p.Title,
+                    Content = x.p.Content,
+                    UserName = x.p.User.UserName,
+                    Desprition = x.p.Desprition,
+                    Like = x.p.Like,
+                    Image = x.p.Image,
+                    View = x.p.View,
+                    UploadDate = x.p.UploadDate,
+
+                }).ToListAsync();
+            //4. Select and projection
+            var pagedResult = new PagedResult<PostVm>()
+            {
+                TotalRecord = totalRow,
+                Items = data
+            };
+            return pagedResult;
+        }
         public async Task<ApiResult<bool>> Update(PostUpdateRequest request, int id)
         {
             if (id == null)

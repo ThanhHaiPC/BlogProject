@@ -14,6 +14,7 @@ namespace BlogProject.Application.Catalog.Comments
         Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId);
         Task<ApiResult<bool>> Delete(int id);
         Task<List<Comment>> GetById(int id);
+        Task<List<Comment>> GetCommentsByPost(int postId);
 
     }
 }

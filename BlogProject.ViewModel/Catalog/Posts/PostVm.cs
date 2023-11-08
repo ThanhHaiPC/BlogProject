@@ -11,7 +11,7 @@ namespace BlogProject.ViewModel.Catalog.Posts
     {
         public int PostID { get; set; }
         public string Desprition { get; set; }
-        public string Name { get; set; }
+        public string UserName { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public int Like { get; set; }

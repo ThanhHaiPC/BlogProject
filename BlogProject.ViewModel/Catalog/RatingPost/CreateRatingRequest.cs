@@ -8,8 +8,7 @@ namespace BlogProject.ViewModel.Catalog.RatingPost
 {
     public class CreateRatingRequest
     {
-        public Guid UserId { get; set; }
-        public int PostId { get; set; }
+       
         public int RatingValue { get; set; }
     }
 }

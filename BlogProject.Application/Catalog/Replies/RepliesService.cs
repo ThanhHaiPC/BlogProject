@@ -57,15 +57,14 @@ namespace BlogProject.Application.Catalog.Replies
 
         public async  Task<ApiResult<bool>> Delete(int id)
         {
-            var reply = await _context.Replies.FirstOrDefaultAsync(x => x.ReplyID == id);
+            var reply = await _context.Replies.FirstOrDefaultAsync(a => a.ReplyID == id);
             _context.Replies.Remove(reply);
             await _context.SaveChangesAsync();
-
             return new ApiSuccessResult<bool>();
         }
         public async  Task<List<Reply>> GetReplyByIdAsync(int id)
         {
-            return await _context.Replies.Where(x => x.CommentID == id).ToListAsync();
+            return await _context.Replies.Where(x => x.ReplyID == id).ToListAsync();
         }
     }
 }

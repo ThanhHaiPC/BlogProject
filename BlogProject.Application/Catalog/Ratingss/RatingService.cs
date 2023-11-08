@@ -1,7 +1,9 @@
-﻿using BlogProject.Data.EF;
+﻿using BlogProject.Application.System.Users;
+using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,46 +17,86 @@ namespace BlogProject.Application.Catalog.Ratingss
     {
 
         private readonly BlogDbContext _context;
-        private readonly RatingService _ratingService;
+        private readonly IUserService _userService;
+        private readonly UserManager<User> _userManager;
 
-
-        public RatingService(BlogDbContext context, RatingService ratingService)
+        public RatingService(BlogDbContext context,IUserService userService, UserManager<User> userManager)
         {
             _context = context;
-            _ratingService = ratingService;
+            _userService = userService;
+            _userManager = userManager;
         }
 
-        public async  Task<bool> Create(Guid userID, int postId, int ratingValue)
+        public async  Task<bool> Create(string userID, int postId)
         {
-            // Create a new Rating entity
-            var rating = new Rating
+            var user = await _userManager.FindByIdAsync(userID);
+
+            var CreateRating = new Rating()
             {
-                UserId = userID,
                 PostID = postId,
-                RatingValue = ratingValue,
-                Date = DateTime.Now
+                UserId = user.Id,
+                Date = DateTime.UtcNow,
+                
             };
-
-            // Add the new rating to the database
-            _context.Ratings.Add(rating);
+            _context.Ratings.Add(CreateRating);
             await _context.SaveChangesAsync();
-
-            return true; // Return true if the rating is created successfully
-        }
-        public async  Task<bool> Rating(int ratingId, int star_number)
-        {
-            var star = await _context.Ratings.Where(x => x.RatingID == ratingId).FirstOrDefaultAsync();
-            if (star == null)
-            {
-                return false;
-            }
-
-            star.Date = DateTime.UtcNow;
-            star.RatingValue = star_number;
-
-            _context.SaveChanges();
 
             return true;
         }
+
+      /*  public async  Task<double> GetAverageRatingForPost(int postId)
+        {
+            var averageRating = await _context.Ratings
+        .Where(r => r.PostID == postId)
+        .Select(r => r.RatingValue)
+        .DefaultIfEmpty(0)
+        .AverageAsync();
+
+            return averageRating;
+        }*/
+
+        public async Task<int> GetRatingForPostByUser(string userID, int postId)
+        {
+
+            var user = await _userManager.FindByIdAsync(userID);
+
+            var rating = await _context.Ratings
+            .Where(x => x.UserId == user.Id && x.PostID == postId)
+            .Select(x => x.RatingValue)
+            .FirstOrDefaultAsync();
+
+            return rating;
+        }
+
+        public async Task<List<Rating>> GetRatingsByPost(int postId)
+        {
+            var ratings = await _context.Ratings
+             .Where(x => x.PostID == postId)
+             .ToListAsync();
+
+            return ratings;
+        }
+
+
+
+
+
+        /*  public async  Task<bool> Rating(int ratingId, int star_number)
+          {
+              var star = await _context.Ratings.Where(x => x.RatingID == ratingId).FirstOrDefaultAsync();
+              if (star == null)
+              {
+                  return false;
+              }
+
+
+              star.Date = DateTime.UtcNow;
+              star.RatingValue = star_number;
+
+
+              _context.SaveChanges();
+
+              return true;
+          }*/
     }
 }

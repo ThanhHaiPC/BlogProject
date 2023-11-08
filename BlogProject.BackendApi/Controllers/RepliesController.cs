@@ -35,11 +35,17 @@ namespace BlogProject.BackendApi.Controllers
                 return BadRequest(replyResult);           
             return Ok(replyResult);
         }
-        [HttpDelete("{replyId}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _repliesService.Delete(id);
-            return Ok(result);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var reply = await _repliesService.Delete(id);
+            if (!reply.IsSuccessed)
+                return BadRequest(reply);
+            return Ok(reply);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReplyByIdAsync(int id)

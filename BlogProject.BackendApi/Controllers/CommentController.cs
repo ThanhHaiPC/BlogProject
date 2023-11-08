@@ -53,5 +53,20 @@ namespace BlogProject.BackendApi.Controllers
             var comments = await _commentService.GetById(id);
             return Ok(comments);
         }
+
+        [HttpGet("comments/{postId}")]
+        public async Task<IActionResult> GetCommentsByPost(int postId)
+        {
+            var comments = await _commentService.GetCommentsByPost(postId);
+
+            if (comments != null)
+            {
+                return Ok(comments);
+            }
+            else
+            {
+                return NotFound(); // Return a 404 Not Found if comments are not found for the specified post.
+            }
+        }
     }
 }

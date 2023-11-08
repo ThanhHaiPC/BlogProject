@@ -9,9 +9,9 @@ namespace BlogProject.ViewModel.Catalog.Comments
 {
     public class CommentCreateRequest
     {
-        public int CommentID { get; set; }
+       
         public int? PostID { get; set; }
-        public Guid UserId { get; set; }
+     
         public string UserName { get; set; }
 
         [StringLength(2000)]

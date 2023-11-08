@@ -2,6 +2,7 @@
 using BlogProject.Application.Catalog.Comments;
 using BlogProject.Application.Catalog.Likes;
 using BlogProject.Application.Catalog.Post;
+using BlogProject.Application.Catalog.Ratingss;
 using BlogProject.Application.Catalog.Replies;
 using BlogProject.Application.System.Roles;
 using BlogProject.Application.System.Users;
@@ -42,7 +43,7 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddTransient<IRepliesService, RepliesService>();
 builder.Services.AddTransient<ILikeService, LikeService>();
-
+builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
 
 

@@ -1,8 +1,10 @@
-﻿using BlogProject.Application.System.Users;
+﻿using BlogProject.Application.Catalog.Post;
+using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Comments;
 using BlogProject.ViewModel.Common;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,23 +18,26 @@ namespace BlogProject.Application.Catalog.Comments
     {
         private readonly BlogDbContext _context;
         private readonly IUserService _userService;
-
-        public CommentService(BlogDbContext context, IUserService userService)
+        private readonly UserManager<User> _userManager;
+        private readonly IPostService _postService;
+        public CommentService(BlogDbContext context, IUserService userService, UserManager<User> userManager, IPostService postService)
         {
             _context = context;
             _userService = userService;
+            _userManager = userManager;
+            _postService = postService;
         }
 
-        public async Task<ApiResult<bool>> Create(CommentCreateRequest request)
+        public async Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId)
         {
 
-            // Tìm userId dựa trên userName
-            Guid userId = await _userService.GetIdByUserName(request.UserName);
+            
+            var user = await _userManager.FindByIdAsync(userId);
 
             // Tạo một đối tượng Comment từ dữ liệu trong request
             var comment = new Comment
             {
-                UserId = userId,
+                UserId = user.Id,
                 PostID = request.PostID ?? 0,
                 Date = DateTime.Now,
                 Content = request.Content,
@@ -63,7 +68,7 @@ namespace BlogProject.Application.Catalog.Comments
 
         public async Task<List<Comment>> GetById(int id)
         {
-            return await _context.Comments.Where(x => x.PostID == id).ToListAsync();
+            return await _context.Comments.Where(x => x.CommentID == id).ToListAsync();
         }
     }
 }

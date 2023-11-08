@@ -2,8 +2,10 @@
 using BlogProject.Application.Catalog.Replies;
 using BlogProject.ViewModel.Catalog.Comments;
 using BlogProject.ViewModel.Catalog.Replies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogProject.BackendApi.Controllers
 {
@@ -18,15 +20,17 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(ReplyCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var replyResult = await _repliesService.Create(request);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var replyResult = await _repliesService.Create(request,userId);
 
-            if (replyResult.IsSuccessed)
+            if (!replyResult.IsSuccessed)
 
                 return BadRequest(replyResult);           
             return Ok(replyResult);

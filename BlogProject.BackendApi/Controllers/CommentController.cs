@@ -1,7 +1,9 @@
 ﻿using BlogProject.Application.Catalog.Comments;
 using BlogProject.ViewModel.Catalog.Comments;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogProject.BackendApi.Controllers
 {
@@ -15,16 +17,17 @@ namespace BlogProject.BackendApi.Controllers
             _commentService = commentService;
         }
 
+        
         [HttpPost]
-        [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(CommentCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            var result = await _commentService.Create(request);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await _commentService.Create(request, userId);
 
             if (result.IsSuccessed)
             {

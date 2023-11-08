@@ -12,7 +12,7 @@ namespace BlogProject.Application.Catalog.Replies
 {
     public interface IRepliesService
     {      
-        Task<ApiResult<bool>> Create(ReplyCreateRequest request);
+        Task<ApiResult<bool>> Create(ReplyCreateRequest request, string userId);
         Task<ApiResult<bool>> Delete(int id);
         Task<List<Reply>> GetReplyByIdAsync(int id);
 

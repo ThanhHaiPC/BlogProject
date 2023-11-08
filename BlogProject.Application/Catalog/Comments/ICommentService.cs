@@ -11,8 +11,9 @@ namespace BlogProject.Application.Catalog.Comments
 {
     public interface ICommentService 
     {
-        Task<ApiResult<bool>> Create(CommentCreateRequest request);
+        Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId);
         Task<ApiResult<bool>> Delete(int id);
         Task<List<Comment>> GetById(int id);
+
     }
 }

@@ -10,10 +10,13 @@ namespace BlogProject.Data.Entities
     {
         public int TagID { get; set; }
         public string TagName { get; set; }
+
+        public int View {  get; set; }
         public int PostID { get; set; }
 
 
         // RelationShip
         public Posts Post { get; set; }
+       
     }
 }

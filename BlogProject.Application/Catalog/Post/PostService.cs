@@ -57,7 +57,7 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Bài viết đã tồn tại");
             }
-            // Lấy thông tin người dùng đăng nhập
+           
 
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.FileImage.FileName;
 
@@ -144,12 +144,16 @@ namespace BlogProject.Application.Catalog.Post
                     Image = x.p.Image,
                     View = x.p.View,
                     UploadDate = x.p.UploadDate,
+                    CategoryId = x.p.CategoryId,
+                    PostID = x.p.PostID
 
                 }).ToListAsync();
             //4. Select and projection
             var pagedResult = new PagedResult<PostVm>()
             {
-                TotalRecord = totalRow,
+                TotalRecords = totalRow,
+                PageSize = request.PageSize,
+                PageIndex = request.PageIndex,
                 Items = data
             };
             return pagedResult;
@@ -161,7 +165,7 @@ namespace BlogProject.Application.Catalog.Post
                 return new ApiErrorResult<bool>("Lỗi cập nhập");
             }
             var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
-            // Lấy thông tin người dùng đăng nhập
+            
 
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.FileImage.FileName;
 

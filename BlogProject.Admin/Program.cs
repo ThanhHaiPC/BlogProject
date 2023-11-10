@@ -1,5 +1,6 @@
 
 using BlogProject.Admin.Service;
+using BlogProject.Application.Common;
 using BlogProject.ViewModel.System.Users;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -22,7 +23,12 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
 
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IUserApiClient, UserApiClient>();
+builder.Services.AddTransient<IStorageService, FileStorageService>();
+builder.Services.AddTransient<IRoleApiClient, RoleApiClient>();
+
 IMvcBuilder mvcBuilder = builder.Services.AddRazorPages();
 var envirment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 if (envirment == Environments.Development)

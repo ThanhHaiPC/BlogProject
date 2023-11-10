@@ -3,6 +3,7 @@ using BlogProject.Application.Catalog.Comments;
 using BlogProject.Application.Catalog.Likes;
 using BlogProject.Application.Catalog.Post;
 using BlogProject.Application.Catalog.Replies;
+using BlogProject.Application.Common;
 using BlogProject.Application.System.Roles;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
@@ -31,10 +32,13 @@ builder.Services.AddIdentity<User, Role>()
     .AddDefaultTokenProviders();
 
 // Declare DI - xin thẩm quyền 
+
 builder.Services.AddTransient<UserManager<User>, UserManager<User>>();
 builder.Services.AddTransient<SignInManager<User>, SignInManager<User>>();
 builder.Services.AddTransient<RoleManager<Role>, RoleManager<Role>>();
 
+
+builder.Services.AddTransient<IStorageService, FileStorageService>();
 builder.Services.AddTransient<IRoleService, RoleService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();

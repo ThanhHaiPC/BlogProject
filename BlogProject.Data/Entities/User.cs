@@ -22,7 +22,7 @@ namespace BlogProject.Data.Entities
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime? DateOfBir { get; set; }
+        public DateTime? DateOfBir  { get; set; }
         public string? Address { get; set; }
 
         // relationship
@@ -34,5 +34,7 @@ namespace BlogProject.Data.Entities
         public List<Video> Video { get; set; }
         public List<Rating> Rating { get; set; }
         public List<Reply> Reply { get; set; }
+
+        
     }
 }

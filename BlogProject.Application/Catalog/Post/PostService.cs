@@ -1,4 +1,6 @@
 ﻿using BlogProject.Application.Catalog.Categories;
+using BlogProject.Application.Catalog.Comments;
+using BlogProject.Application.Catalog.Likes;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
@@ -28,12 +30,16 @@ namespace BlogProject.Application.Catalog.Post
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+    /*    private readonly ICommentService _commentService;*/
+        private readonly ILikeService _likeService;
 
-        public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment)
+        public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
         {
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
+           /* _commentService = commentService;*/
+            _likeService = likeService;
         }
 
         public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
@@ -50,7 +56,17 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Chưa nhập nội dung");
             }
+           /* if (request.CategoryId == null || request.CategoryId <= 0)
+            {
+                return new ApiErrorResult<bool>("CategoryId không hợp lệ");
+            }*/
 
+            // Check if the specified CategoryId exists in the database
+            var categoryExists = await _context.Categories.AnyAsync(c => c.CategoriesID == request.CategoryId);
+            if (!categoryExists)
+            {
+                return new ApiErrorResult<bool>("CategoryId không tồn tại");
+            }
 
             List<Posts> posts = await _context.Posts.Where(x => x.Title == request.Title).ToListAsync();
             if (posts.Count != 0)
@@ -120,9 +136,66 @@ namespace BlogProject.Application.Catalog.Post
             return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
         }
 
-       
 
-       
+        public async Task<ApiResult<List<PostVm>>> GetByUserId(string userId)
+        {
+            try
+            {
+                var posts = await _context.Posts
+             .Where(p => p.UserId == Guid.Parse(userId))
+             .Include(p => p.User)
+             .ToListAsync();
+
+                var postsWithUsernames = posts.Select(post => new PostVm
+                {
+                    PostID = post.PostID,
+                    UserName = post.User.UserName,
+                    Title = post.Title,
+                    Content = post.Content,
+                    UploadDate = post.UploadDate,
+                    View = post.View,
+                    CategoryId = post.CategoryId,
+                    Desprition = post.Desprition,
+                    Image = post.Image,
+                }).ToList();
+
+                return new  ApiSuccessResult<List<PostVm>>(postsWithUsernames);
+            }
+            catch (Exception ex)
+            {
+                return new  ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
+            }
+        }
+
+        public async Task<ApiResult<List<PostVm>>> Search(string searchTerm)
+        {
+            try
+            {
+                var posts = await _context.Posts
+                    .Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm))
+                    .Include(p => p.User)
+                    .ToListAsync();
+
+                var postsWithUsernames = posts.Select(post => new PostVm
+                {
+                    PostID = post.PostID,
+                    UserName = post.User.UserName,
+                    Title = post.Title,
+                    Content = post.Content,
+                    UploadDate = post.UploadDate,
+                    View = post.View,
+                    CategoryId = post.CategoryId,
+                    Desprition = post.Desprition,
+                    Image = post.Image,
+                }).ToList();
+
+                return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
+            }
+            catch (Exception ex)
+            {
+                return new  ApiErrorResult<List<PostVm>>($"An error occurred while searching for posts: {ex.Message}");
+            }
+        }
 
         public async Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request)
         {
@@ -140,24 +213,27 @@ namespace BlogProject.Application.Catalog.Post
                 .Take(request.PageSize)
                 .Select(x => new PostVm()
                 {
+
                     Title = x.p.Title,
                     Content = x.p.Content,
                     UserName = x.p.User.UserName,
                     Desprition = x.p.Desprition,
-                    Like = x.p.Like,
                     Image = x.p.Image,
                     View = x.p.View,
                     UploadDate = x.p.UploadDate,
+                    CategoryId = x.p.CategoryId,
+                    PostID = x.p.PostID
 
                 }).ToListAsync();
             //4. Select and projection
             var pagedResult = new PagedResult<PostVm>()
             {
-                TotalRecord = totalRow,
+                TotalRecords = totalRow,
                 Items = data
             };
             return pagedResult;
-        }
+        }      
+
         public async Task<ApiResult<bool>> Update(PostUpdateRequest request, int id)
         {
             if (id == null)
@@ -192,5 +268,81 @@ namespace BlogProject.Application.Catalog.Post
             _context.SaveChanges();
             return new ApiSuccessResult<bool>(true);
         }
+
+        public async  Task<List<PostVm>> TakeTopByQuantity(int quantity)
+        {
+            if (_context.Posts.Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+            var post = await _context.Posts
+            .OrderByDescending(p => p.View)
+            .Take(quantity)
+            .ToListAsync();
+
+            List<PostVm> postList = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title = item.Title;
+                postVm.UserId = item.UserId;
+                postVm.PostID = item.PostID;
+                postVm.UploadDate = item.UploadDate;
+                postVm.View = item.View;
+
+                postList.Add(postVm);
+            }
+
+            return postList;
+        }
+
+        /*   public async Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request)
+           {
+               try
+               {
+                   var userId = await _userService.GetIdByUserName(request.Name);
+
+                   // Get the list of users the specified user is following
+                   var followings = await _context.Follows
+                       .Where(x => x.FolloweeId == userId)
+                       .ToListAsync();
+
+                   // Get all posts
+                   var posts = await _context.Posts
+                       .Where(post => followings.Any(user => user.FollowerId == post.UserId) && post.Active == 0)
+                       .OrderByDescending(post => post.PostID)
+                       .ToListAsync();
+
+                   // Paging
+                   int totalRow = posts.Count();
+
+                   var data = posts
+                       .Skip((request.PageIndex - 1) * request.PageSize)
+                       .Take(request.PageSize)
+                       .Select(post => new PostVm()
+                       {
+                           PostID = post.PostID,
+                           Title = post.Title,
+                           UploadDate = post.UploadDate,
+                         *//*  CountComment = _commentService.CountById(post.PostID),*//*
+                           CountLike = _likeService.CountById(post.PostID),
+                           UserName = _userService.GetUserNameById(post.UserId),
+                           View = post.View
+                       })
+                       .ToList();
+
+                   // Select and projection
+                   var pagedResult = new PagedResult<PostVm>()
+                   {
+                       TotalRecords = totalRow,
+                       PageIndex = request.PageIndex,
+                       PageSize = request.PageSize,
+                       Items = data
+                   };
+
+                   return new ApiSuccessResult<PagedResult<PostVm>>(pagedResult);
+               }
+               catch (Exception ex)
+               {
+                   return new ApiErrorResult<PagedResult<PostVm>>($"An error occurred while getting paged posts: {ex.Message}");
+               }
+           }*/
     }
 }

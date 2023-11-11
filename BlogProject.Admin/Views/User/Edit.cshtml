@@ -1,0 +1,128 @@
+﻿@model BlogProject.ViewModel.System.Users.UserUpdateRequest
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .image-preview {
+        width: 200px; /* Set your desired width */
+        height: 200px; /* Set your desired height */
+        overflow: hidden;
+        position: relative;
+    }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+</style>
+<div class="container-fluid">
+    <h1 class="mt-4">Cập nhật người dùng</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Cập nhật người dùng</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <a class="btn btn-success" asp-action="Index" asp-controller="User">Về danh sách</a>
+        </div>
+
+        <div class="card-body">
+            <div class="col-md-4">
+                <form asp-action="Edit" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Gender" class="control-label"></label>
+                        @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
+                        {
+                        new SelectListItem { Value = "2", Text = "Không" },
+                        new SelectListItem { Value = "0", Text = "Nam" },
+                        new SelectListItem { Value = "1", Text = "Nữ" }
+                        }, "Value", "Text"), new { @class = "form-control" })
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        @{
+                            if (Model.Dob != null)
+                            {
+                                string formattedDateOfBirth = Model.Dob.ToString();
+                            }
+
+                        }
+                        <label asp-for="Dob" class="control-label"></label>
+                        <input asp-for="Dob" class="form-control" placeholder="@Html.DisplayFor(model => model.Dob)" asp-format="{0:dd/MM/yyyy}" />
+                        <span asp-validation-for="Dob" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Address" class="control-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Image" class="control-label"></label>
+                        <div class="custom-file">
+                            <input asp-for="Image" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
+                            <div class="image-preview">
+                                <img id="selectedImage">
+                            </div>
+                        </div>
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        function displaySelectedImage(event) {
+            const selectedFile = event.target.files[0];
+            const imgElement = document.getElementById('selectedImage');
+
+            imgElement.style.display = 'block';
+
+            const reader = new FileReader();
+            reader.onload = function () {
+                imgElement.src = reader.result;
+            }
+
+            if (selectedFile) {
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+    </script>
+}

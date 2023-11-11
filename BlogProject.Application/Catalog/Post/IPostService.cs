@@ -16,5 +16,10 @@ namespace BlogProject.Application.Catalog.Post
         Task<ApiResult<bool>> Create(PostRequest request, string userId);
         Task<ApiResult<bool>> Update(PostUpdateRequest request, int Id);
         Task<ApiResult<bool>> Delete(int Id);
+        Task<ApiResult<List<PostVm>>> GetByUserId(string userId);
+        Task<ApiResult<List<PostVm>>> Search(string searchTerm);
+
+        Task<List<PostVm>> TakeTopByQuantity(int quantity);
+        /* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
     }
 }

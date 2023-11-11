@@ -15,6 +15,7 @@ namespace BlogProject.Application.Catalog.Comments
         Task<ApiResult<bool>> Delete(int id);
         Task<List<Comment>> GetById(int id);
         Task<List<Comment>> GetCommentsByPost(int postId);
-
+        Task<int> CountAsyncById(int id);
+        int CountById(int id);
     }
 }

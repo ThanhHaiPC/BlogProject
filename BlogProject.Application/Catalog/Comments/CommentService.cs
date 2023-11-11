@@ -28,6 +28,15 @@ namespace BlogProject.Application.Catalog.Comments
             _postService = postService;
         }
 
+        public async Task<int> CountAsyncById(int id)
+        {
+            return await _context.Comments.Where(x => x.PostID == id).CountAsync();
+        }
+        public int CountById(int id)
+        {
+            return _context.Comments.Where(x => x.PostID == id).Count();
+        }
+
         public async Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId)
         {
 

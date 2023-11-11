@@ -27,10 +27,10 @@ namespace BlogProject.BackendApi.Controllers
 
             var result = await _userService.Authencate(request);
 
-            if (string.IsNullOrEmpty(result))
+            if (!result.IsSuccessed)
             {
                 return BadRequest("Username or password is incorrect.");
-            }       
+            }
             return Ok(result);
         }
         [HttpPost("register")]
@@ -63,6 +63,50 @@ namespace BlogProject.BackendApi.Controllers
             var listuser = await _userService.GetUserPaging(request);
             return Ok(listuser);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _userService.Delete(id);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetbyId(Guid id)
+        {
+            var user = await _userService.GetById(id);
+            return Ok(user);
+        }
+        [HttpPut("{id}")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Update([FromForm] UserUpdateRequest request, Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _userService.Update(request, id);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPut("{id}/roles")]
+
+        public async Task<IActionResult> RoleAssign(Guid id, [FromBody] RoleAssignRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _userService.RoleAssign(request, id);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
 
     }
 }

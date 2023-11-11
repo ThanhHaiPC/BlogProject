@@ -15,8 +15,4 @@
     <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Catalog\Follows\" />
-  </ItemGroup>
-
 </Project>

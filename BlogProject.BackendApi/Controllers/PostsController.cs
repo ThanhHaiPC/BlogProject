@@ -1,6 +1,7 @@
 ﻿using BlogProject.Application.Catalog.Post;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.System.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -74,5 +75,44 @@ namespace BlogProject.BackendApi.Controllers
             var post = await _postService.GetPaged(request);
             return Ok(post);
         }
+        [HttpGet("get-by-user")]
+        public async Task<IActionResult> GetByUserId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID not found.");
+            }
+
+            var posts = await _postService.GetByUserId(userId);
+            return Ok(posts);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                return BadRequest("Search term is required.");
+            }
+
+            var posts = await _postService.Search(searchTerm);
+            return Ok(posts);
+        }
+        [AllowAnonymous]
+        [HttpGet("show/{quantity}")]
+        public async Task<IActionResult> TakeByQuantity(int quantity)
+        {
+            var user = await _postService.TakeTopByQuantity(quantity);
+            return Ok(user);
+        }
+        /* [HttpGet("pagingallfollow")]
+         public async Task<IActionResult> GetAllFollowPostPaging([FromQuery] GetUserPagingRequest request)
+         {
+
+             var products = await _postService.GetPostFollowPaging(request);
+             return Ok(products);
+         }*/
     }
 }

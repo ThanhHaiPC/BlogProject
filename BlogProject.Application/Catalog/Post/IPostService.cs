@@ -18,7 +18,7 @@ namespace BlogProject.Application.Catalog.Post
         Task<ApiResult<bool>> Delete(int Id);
         Task<ApiResult<List<PostVm>>> GetByUserId(string userId);
         Task<ApiResult<List<PostVm>>> Search(string searchTerm);
-
+        Task<ApiResult<PostVm>> GetById(int Id);
         Task<List<PostVm>> TakeTopByQuantity(int quantity);
         /* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
     }

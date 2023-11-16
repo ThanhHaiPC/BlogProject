@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BaseProject.Ultilities\BaseProject.Ultilities.csproj" />
     <ProjectReference Include="..\BlogProject.Application\BlogProject.Application.csproj" />
     <ProjectReference Include="..\BlogProject.Data\BlogProject.Data.csproj" />
     <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />

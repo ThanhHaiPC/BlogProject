@@ -19,11 +19,11 @@ namespace BlogProject.Data.Configurations
             builder.Property(x => x.CommentID).UseIdentityColumn();
             builder.Property(x => x.Content).IsRequired().HasMaxLength(2000);
 
-
+                
 
             // Relationship
             builder.HasOne(x => x.User).WithMany(x => x.Comment).HasForeignKey(x => x.UserId);
-            builder.HasOne(x => x.Post).WithMany(x => x.Comment).HasForeignKey(x => x.PostID);
+            builder.HasOne(x => x.Post).WithMany(x => x.Comment).HasForeignKey(x => x.PostID).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

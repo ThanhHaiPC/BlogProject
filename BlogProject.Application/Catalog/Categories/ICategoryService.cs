@@ -16,6 +16,6 @@ namespace BlogProject.Application.Catalog.Categories
         Task<ApiResult<bool>> Delete(int categoryId);
 
         Task<ApiResult<CategoryRequest>> GetById(int categoryId);
-        Task<ApiResult<List<Category>>> GetAll();
+        Task<List<CategoryVm>> GetAll();
     }
 }

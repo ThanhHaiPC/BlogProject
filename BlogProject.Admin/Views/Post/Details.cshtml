@@ -1,0 +1,115 @@
+﻿@model BlogProject.ViewModel.Catalog.Posts.PostVm
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="https://cdn.ckeditor.com/ckeditor5/21.0.0/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#contentEditor'), {
+            enterMode: 'br',  // Chuyển xuống dòng bằng thẻ <br> thay vì <p>
+            shiftEnterMode: 'br',
+            autoParagraph: false  // Tắt tự động thêm thẻ <p>
+        })
+        .then(editor => {
+            window.editor = editor;
+        })
+        .catch(err => {
+            console.error(err.stack);
+        });
+</script>
+<h1>Details</h1>
+
+<div>
+    <h4>PostVm</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Desprition)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Desprition)
+        </dd>
+      
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        
+        <dd class="col-sm-10">
+            @Html.Raw(Model.Content)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CountLike)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CountLike)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CountComment)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CountComment)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UploadDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UploadDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.View)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.View)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Image)
+        </dt>
+        <dd class="col-sm-10">
+            <td style="width: 10px; height: 10px; overflow: hidden;">
+                <img src="@Model.Image" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="User Image">
+            </td>
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new {  id = Model.PostID  }) |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts{
+
+
+    <script>
+        function toggleContent() {
+            var truncatedContentElement = document.getElementById('truncatedContent');
+            var remainingContentElement = document.getElementById('remainingContent');
+            var readMoreLink = document.querySelector('a');
+
+            if (truncatedContentElement.style.display === 'inline') {
+                truncatedContentElement.style.display = 'none';
+                remainingContentElement.style.display = 'inline';
+                readMoreLink.innerHTML = 'Thu gọn';
+            } else {
+                truncatedContentElement.style.display = 'inline';
+                remainingContentElement.style.display = 'none';
+                readMoreLink.innerHTML = 'Xem thêm';
+            }
+        }
+    </script>
+    
+}

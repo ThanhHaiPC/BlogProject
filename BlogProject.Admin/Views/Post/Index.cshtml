@@ -1,0 +1,157 @@
+﻿@using BlogProject.ViewModel.Common;
+@model PagedResult<BlogProject.ViewModel.Catalog.Posts.PostVm>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts{
+    <script>
+        setTimeout(function () {
+            $('#msgAlert').fadeOut('slow');
+        }, 2000);
+    </script>
+
+}
+<style>
+    .image-preview {
+        width: 200px; /* Set your desired width */
+        height: 200px; /* Set your desired height */
+        overflow: hidden;
+        position: relative;
+    }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+</style>
+<div class="container-fluid">
+    <h1 class="mt-4">Danh sách sản phẩm</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Danh sách bài viết</li>
+    </ol>
+    <div class="card mb-16">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <a class="btn btn-success" asp-action="Create" asp-controller="Post">Tạo mới</a>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <form asp-action="Index" method="get">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary">Tìm</button>
+                                <button type="button" onclick="window.location.href='/User/Index'" class="btn btn-dark">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                @if (ViewBag.SuccessMsg != null)
+                {
+                    <div id="msgAlert" class="alert alert-success" role="alert">
+                        @ViewBag.SuccessMsg
+                    </div>
+                }
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+    <thead>
+        <tr>
+                            <th>
+                                Tiêu đề
+                            </th>
+           
+            <th>
+                Mô tả
+            </th>
+            <th>
+                Tên tác giả
+            </th>
+            
+            
+            <th>
+                Lượt thích
+            </th>
+            <th>
+                Lượt bình luận
+            </th>
+            <th>
+                Ngày tạo
+            </th>
+            <th>
+                Lượt xem
+            </th>
+            <th>
+                Thể loại
+            </th>
+            <th>
+                Hình ảnh đại diện
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+                    <tbody>
+                    @foreach (var item in Model.Items) {
+                            <tr>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Desprition)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserName)
+                                </td>
+                                
+                                
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CountLike)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CountComment)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UploadDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.View)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CategoryName)
+                                </td>
+                                    <td style="width: 150px; height: 150px; overflow: hidden;">
+                                        <img src="@item.Image" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="User Image">
+                                    </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new {  id=item.PostID  }) |
+                                    @Html.ActionLink("Details", "Details", new {  id=item.PostID }) |
+                                    @Html.ActionLink("Delete", "Delete", new {  id=item.PostID })
+                                </td>
+                            </tr>
+                            }
+                    </tbody>
+                </table>
+            </div>
+            @await Component.InvokeAsync("Pager", Model)
+        </div>
+    </div>
+</div>

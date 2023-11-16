@@ -3,6 +3,8 @@ using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Categories;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Roles;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -57,10 +59,17 @@ namespace BlogProject.Application.Catalog.Categories
             return new ApiSuccessResult<bool>();
         }
 
-        public async Task<ApiResult<List<Category>>> GetAll()
+        public async Task<List<CategoryVm>> GetAll()
         {
-            var cate = await _dbContext.Categories.ToListAsync();
-            return new ApiSuccessResult<List<Category>>(cate);
+            var categories = await _dbContext.Categories
+                .Select(x => new CategoryVm()
+                {
+                    id = x.CategoriesID,
+                    name = x.Name,
+                    
+                }).ToListAsync();
+
+            return categories;
         }
 
         public async Task<ApiResult<CategoryRequest>> GetById(int categoryId)

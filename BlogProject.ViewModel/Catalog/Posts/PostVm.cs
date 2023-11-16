@@ -22,6 +22,8 @@ namespace BlogProject.ViewModel.Catalog.Posts
         public DateTime UploadDate { get; set; }
         public int View { get; set; }
         public int CategoryId { get; set; }
+
+        public string CategoryName { get; set; }
         public string Image { get; set; }
     }
 }

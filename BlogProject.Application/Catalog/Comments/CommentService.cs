@@ -43,6 +43,7 @@ namespace BlogProject.Application.Catalog.Comments
             
             var user = await _userManager.FindByIdAsync(userId);
 
+
             // Tạo một đối tượng Comment từ dữ liệu trong request
             var comment = new Comment
             {

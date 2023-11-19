@@ -16,9 +16,11 @@ using System.Drawing.Printing;
 using Microsoft.AspNetCore.Identity;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlogProject.Admin.Controllers
 {
+    
     public class UserController : BaseController
     {
         private readonly IUserApiClient _userApiClient;
@@ -31,7 +33,8 @@ namespace BlogProject.Admin.Controllers
             _roleApiClient = roleApiClient;
         }
 
-        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 1)
+        //[Authorize(Roles = "admin")]
+        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
         {
             var sessions = HttpContext.Session.GetString("Token");
             var request = new GetUserPagingRequest()
@@ -49,12 +52,14 @@ namespace BlogProject.Admin.Controllers
             return View(data.ResultObj);
         }
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create(RegisterRequest request)
         {
             if (!ModelState.IsValid)
@@ -71,12 +76,14 @@ namespace BlogProject.Admin.Controllers
             return View(request);
         }
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Details(Guid id)
         {
             var user = await _userApiClient.GetById(id);
             return View(user.ResultObj);
         }
         [HttpGet]
+        //[Authorize(Roles = "admin,author")]
         public async Task<IActionResult> Edit(Guid id)
         {
 
@@ -104,6 +111,7 @@ namespace BlogProject.Admin.Controllers
 
         }
         [HttpPost]
+        //[Authorize(Roles = "admin,author")]
         public async Task<IActionResult> Edit(UserUpdateRequest request)
         {
             if (!ModelState.IsValid)
@@ -120,6 +128,7 @@ namespace BlogProject.Admin.Controllers
             return View(request);
         }
         [HttpPost]
+     
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -127,6 +136,7 @@ namespace BlogProject.Admin.Controllers
             return RedirectToAction("Index", "Login");
         }
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete(Guid id)
         {
             return View(new UserDeleteRequest()
@@ -135,6 +145,7 @@ namespace BlogProject.Admin.Controllers
             });
         }
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(UserDeleteRequest request)
         {
             if (!ModelState.IsValid)
@@ -151,6 +162,7 @@ namespace BlogProject.Admin.Controllers
             return View(request);
         }
         [HttpGet]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> RoleAssign(Guid id)
         {
             var roleAssignRequest = await GetRoleAssignRequest(id);
@@ -158,6 +170,7 @@ namespace BlogProject.Admin.Controllers
         }
 
         [HttpPost]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> RoleAssign(RoleAssignRequest request)
         {
             if (!ModelState.IsValid)
@@ -176,7 +189,14 @@ namespace BlogProject.Admin.Controllers
 
             return View(roleAssignRequest);
         }
+        [HttpGet]
+        [Authorize(Roles = "admin,author")]
+        public async Task<IActionResult> Profile(Guid id)
+        {
 
+            var profile = await _userApiClient.Profile(id);
+            return View(profile.ResultObj);
+        }
         private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid id)
         {
             var userObj = await _userApiClient.GetById(id);
@@ -193,5 +213,7 @@ namespace BlogProject.Admin.Controllers
             }
             return roleAssignRequest;
         }
+
+        
     }
 }

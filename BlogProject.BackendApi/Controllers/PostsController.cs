@@ -1,9 +1,12 @@
-﻿using BlogProject.Application.Catalog.Post;
+﻿using BlogProject.Application.Catalog.Comments;
+using BlogProject.Application.Catalog.Post;
+using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace BlogProject.BackendApi.Controllers
@@ -14,15 +17,15 @@ namespace BlogProject.BackendApi.Controllers
     {
 
         private readonly IPostService _postService;
-
+        private readonly ICommentService _commentService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public PostsController(IPostService postService, IHttpContextAccessor httpContextAccessor)
+        public PostsController(IPostService postService, IHttpContextAccessor httpContextAccessor,ICommentService commentService)
         {
             _postService = postService;
-
+           _commentService = commentService;
             _httpContextAccessor = httpContextAccessor;
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetAllPost()
         {
@@ -76,7 +79,7 @@ namespace BlogProject.BackendApi.Controllers
             return Ok(post);
         }
         [HttpGet("get-by-user")]
-        public async Task<IActionResult> GetByUserId()
+        public async Task<IActionResult> GetByUserId([FromQuery] GetUserPagingRequest request )
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -85,7 +88,7 @@ namespace BlogProject.BackendApi.Controllers
                 return BadRequest("User ID not found.");
             }
 
-            var posts = await _postService.GetByUserId(userId);
+            var posts = await _postService.GetByUserId(userId, request);
             return Ok(posts);
         }
 
@@ -123,5 +126,24 @@ namespace BlogProject.BackendApi.Controllers
              var products = await _postService.GetPostFollowPaging(request);
              return Ok(products);
          }*/
+        
+        [HttpGet("role")]
+        [Authorize(Roles = "admin,author")]
+        public async Task<IActionResult> GetByRole([FromQuery] GetUserPagingRequest request)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID not found.");
+            }
+
+            var articles = userId != null && User.IsInRole("author")
+           ?  await _postService.GetByUserId(userId, request)
+           : await _postService.GetPaged(request);
+           
+
+            return Ok(articles);
+        }
     }
 }

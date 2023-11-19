@@ -145,7 +145,7 @@ namespace BlogProject.Application.System.Users
             user.Gender = request.Gender;
             user.LastName = request.LastName;
             user.Address = request.Address;
-
+            user.PhoneNumber = request.PhoneNumber;
             if (request.Image != null)
             {
                 //if (user.Image != null)
@@ -217,7 +217,32 @@ namespace BlogProject.Application.System.Users
             return new ApiSuccessResult<bool>();
         }
 
-        public async  Task<ApiResult<UserVm>> GetById(Guid id)
+        public async  Task<ApiResult<UserVm>> GetById(string? id)
+        {
+            
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return new ApiErrorResult<UserVm>("User không tồn tại");
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            var userVm = new UserVm()
+            {
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                FirstName = user.FirstName,
+                DateOfBir = user.DateOfBir,
+                Id = user.Id,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Roles = roles,
+                Image = user.Image,
+                Gender = user.Gender,
+                Address = user.Address,
+            };
+            return new ApiSuccessResult<UserVm>(userVm);
+        }
+        public async Task<ApiResult<UserVm>> Profile(string? id)
         {
 
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -242,7 +267,6 @@ namespace BlogProject.Application.System.Users
             };
             return new ApiSuccessResult<UserVm>(userVm);
         }
-
         public async Task<ApiResult<PagedResult<UserVm>>>GetUserPaging(GetUserPagingRequest request)
         {
             var query = _userManager.Users;

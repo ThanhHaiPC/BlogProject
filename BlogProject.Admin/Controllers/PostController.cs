@@ -2,10 +2,12 @@
 using BlogProject.Data.EF;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.System.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
+using System.Xml;
 
 namespace BlogProject.Admin.Controllers
 {
@@ -14,18 +16,22 @@ namespace BlogProject.Admin.Controllers
         private readonly IPostApiClient _postApiClient;
         private readonly IConfiguration _configuration;
         private readonly ICategoryApiClient _categoryApiClient;
+        private readonly ICommentService _commentService;
         private readonly BlogDbContext _context;
-        public PostController(IPostApiClient postApiClient, IConfiguration configuration, ICategoryApiClient categoryApiClient, BlogDbContext context)
+        public PostController(IPostApiClient postApiClient, IConfiguration configuration, ICategoryApiClient categoryApiClient, BlogDbContext context, ICommentService commentService)
         {
             _postApiClient = postApiClient;
             _configuration = configuration;
             _categoryApiClient = categoryApiClient;
             _context = context;
+            _commentService = commentService;
         }
-
-        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 1)
+        
+       
+        
+        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
         {
-            var sessions = HttpContext.Session.GetString("Token");
+           
             var request = new GetUserPagingRequest()
             {
 
@@ -33,10 +39,12 @@ namespace BlogProject.Admin.Controllers
                 PageIndex = pageIndex,
                 PageSize = pageSize
             };
+
             if (TempData["result"] != null)
             {
                 ViewBag.SuccessMsg = TempData["result"];
             }
+
             var data = await _postApiClient.GetPagings(request);
             return View(data);
         }
@@ -141,5 +149,25 @@ namespace BlogProject.Admin.Controllers
             var post = await _postApiClient.GetById(id);
             return View(post.ResultObj);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetComment(int Id,string keyword, int pageIndex = 1, int pageSize = 5)
+        {
+            var request = new GetUserPagingRequest()
+            {
+
+                Keyword = keyword,
+                PageIndex = pageIndex,
+                PageSize = pageSize
+            };
+
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
+
+            var data = await _commentService.GetByPostId(Id,request);
+            return View(data);
+        }
+       
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BlogProject.Application.Catalog.Comments;
+using BlogProject.Application.Catalog.Post;
 using BlogProject.Application.Catalog.Replies;
 using BlogProject.ViewModel.Catalog.Comments;
 using BlogProject.ViewModel.Catalog.Replies;
@@ -14,9 +15,11 @@ namespace BlogProject.BackendApi.Controllers
     public class RepliesController : ControllerBase
     {
         private readonly IRepliesService _repliesService;
-        public RepliesController(IRepliesService repliesService)
+        private readonly IPostService _postService;
+        public RepliesController(IRepliesService repliesService, IPostService postService)
         {
             _repliesService = repliesService;
+            _postService = postService;
         }
 
         [HttpPost]

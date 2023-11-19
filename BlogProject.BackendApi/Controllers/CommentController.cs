@@ -1,7 +1,12 @@
 ﻿using BlogProject.Application.Catalog.Comments;
+using BlogProject.Application.Catalog.Post;
+using BlogProject.Application.Catalog.Replies;
+using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Comments;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -12,9 +17,13 @@ namespace BlogProject.BackendApi.Controllers
     public class CommentController : ControllerBase
     {
         private readonly ICommentService _commentService;
-        public CommentController(ICommentService commentService)
+        private readonly IRepliesService _repliesService;
+        private readonly UserManager<User> _userManager;
+        public CommentController(ICommentService commentService, UserManager<User> userManager, IRepliesService repliesService)
         {
             _commentService = commentService;
+            _userManager = userManager;
+            _repliesService = repliesService;
         }
 
         
@@ -55,10 +64,11 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [HttpGet("comments/{postId}")]
-        public async Task<IActionResult> GetCommentsByPost(int postId)
+        public async Task<IActionResult> GetCommentsByPost(int postId, [FromQuery] GetUserPagingRequest request)
         {
-            var comments = await _commentService.GetCommentsByPost(postId);
 
+            
+            var comments = await _commentService.GetCommentsByPost(postId, request);
             if (comments != null)
             {
                 return Ok(comments);

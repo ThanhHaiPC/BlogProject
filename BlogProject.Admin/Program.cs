@@ -2,9 +2,11 @@
 using BlogProject.Admin.Service;
 using BlogProject.Application.Common;
 using BlogProject.Data.EF;
+using BlogProject.Data.Entities;
 using BlogProject.ViewModel.System.Users;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +35,13 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     // Chuỗi DataContext: Là chuỗi trong file Json: appsettings.Development (
     options.UseSqlServer(builder.Configuration.GetConnectionString("BlogDbContext"));
 });
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<BlogDbContext>()
+    .AddDefaultTokenProviders();
+builder.Services.AddTransient<UserManager<User>, UserManager<User>>();
+builder.Services.AddTransient<SignInManager<User>, SignInManager<User>>();
+builder.Services.AddTransient<RoleManager<Role>, RoleManager<Role>>();
+
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IUserApiClient, UserApiClient>();
@@ -40,7 +49,7 @@ builder.Services.AddTransient<IStorageService, FileStorageService>();
 builder.Services.AddTransient<IRoleApiClient, RoleApiClient>();
 builder.Services.AddTransient<IPostApiClient, PostApiClient>();
 builder.Services.AddTransient<ICategoryApiClient, CategoryApiClient>();
-
+builder.Services.AddTransient<ICommentService, CommentService>();
 
 
 builder.Services.AddScoped<ICategoryApiClient, CategoryApiClient>();

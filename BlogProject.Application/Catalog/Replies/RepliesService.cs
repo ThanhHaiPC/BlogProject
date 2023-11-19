@@ -1,4 +1,5 @@
 ﻿using BlogProject.Application.Catalog.Comments;
+using BlogProject.Application.Catalog.Post;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
@@ -19,14 +20,16 @@ namespace BlogProject.Application.Catalog.Replies
     {
         private readonly BlogDbContext _context;
         private readonly IUserService _userService;
-        private readonly ICommentService _commentService;
-        private readonly UserManager<User> _userManager;    
-        public RepliesService(BlogDbContext context, IUserService userService, ICommentService commentService, UserManager<User> userManager)
+
+        private readonly UserManager<User> _userManager;
+       
+        public RepliesService(BlogDbContext context, IUserService userService, UserManager<User> userManager)
         {
             _context = context;
             _userService = userService;
-            _commentService = commentService;
+            
             _userManager = userManager;
+            
         }
         public async Task<ApiResult<bool>> Create(ReplyCreateRequest request,string userId)
         {

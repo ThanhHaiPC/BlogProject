@@ -5,74 +5,78 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="mt-4">Chi tiết</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-    <li class="breadcrumb-item active">Chi tiết</li>
-</ol>
-<div class="card mb-4">
-    <div class="card-header">
-        <a class="btn btn-success" asp-action="Index" asp-controller="User">Về danh sách</a>
-    </div>
+<style>
+    .gradient-custom {
+        /* fallback for old browsers */
+        background: #f6d365;
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+    }
+</style>
+<section class="vh-100" style="background-color: #f4f5f7;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col col-lg-6 mb-4 mb-lg-0">
+                <div class="card mb-3" style="border-radius: .5rem;">
+                    <div class="row g-0">
+                        <div class="col-md-4 gradient-custom text-center text-white"
+                             style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                            <img src="@Html.DisplayFor(model => model.Image)"
+                                 alt="Avatar" class="img-fluid my-5" style="width: 150px;" />
+                            <h5>@Html.DisplayFor(model => model.UserName)</h5>
+                            <p>@Html.DisplayFor(model => model.Gender)</p>
+                            <a href="@Url.Action("Edit", new { id = Model.Id })"><i class="far fa-edit mb-5"></i></a>
+                            <a href="@Url.Action("Delete", new { id = Model.Id })"><i class="fa-trash mb-5"></i></a>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <h6>Thông Tin</h6>
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6>First Name</h6>
+                                        <p class="text-muted"> @Html.DisplayFor(model => model.FirstName)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6>Last Name</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.LastName)</p>
+                                    </div>
+                                </div>
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6>Email</h6>
+                                        <p class="text-muted"> @Html.DisplayFor(model => model.Email)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6>Phone</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.PhoneNumber)</p>
+                                    </div>
+                                </div>
 
-    <div class="card-body">
-        <div class="col-md-14">
-            <dl class="row">
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.FirstName)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.FirstName)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.LastName)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.LastName)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.PhoneNumber)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.PhoneNumber)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.UserName)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.UserName)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Email)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Email)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Image)
-                </dt>
-                <dd class="col-sm-10">
-                    <img style="width: 50px; height:50px" src="@Html.DisplayFor(model => model.Image)">
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Gender)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Gender)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.DateOfBir)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.DateOfBir)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Address)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Address)
-                </dd>
-            </dl>
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6>Ngày Sinh</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.DateOfBir)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6>Địa Chỉ</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.Address)</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    </di
+</section>
+<div>
+    @Html.ActionLink("Edit", "Edit", new {  id = Model.Id  }) |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -3,6 +3,7 @@ using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogProject.BackendApi.Controllers
 {
@@ -70,11 +71,20 @@ namespace BlogProject.BackendApi.Controllers
             return Ok(result);
         }
 
-        [AllowAnonymous]
+        
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetbyId(Guid id)
+        public async Task<IActionResult> GetbyId(string? id)
         {
+            
             var user = await _userService.GetById(id);
+            return Ok(user);
+        }
+        
+        [HttpGet("Profile/{id}")]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userService.Profile(userId);
             return Ok(user);
         }
         [HttpPut("{id}")]

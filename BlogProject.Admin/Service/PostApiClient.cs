@@ -115,9 +115,11 @@ namespace BlogProject.Admin.Service
             return JsonConvert.DeserializeObject<ApiResult<PostVm>>(body);
         }
 
+      
+
         public async Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request)
         {
-          var data= await  GetAsync<PagedResult<PostVm>>($"/api/Posts/get-all-paging?pageIndex=" +
+          var data= await  GetAsync<PagedResult<PostVm>>($"/api/Posts/role?pageIndex=" +
                 $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
             return data;
         }

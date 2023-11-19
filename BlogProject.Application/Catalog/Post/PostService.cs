@@ -1,6 +1,7 @@
 ﻿using BlogProject.Application.Catalog.Categories;
 using BlogProject.Application.Catalog.Comments;
 using BlogProject.Application.Catalog.Likes;
+using BlogProject.Application.Catalog.Replies;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
@@ -21,6 +22,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace BlogProject.Application.Catalog.Post
@@ -32,16 +34,23 @@ namespace BlogProject.Application.Catalog.Post
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-    /*    private readonly ICommentService _commentService;*/
-        private readonly ILikeService _likeService;
 
-        public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
+        private readonly ILikeService _likeService;
+        
+
+        public PostService(BlogDbContext context,
+            UserManager<User> userManager,
+            IWebHostEnvironment webHostEnvironment,
+ 
+            ILikeService likeService,
+            IRepliesService replies)
         {
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
-           /* _commentService = commentService;*/
+
             _likeService = likeService;
+        
         }
 
         public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
@@ -127,15 +136,18 @@ namespace BlogProject.Application.Catalog.Post
         }
 
 
-        public async Task<ApiResult<List<PostVm>>> GetByUserId(string userId)
+        public async Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request)
         {
-            try
-            {
+            
                 var posts = await _context.Posts
-             .Where(p => p.UserId == Guid.Parse(userId))
-             .Include(p => p.User)
-             .ToListAsync();
-
+                     .Where(p => p.UserId == Guid.Parse(userId))
+                     .Include(p => p.User)
+                     .ToListAsync();
+                if (!string.IsNullOrEmpty(request.Keyword))
+                {
+                    posts = (List<Posts>)posts.Where(x => x.Title.Contains(request.Keyword) || x.Desprition.Contains(request.Keyword));
+                }
+                int totalRow = posts.Count();
                 var postsWithUsernames = posts.Select(post => new PostVm
                 {
                     PostID = post.PostID,
@@ -149,12 +161,16 @@ namespace BlogProject.Application.Catalog.Post
                     Image = post.Image,
                 }).ToList();
 
-                return new  ApiSuccessResult<List<PostVm>>(postsWithUsernames);
-            }
-            catch (Exception ex)
-            {
-                return new  ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
-            }
+                var pagedResult = new PagedResult<PostVm>()
+                {
+                    TotalRecords = totalRow,
+                    PageIndex = request.PageIndex,
+                    PageSize = request.PageSize,
+                    Items = postsWithUsernames
+                };
+                return pagedResult;
+            
+            
         }
 
         public async Task<ApiResult<List<PostVm>>> Search(string searchTerm)
@@ -165,7 +181,7 @@ namespace BlogProject.Application.Catalog.Post
                     .Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm))
                     .Include(p => p.User)
                     .ToListAsync();
-
+                
                 var postsWithUsernames = posts.Select(post => new PostVm
                 {
                     PostID = post.PostID,
@@ -191,17 +207,17 @@ namespace BlogProject.Application.Catalog.Post
         {
             var query = from p in _context.Posts
                         select new { p };
-
+            
             if (!string.IsNullOrEmpty(request.Keyword))
             {
                 query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword));
             }
             
             int totalRow = await query.CountAsync();
-
+           
             var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(x => new PostVm()
+                .Select( x => new PostVm()
                 {
 
                     Title = x.p.Title,
@@ -212,9 +228,13 @@ namespace BlogProject.Application.Catalog.Post
                     View = x.p.View,
                     UploadDate = x.p.UploadDate,
                     CategoryName = x.p.Categories.Name,
-                    PostID = x.p.PostID
+                    PostID = x.p.PostID,
+                   
+                    CountComment =  _context.Comments
+                       .Where(c => c.PostID == x.p.PostID)
+                       .Count()
 
-                }).ToListAsync();
+        }).ToListAsync();
             //4. Select and projection
             var pagedResult = new PagedResult<PostVm>()
             {
@@ -285,7 +305,6 @@ namespace BlogProject.Application.Catalog.Post
                 Title = postId.Title,
                 Desprition = postId.Desprition,
                 Content = postId.Content,
-
                 CategoryName = postId.Categories.Name,
                 Image = postId.Image,
                 UploadDate = postId.UploadDate,

@@ -10,7 +10,7 @@ namespace BlogProject.Admin.Service
         Task<ApiResult<bool>> UpdatePost(PostUpdateRequest request, int id);
         Task<ApiResult<bool>> CreatePost(PostRequest request);
         Task<ApiResult<bool>> DeletePost(int id);
-       
+ 
         Task<ApiResult<PostVm>> GetById(int id);
     }
 }

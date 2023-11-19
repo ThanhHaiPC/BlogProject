@@ -1,9 +1,11 @@
 ﻿using BlogProject.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace BlogProject.Admin.Controllers
 {
+    //[Authorize (Roles =("admin,author"))]
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,7 +19,7 @@ namespace BlogProject.Admin.Controllers
         {
             return View();
         }
-
+        
         public IActionResult Privacy()
         {
             return View();

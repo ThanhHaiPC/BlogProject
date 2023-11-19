@@ -379,7 +379,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "9b33ad8f-be76-4d22-ad26-ca9956739450",
+                            ConcurrencyStamp = "1a35f033-3b8d-407b-99bd-61a7c9443aea",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -387,10 +387,18 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "651c6ab8-63ab-470c-8e52-ce66ae0380c2",
+                            ConcurrencyStamp = "4acc181e-5447-40f7-84db-c0d5edabd83e",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
+                        },
+                        new
+                        {
+                            Id = new Guid("d6364d4d-f2de-4585-9672-7d2b41ac7a2d"),
+                            ConcurrencyStamp = "ce183304-86f8-4dcf-9a7d-0c3cf81028ee",
+                            Description = "Author Role",
+                            Name = "author",
+                            NormalizedName = "author"
                         });
                 });
 
@@ -521,7 +529,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "22bbe8d0-7dc3-4613-8b8b-682605bdf753",
+                            ConcurrencyStamp = "e70184c7-cecd-401b-8668-893bbd540bb1",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -531,7 +539,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKTG4oajafxKVg04mXDWLlwoEKLoOFambH14CbTg8kJEh4pb9Mv9Ji7UskwEMe+4Ow==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM8g7amBOfoOzqxvL/TeNTVuB1nV80i13CFOllXyJ79PItz7VIIPVZapwqWwiZFuFQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

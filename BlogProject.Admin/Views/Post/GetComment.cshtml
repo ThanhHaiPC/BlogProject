@@ -1,0 +1,51 @@
+﻿﻿@using BlogProject.ViewModel.Common;
+@model PagedResult<BlogProject.ViewModel.Catalog.Comments.CommentVm>
+
+@{
+    ViewData["Title"] = "GetComment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>GetComment</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>
+                Tên tài khoản
+            </th>
+            <th>
+                Nội dung bình luận
+            </th>
+            <th>
+                Ngày bình luận
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Items) {
+        <tr>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

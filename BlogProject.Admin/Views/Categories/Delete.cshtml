@@ -1,0 +1,44 @@
+﻿@model BlogProject.ViewModel.Catalog.Categories.CategoryRequest
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container-fluid">
+    <h1 class="mt-4">Xóa danh mục</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Xóa danh mục</li>
+    </ol>
+    <div class="card mb-4">
+        <div class="card-header">
+            <a class="btn btn-success" asp-action="Index" asp-controller="Categories">Về danh sách</a>
+        </div>
+
+        <div class="card-body">
+            <div class="col-md-12">
+                <dl class="row">
+                    <span>Hãy chắc chắn rằng bạn muốn xóa danh mục này</span>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.CategoriesID)
+                    </dt>
+                    <dd class="col-sm-6">
+                        @Html.DisplayFor(model => model.CategoriesID)
+                    </dd>
+                    <div class="col-sm-4 d-xxl-inline-flex">
+                        <form asp-action="Delete" style="text-align: end">
+                            <input asp-for="CategoriesID" type="hidden" />
+                            <input type="submit" value="Xóa" class="btn btn-danger" />
+                            <a class="btn btn-success" asp-action="Index" asp-controller="Categories">Về danh sách</a>
+                        </form>
+                    </div>
+
+                </dl>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+

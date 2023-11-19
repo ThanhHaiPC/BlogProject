@@ -1,6 +1,7 @@
 ﻿using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Categories;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace BlogProject.Application.Catalog.Categories
         Task<ApiResult<bool>> Delete(int categoryId);
 
         Task<ApiResult<CategoryRequest>> GetById(int categoryId);
-        Task<ApiResult<List<Category>>> GetAll();
+        Task<List<CategoryVm>> GetAll();
+        Task<ApiResult<PagedResult<CategoryRequest>>> GetCategoryPaging(GetUserPagingRequest request);
+
     }
 }

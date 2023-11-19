@@ -1,0 +1,77 @@
+﻿@using BlogProject.ViewModel.Common
+@model PagedResult<BlogProject.ViewModel.Catalog.Categories.CategoryRequest>
+@{
+    ViewData["Title"] = "Danh mục";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Danh sách danh mục</h1>
+
+@section Scripts{
+    <script>
+        setTimeout(function () {
+            $('#msgAlert').fadeOut('slow');
+        }, 2000);
+    </script>
+}
+<div class="row">
+    @if (ViewBag.SuccessMsg != null)
+    {
+        <div id="msgAlert" class="alert alert-success" role="alert">
+            @ViewBag.SuccessMsg
+        </div>
+    }
+</div>
+<div class="card mb-12">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <a asp-action="Create" class="btn btn-success">Thêm danh mục</a>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <form asp-action="Index" method="get">
+                    <div class="row">
+                        <div class="cold-md-3 user-search-btn" style="width: unset;">
+                            <button type="submit" class="btn btn-primary">
+                                Tìm
+                            </button>
+                            <button style="padding: 10px 24px; font-size: 15px;" type="button" onclick="window.location.href='/Categories/Index'" class="btn btn-dark"><i class="fa-solid fa-arrow-rotate-right"></i></button>
+                        </div>
+                        <div class="col-md-9" style="flex: 1;">
+                            <input type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr class="row no-margin">
+                    <th class="col-10">
+                        Tên danh mục
+                    </th>
+                    <th class="col-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="row no-margin">
+                        <td class="col-10">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td class="col-2">
+                            <a title="Sửa" href="@Url.Action("Edit", new { id=item.CategoriesID })"><i class="fa fa-edit"></i></a>
+                            <a title="Xóa" href="@Url.Action("Delete", new { idCategory=item.CategoriesID })"><i class="fa-solid fa-trash-can"></i></a>
+                        </td>
+                    </tr>
+                }
+            <td style="border-bottom: 2px solid #e9ecef; position: relative; top: -18px;"></td>
+
+            </tbody>
+        </table>
+        @await Component.InvokeAsync("Pager", Model)
+    </div>
+</div>

@@ -30,7 +30,7 @@ namespace BlogProject.BackendApi.Controllers
             var post = await _postService.GetAll();
             return Ok(post);
         }
-        [HttpPost("/Post/Create")]
+        [HttpPost]
         public async Task<IActionResult> Create([FromForm] PostRequest request)
         {
             if (!ModelState.IsValid)
@@ -44,7 +44,7 @@ namespace BlogProject.BackendApi.Controllers
 
             return Ok(post);
         }
-        [HttpDelete("/Post/Delete/{Id}")]
+        [HttpDelete("{Id}")]
         public async Task<IActionResult> Delete(int Id)
         {
             if (!ModelState.IsValid)
@@ -56,7 +56,7 @@ namespace BlogProject.BackendApi.Controllers
                 return BadRequest(post);
             return Ok(post);
         }
-        [HttpPut("/Post/Update/{Id}")]
+        [HttpPut("{Id}")]
         public async Task<IActionResult> Update([FromForm] PostUpdateRequest request, int Id)
         {
             if (!ModelState.IsValid)
@@ -106,6 +106,15 @@ namespace BlogProject.BackendApi.Controllers
         {
             var user = await _postService.TakeTopByQuantity(quantity);
             return Ok(user);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+
+
+            var posts = await _postService.GetById(id);
+            return Ok(posts);
         }
         /* [HttpGet("pagingallfollow")]
          public async Task<IActionResult> GetAllFollowPostPaging([FromQuery] GetUserPagingRequest request)

@@ -1,5 +1,6 @@
 ﻿using BlogProject.Application.Catalog.Categories;
 using BlogProject.ViewModel.Catalog.Categories;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -66,6 +67,12 @@ namespace BlogProject.BackendApi.Controllers
         {
             var cate = await _categoryService.GetAll();
             return Ok(cate);
+        }
+        [HttpGet("paging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
+        {
+            var products = await _categoryService.GetCategoryPaging(request);
+            return Ok(products);
         }
     }
 }

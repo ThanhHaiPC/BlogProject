@@ -4,7 +4,6 @@ using System.Diagnostics;
 
 namespace BlogProject.WebBlog.Controllers
 {
-   
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

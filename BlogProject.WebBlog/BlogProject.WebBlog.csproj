@@ -6,4 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlogProject.Apilntegration\BlogProject.Apilntegration.csproj" />
+    <ProjectReference Include="..\BlogProject.Utilities\BlogProject.Utilities.csproj" />
+    <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />
+  </ItemGroup>
+
 </Project>

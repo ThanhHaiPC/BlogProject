@@ -13,6 +13,7 @@ namespace BlogProject.ViewModel.Catalog.Posts
         public string Desprition { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public IFormFile FileImage { get; set; }
+        public IFormFile Image { get; set; }
+        public string? ImageFileName { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Categories;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BlogProject.Application.Catalog.Categories
 {
-    public class CategoryService : ICategoryService
+    public class CategoryService :ICategoryService
     {
         private readonly BlogDbContext _dbContext;
 
@@ -57,10 +58,17 @@ namespace BlogProject.Application.Catalog.Categories
             return new ApiSuccessResult<bool>();
         }
 
-        public async Task<ApiResult<List<Category>>> GetAll()
+        public async Task<List<CategoryVm>> GetAll()
         {
-            var cate = await _dbContext.Categories.ToListAsync();
-            return new ApiSuccessResult<List<Category>>(cate);
+            var categories = await _dbContext.Categories
+                .Select(x => new CategoryVm()
+                {
+                    id = x.CategoriesID,
+                    name = x.Name,
+
+                }).ToListAsync();
+
+            return categories;
         }
 
         public async Task<ApiResult<CategoryRequest>> GetById(int categoryId)
@@ -79,6 +87,36 @@ namespace BlogProject.Application.Catalog.Categories
             return new ApiSuccessResult<CategoryRequest>(category);
         }
 
+        public async  Task<ApiResult<PagedResult<CategoryRequest>>> GetCategoryPaging(GetUserPagingRequest request)
+        {
+            var query = await _dbContext.Categories.ToListAsync();
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.Name.Contains(request.Keyword)).ToList();
+            }
+
+            //3. Paging
+            int totalRow = query.Count();
+
+            var data = query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new CategoryRequest()
+                {
+                    CategoriesID = x.CategoriesID,
+                    Name = x.Name
+                }).ToList();
+
+            //4. Select and projection
+            var pagedResult = new PagedResult<CategoryRequest>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+            return new ApiSuccessResult<PagedResult<CategoryRequest>>(pagedResult);
+        }
+
         public async Task<ApiResult<bool>> Update(int id, CategoryRequest request)
         {
             if (id == null)
@@ -93,5 +131,6 @@ namespace BlogProject.Application.Catalog.Categories
             _dbContext.SaveChanges();
             return new ApiSuccessResult<bool>();
         }
+     
     }
 }

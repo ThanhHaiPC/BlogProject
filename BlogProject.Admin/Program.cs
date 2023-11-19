@@ -1,12 +1,18 @@
-
-using BlogProject.Admin.Service;
+﻿using BlogProject.Admin.Service;
+using BlogProject.Apilntegration.Category;
+using BlogProject.Apilntegration.Posts;
+using BlogProject.Apilntegration.Roles;
+using BlogProject.Apilntegration.Users;
 using BlogProject.Application.Common;
+using BlogProject.Data.EF;
 using BlogProject.ViewModel.System.Users;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 // Add services to the container.
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews()
@@ -22,12 +28,22 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
+var connectionString = builder.Configuration.GetConnectionString("ConnectionStrings");
+builder.Services.AddDbContext<BlogDbContext>(options =>
+{
+    // Chuỗi DataContext: Là chuỗi trong file Json: appsettings.Development (
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BlogDbContext"));
+});
 
 
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IUserApiClient, UserApiClient>();
 builder.Services.AddTransient<IStorageService, FileStorageService>();
 builder.Services.AddTransient<IRoleApiClient, RoleApiClient>();
+builder.Services.AddTransient<IPostApiClient, PostApiClient>();
+builder.Services.AddTransient<ICategoryApiClient, CategoryApiClient>();
+
+builder.Services.AddScoped<ICategoryApiClient, CategoryApiClient>();
 
 IMvcBuilder mvcBuilder = builder.Services.AddRazorPages();
 var envirment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

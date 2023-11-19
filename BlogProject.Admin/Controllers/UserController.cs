@@ -1,6 +1,4 @@
-﻿
-using BlogProject.Admin.Service;
-using BlogProject.ViewModel.System.Users;
+﻿using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +14,8 @@ using System.Drawing.Printing;
 using Microsoft.AspNetCore.Identity;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Common;
+using BlogProject.Apilntegration.Users;
+using BlogProject.Apilntegration.Roles;
 
 namespace BlogProject.Admin.Controllers
 {

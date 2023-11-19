@@ -11,8 +11,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +32,7 @@ namespace BlogProject.Application.Catalog.Post
         private readonly UserManager<User> _userManager;
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-    /*    private readonly ICommentService _commentService;*/
+        /*    private readonly ICommentService _commentService;*/
         private readonly ILikeService _likeService;
 
         public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
@@ -38,7 +40,7 @@ namespace BlogProject.Application.Catalog.Post
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
-           /* _commentService = commentService;*/
+            /* _commentService = commentService;*/
             _likeService = likeService;
         }
 
@@ -56,10 +58,10 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Chưa nhập nội dung");
             }
-           /* if (request.CategoryId == null || request.CategoryId <= 0)
-            {
-                return new ApiErrorResult<bool>("CategoryId không hợp lệ");
-            }*/
+            /* if (request.CategoryId == null || request.CategoryId <= 0)
+             {
+                 return new ApiErrorResult<bool>("CategoryId không hợp lệ");
+             }*/
 
             // Check if the specified CategoryId exists in the database
             var categoryExists = await _context.Categories.AnyAsync(c => c.CategoriesID == request.CategoryId);
@@ -73,21 +75,8 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Bài viết đã tồn tại");
             }
-            // Lấy thông tin người dùng đăng nhập
 
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.FileImage.FileName;
 
-            // Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-
-            // Tạo đường dẫn đầy đủ tới tệp hình ảnh
-            string imagePath = Path.Combine(uploadPath, uniqueFileName);
-
-            // Lưu tệp hình ảnh
-            using (var stream = new FileStream(imagePath, FileMode.Create))
-            {
-                request.FileImage.CopyTo(stream);
-            }
             var user = await _userManager.FindByIdAsync(userId);
             // Tạo một đối tượng Post từ dữ liệu PostViewModel
             var add = new Posts
@@ -99,7 +88,8 @@ namespace BlogProject.Application.Catalog.Post
                 UploadDate = DateTime.Now,
                 Desprition = request.Desprition,
                 CategoryId = request.CategoryId,
-                Image = "/images/" + uniqueFileName,
+                Image = await SaveFile(request.Image),
+
             };
 
 
@@ -159,11 +149,11 @@ namespace BlogProject.Application.Catalog.Post
                     Image = post.Image,
                 }).ToList();
 
-                return new  ApiSuccessResult<List<PostVm>>(postsWithUsernames);
+                return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
             }
             catch (Exception ex)
             {
-                return new  ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
+                return new ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
             }
         }
 
@@ -193,7 +183,7 @@ namespace BlogProject.Application.Catalog.Post
             }
             catch (Exception ex)
             {
-                return new  ApiErrorResult<List<PostVm>>($"An error occurred while searching for posts: {ex.Message}");
+                return new ApiErrorResult<List<PostVm>>($"An error occurred while searching for posts: {ex.Message}");
             }
         }
 
@@ -221,7 +211,7 @@ namespace BlogProject.Application.Catalog.Post
                     Image = x.p.Image,
                     View = x.p.View,
                     UploadDate = x.p.UploadDate,
-                    CategoryId = x.p.CategoryId,
+                    CategoryName = x.p.Categories.Name,
                     PostID = x.p.PostID
 
                 }).ToListAsync();
@@ -229,10 +219,12 @@ namespace BlogProject.Application.Catalog.Post
             var pagedResult = new PagedResult<PostVm>()
             {
                 TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
                 Items = data
             };
             return pagedResult;
-        }      
+        }
 
         public async Task<ApiResult<bool>> Update(PostUpdateRequest request, int id)
         {
@@ -241,35 +233,26 @@ namespace BlogProject.Application.Catalog.Post
                 return new ApiErrorResult<bool>("Lỗi cập nhập");
             }
             var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
-            // Lấy thông tin người dùng đăng nhập
+            var categories = _context.Categories.ToList(); // Thay Categories bằng tên thật của bảng Category
 
-            string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.FileImage.FileName;
-
-            // Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-
-            // Tạo đường dẫn đầy đủ tới tệp hình ảnh
-            string imagePath = Path.Combine(uploadPath, uniqueFileName);
-
-            // Lưu tệp hình ảnh
-            using (var stream = new FileStream(imagePath, FileMode.Create))
-            {
-                request.FileImage.CopyTo(stream);
-            }
 
 
             post.Desprition = request.Desprition;
             post.Title = request.Title;
             post.Content = request.Content;
-            post.CategoryId = request.CategoryId;
-            post.Image = "/images/" + uniqueFileName;
+            post.CategoryId = (int)request.CategoryId;
+            if (request.Image != null)
+            {
+
+                post.Image = await SaveFile(request.Image);
+            }
 
             _context.Posts.Update(post);
             _context.SaveChanges();
             return new ApiSuccessResult<bool>(true);
         }
 
-        public async  Task<List<PostVm>> TakeTopByQuantity(int quantity)
+        public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
         {
             if (_context.Posts.Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
             var post = await _context.Posts
@@ -291,6 +274,24 @@ namespace BlogProject.Application.Catalog.Post
             }
 
             return postList;
+        }
+
+        public async Task<ApiResult<PostVm>> GetById(int Id)
+        {
+            var postId = await _context.Posts.Include(p => p.Categories).FirstOrDefaultAsync(p => p.PostID == Id);
+
+            var postvm = new PostVm()
+            {
+                Title = postId.Title,
+                Desprition = postId.Desprition,
+                Content = postId.Content,
+
+                CategoryName = postId.Categories.Name,
+                Image = postId.Image,
+                UploadDate = postId.UploadDate,
+            };
+            return new ApiSuccessResult<PostVm>(postvm);
+
         }
 
         /*   public async Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request)
@@ -344,5 +345,24 @@ namespace BlogProject.Application.Catalog.Post
                    return new ApiErrorResult<PagedResult<PostVm>>($"An error occurred while getting paged posts: {ex.Message}");
                }
            }*/
+
+        //save image
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+
+            // Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+
+            // Tạo đường dẫn đầy đủ tới tệp hình ảnh
+            string imagePath = Path.Combine(uploadPath, uniqueFileName);
+
+            // Lưu tệp hình ảnh
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            return "https://localhost:5001/" + "/Images/" + uniqueFileName;
+        }
     }
 }

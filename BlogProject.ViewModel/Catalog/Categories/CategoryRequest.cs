@@ -11,6 +11,6 @@ namespace BlogProject.ViewModel.Catalog.Categories
     {
         public int CategoriesID { get; set; }
         [Display(Name = "Tên danh mục")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
     }
 }

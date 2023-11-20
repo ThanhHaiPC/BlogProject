@@ -1,4 +1,5 @@
-﻿using BlogProject.ViewModel.Catalog.Posts;
+﻿using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
 using System;
@@ -12,10 +13,12 @@ namespace BlogProject.Apilntegration.Posts
     public interface IPostApiClient
     {
         Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request);
-        Task<ApiResult<bool>> UpdatePost(PostUpdateRequest request, int id);
+		Task<PagedResult<PostVm>> GetAllPaging(GetUserPagingRequest request);
+		Task<ApiResult<bool>> UpdatePost(PostUpdateRequest request, int id);
         Task<ApiResult<bool>> CreatePost(PostRequest request);
         Task<ApiResult<bool>> DeletePost(int id);
-       
+        Task<List<PostVm>> TakeTopByQuantity(int quantity);
+        Task<List<BlogProject.Data.Entities.Posts>> GetAll();
         Task<ApiResult<PostVm>> GetById(int id);
     }
 }

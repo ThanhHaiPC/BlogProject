@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Comments;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -80,13 +81,38 @@ namespace BlogProject.Application.Catalog.Comments
             return await _context.Comments.Where(x => x.CommentID == id).ToListAsync();
         }
 
-        public async Task<List<Comment>> GetCommentsByPost(int postId)
+        public async Task<PagedResult<CommentVm>> GetCommentsByPost(int postId, GetUserPagingRequest request)
         {
-            var comments = await _context.Comments
-            .Where(c => c.PostID == postId)
-            .ToListAsync();
+            var commentId = await _context.Comments
+               .Include(c => c.User)
+               .Where(p => p.PostID == postId)
+               .ToListAsync();
 
-            return comments;
+
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                commentId = (List<Comment>)commentId.Where(x => x.Content.Contains(request.Keyword));
+            }
+
+            int totalRow = commentId.Count();
+            var data = commentId.Skip((request.PageIndex - 1) * request.PageSize)
+                 .Take(request.PageSize)
+                 .Select(x => new CommentVm()
+                 {
+
+                     UserName = x.User.UserName,
+                     Content = x.Content,
+                     DateTime = x.Date,
+                 }).ToList();
+            //4. Select and projection
+            var pagedResult = new PagedResult<CommentVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+            return pagedResult;
         }
     }
 }

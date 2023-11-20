@@ -1,4 +1,5 @@
-﻿using BlogProject.ViewModel.Catalog.Posts;
+﻿using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
 using System;
@@ -11,7 +12,7 @@ namespace BlogProject.Application.Catalog.Post
 {
     public interface IPostService
     {
-        Task<ApiResult<List<PostVm>>> GetAll();
+        Task<ApiResult<List<Posts>>> GetAll();
         Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request);
         Task<ApiResult<bool>> Create(PostRequest request, string userId);
         Task<ApiResult<bool>> Update(PostUpdateRequest request, int Id);
@@ -19,7 +20,8 @@ namespace BlogProject.Application.Catalog.Post
         Task<ApiResult<List<PostVm>>> GetByUserId(string userId);
         Task<ApiResult<List<PostVm>>> Search(string searchTerm);
         Task<ApiResult<PostVm>> GetById(int Id);
-        Task<List<PostVm>> TakeTopByQuantity(int quantity); 
-        /* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
-    }
+        Task<List<PostVm>> TakeTopByQuantity(int quantity);
+		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);
+		/* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
+	}
 }

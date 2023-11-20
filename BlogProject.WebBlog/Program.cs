@@ -1,4 +1,6 @@
 
+using BlogProject.Admin.Service;
+using BlogProject.Apilntegration.Posts;
 using BlogProject.Apilntegration.Roles;
 using BlogProject.Apilntegration.Users;
 using BlogProject.ViewModel.System.Users;
@@ -27,6 +29,7 @@ builder.Services.AddSession(options =>
 
 });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IPostApiClient, PostApiClient >();
 // Add services to the container.
 
 

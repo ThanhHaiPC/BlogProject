@@ -107,23 +107,12 @@ namespace BlogProject.Application.Catalog.Post
             return new ApiSuccessResult<bool>();
         }
 
-        public async Task<ApiResult<List<PostVm>>> GetAll()
+        public async Task<ApiResult<List<Posts>>> GetAll()
         {
             var posts = await _context.Posts.Include(p => p.User).ToListAsync();
 
-            var postsWithUsernames = posts.Select(post => new PostVm
-            {
-                PostID = post.PostID,
-                UserName = post.User.UserName,
-                Title = post.Title,
-                Content = post.Content,
-                UploadDate = post.UploadDate,
-                View = post.View,
-                CategoryId = post.CategoryId,
-                Desprition = post.Desprition,
-                Image = post.Image,
-            }).ToList();
-            return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
+           
+            return new ApiSuccessResult<List<Posts>>(posts);
         }
 
 
@@ -212,9 +201,12 @@ namespace BlogProject.Application.Catalog.Post
                     View = x.p.View,
                     UploadDate = x.p.UploadDate,
                     CategoryName = x.p.Categories.Name,
-                    PostID = x.p.PostID
-
-                }).ToListAsync();
+                    PostID = x.p.PostID,
+					CountComment = _context.Comments
+					   .Where(c => c.PostID == x.p.PostID)
+					   .Count(),
+                    
+				}).ToListAsync();
             //4. Select and projection
             var pagedResult = new PagedResult<PostVm>()
             {
@@ -254,7 +246,7 @@ namespace BlogProject.Application.Catalog.Post
 
         public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
         {
-            if (_context.Posts.Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+            if (_context.Posts.Include(c=>c.User).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
             var post = await _context.Posts
             .OrderByDescending(p => p.View)
             .Take(quantity)
@@ -269,7 +261,9 @@ namespace BlogProject.Application.Catalog.Post
                 postVm.PostID = item.PostID;
                 postVm.UploadDate = item.UploadDate;
                 postVm.View = item.View;
-
+                postVm.Content = item.Content;
+                postVm.UserName = item.User.UserName;
+                postVm.Image = item.Image;
                 postList.Add(postVm);
             }
 
@@ -285,12 +279,15 @@ namespace BlogProject.Application.Catalog.Post
                 Title = postId.Title,
                 Desprition = postId.Desprition,
                 Content = postId.Content,
-
+                View = postId.View + 1,
                 CategoryName = postId.Categories.Name,
                 Image = postId.Image,
                 UploadDate = postId.UploadDate,
-            };
-            return new ApiSuccessResult<PostVm>(postvm);
+				
+		    };
+			_context.Entry(postId).Property(x => x.View).IsModified = true;
+			_context.SaveChanges();
+			return new ApiSuccessResult<PostVm>(postvm);
 
         }
 
@@ -364,5 +361,42 @@ namespace BlogProject.Application.Catalog.Post
             }
             return "https://localhost:5001/" + "/Images/" + uniqueFileName;
         }
-    }
+
+		public async Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request)
+		{
+			var posts = await _context.Posts
+					 .Where(p => p.UserId == Guid.Parse(userId))
+					 .Include(p => p.User)
+					 .ToListAsync();
+			if (!string.IsNullOrEmpty(request.Keyword))
+			{
+				posts = (List<Posts>)posts.Where(x => x.Title.Contains(request.Keyword) || x.Desprition.Contains(request.Keyword));
+			}
+			int totalRow = posts.Count();
+			var postsWithUsernames = posts.Select(post => new PostVm
+			{
+				PostID = post.PostID,
+				UserName = post.User.UserName,
+				Title = post.Title,
+				Content = post.Content,
+				UploadDate = post.UploadDate,
+				View = post.View,
+				CategoryId = post.CategoryId,
+				Desprition = post.Desprition,
+				Image = post.Image,
+				CountComment = _context.Comments
+					   .Where(c => c.PostID == post.PostID)
+					   .Count(),
+			}).ToList();
+
+			var pagedResult = new PagedResult<PostVm>()
+			{
+				TotalRecords = totalRow,
+				PageIndex = request.PageIndex,
+				PageSize = request.PageSize,
+				Items = postsWithUsernames
+			};
+			return pagedResult;
+		}
+	}
 }

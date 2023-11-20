@@ -46,7 +46,32 @@ namespace BlogProject.Application.System.Users
             _hostingEnvironment = hostingEnvironment;
 
         }
-        public async Task<ApiResult<string>> Authencate(LoginRequest request)
+		public async Task<ApiResult<UserVm>> Profile(string? id)
+		{
+
+			var user = await _userManager.FindByIdAsync(id.ToString());
+			if (user == null)
+			{
+				return new ApiErrorResult<UserVm>("User không tồn tại");
+			}
+			var roles = await _userManager.GetRolesAsync(user);
+			var userVm = new UserVm()
+			{
+				Email = user.Email,
+				PhoneNumber = user.PhoneNumber,
+				FirstName = user.FirstName,
+				DateOfBir = user.DateOfBir,
+				Id = user.Id,
+				LastName = user.LastName,
+				UserName = user.UserName,
+				Roles = roles,
+				Image = user.Image,
+				Gender = user.Gender,
+				Address = user.Address,
+			};
+			return new ApiSuccessResult<UserVm>(userVm);
+		}
+		public async Task<ApiResult<string>> Authencate(LoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null) return null;

@@ -3,6 +3,7 @@ using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogProject.BackendApi.Controllers
 {
@@ -17,8 +18,14 @@ namespace BlogProject.BackendApi.Controllers
         {
             _userService = userService;
         }
-
-        [HttpPost("authenticate")]
+		[HttpGet("Profile/{id}")]
+		public async Task<IActionResult> Profile()
+		{
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			var user = await _userService.Profile(userId);
+			return Ok(user);
+		}
+		[HttpPost("authenticate")]
         [AllowAnonymous]
         public async Task<IActionResult> Authencate([FromBody] LoginRequest request)
         {

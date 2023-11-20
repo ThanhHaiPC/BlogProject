@@ -9,6 +9,8 @@ using BlogProject.Apilntegration;
 using BlogProject.Utilities.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using BlogProject.ViewModel.Catalog.Categories;
+using BlogProject.Data.Entities;
 
 namespace BlogProject.Admin.Service
 {
@@ -103,9 +105,26 @@ namespace BlogProject.Admin.Service
 
         }
 
+        public async Task<List<Posts>> GetAll()
+        {
+            
+            var client = _httpClientFactory.CreateClient();
+            
+            var response = await client.GetAsync("/api/posts");
+            var body = await response.Content.ReadAsStringAsync();
+            List<Posts> posts = JsonConvert.DeserializeObject<List<Posts>>(body);
 
+            return posts;
+        }
 
-        public async Task<ApiResult<PostVm>> GetById(int id)
+        public async Task<PagedResult<PostVm>> GetAllPaging(GetUserPagingRequest request)
+		{
+			var data = await GetAsync<PagedResult<PostVm>>($"/api/Posts/get-all-paging?pageIndex=" +
+				 $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
+			return data;
+		}
+
+		public async Task<ApiResult<PostVm>> GetById(int id)
         {
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();
@@ -121,9 +140,24 @@ namespace BlogProject.Admin.Service
 
         public async Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request)
         {
-            var data = await GetAsync<PagedResult<PostVm>>($"/api/Posts/get-all-paging?pageIndex=" +
-                  $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
-            return data;
+			var data = await GetAsync<PagedResult<PostVm>>($"/api/Posts/role?pageIndex=" +
+				 $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
+			return data;
+		}
+
+        public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var response = await client.GetAsync($"/api/posts/show/{quantity}");
+
+            var body = await response.Content.ReadAsStringAsync();
+            var users = JsonConvert.DeserializeObject<List<PostVm>>(body);
+            return users;
         }
 
         public async Task<ApiResult<bool>> UpdatePost(PostUpdateRequest request, int id)

@@ -1,5 +1,6 @@
 ﻿using BlogProject.Admin.Service;
 using BlogProject.Apilntegration.Category;
+using BlogProject.Apilntegration.Comment;
 using BlogProject.Apilntegration.Posts;
 using BlogProject.Apilntegration.Roles;
 using BlogProject.Apilntegration.Users;
@@ -42,7 +43,7 @@ builder.Services.AddTransient<IStorageService, FileStorageService>();
 builder.Services.AddTransient<IRoleApiClient, RoleApiClient>();
 builder.Services.AddTransient<IPostApiClient, PostApiClient>();
 builder.Services.AddTransient<ICategoryApiClient, CategoryApiClient>();
-
+builder.Services.AddTransient<ICommentApiClient, CommentApiClient>();
 builder.Services.AddScoped<ICategoryApiClient, CategoryApiClient>();
 
 IMvcBuilder mvcBuilder = builder.Services.AddRazorPages();

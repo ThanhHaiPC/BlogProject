@@ -1,6 +1,7 @@
 ﻿using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Comments;
 using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace BlogProject.Application.Catalog.Comments
         Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId);
         Task<ApiResult<bool>> Delete(int id);
         Task<List<Comment>> GetById(int id);
-        Task<List<Comment>> GetCommentsByPost(int postId);
+        Task<PagedResult<CommentVm>> GetCommentsByPost(int postId, GetUserPagingRequest request);
         Task<int> CountAsyncById(int id);
         int CountById(int id);
     }

@@ -1,5 +1,6 @@
 ﻿using BlogProject.Application.Catalog.Comments;
 using BlogProject.ViewModel.Catalog.Comments;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,10 +56,11 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [HttpGet("comments/{postId}")]
-        public async Task<IActionResult> GetCommentsByPost(int postId)
+        public async Task<IActionResult> GetCommentsByPost(int postId, [FromQuery] GetUserPagingRequest request)
         {
-            var comments = await _commentService.GetCommentsByPost(postId);
 
+
+            var comments = await _commentService.GetCommentsByPost(postId, request);
             if (comments != null)
             {
                 return Ok(comments);

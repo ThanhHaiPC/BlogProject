@@ -116,12 +116,30 @@ namespace BlogProject.BackendApi.Controllers
             var posts = await _postService.GetById(id);
             return Ok(posts);
         }
-        /* [HttpGet("pagingallfollow")]
+		[HttpGet("role")]
+		[Authorize(Roles = "admin,author")]
+		public async Task<IActionResult> GetByRole([FromQuery] GetUserPagingRequest request)
+		{
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+			if (string.IsNullOrEmpty(userId))
+			{
+				return BadRequest("User ID not found.");
+			}
+
+			var articles = userId != null && User.IsInRole("author")
+		   ? await _postService.GetByUserId(userId, request)
+		   : await _postService.GetPaged(request);
+
+
+			return Ok(articles);
+		}
+		/* [HttpGet("pagingallfollow")]
          public async Task<IActionResult> GetAllFollowPostPaging([FromQuery] GetUserPagingRequest request)
          {
 
              var products = await _postService.GetPostFollowPaging(request);
              return Ok(products);
          }*/
-    }
+	}
 }

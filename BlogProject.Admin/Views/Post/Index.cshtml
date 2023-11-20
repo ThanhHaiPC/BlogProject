@@ -129,6 +129,7 @@
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.CountComment)
+                                    @Html.ActionLink("Chi Tiết", "GetComment", new {  id=item.PostID  })
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.UploadDate)

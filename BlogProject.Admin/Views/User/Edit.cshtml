@@ -19,109 +19,207 @@
             display: block;
             max-width: 100%;
             max-height: 100%;
-            position: absolute;
+            position: absolute; 
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+    body {
+        margin-top: 20px;
+        background-color: #f2f6fc;
+        color: #69707a;
+    }
+
+    .img-account-profile {
+        height: 10rem;
+    }
+
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+        .card .card-header {
+            font-weight: 500;
+        }
+
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+
+    .form-control, .dataTable-input {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #69707a;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #c5ccd6;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.35rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .nav-borders .nav-link.active {
+        color: #0061f2;
+        border-bottom-color: #0061f2;
+    }
+
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
 </style>
-<div class="container-fluid">
-    <h1 class="mt-4">Cập nhật người dùng</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-        <li class="breadcrumb-item active">Cập nhật người dùng</li>
-    </ol>
-    <div class="card mb-4">
-        <div class="card-header">
-            <a class="btn btn-success" asp-action="Index" asp-controller="User">Về danh sách</a>
-        </div>
 
-        <div class="card-body">
-            <div class="col-md-4">
-                <form asp-action="Edit" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container-xl px-4 mt-4">
+    <!-- Account page navigation-->
+    <nav class="nav nav-borders">
+        <h1>Thay Đổi Thông Tin</h1>
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <form asp-action="Edit" enctype="multipart/form-data">
 
-                    <div class="form-group">
-                        <label asp-for="FirstName" class="control-label"></label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="LastName" class="control-label"></label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Chi Tiết Tài Khoản </div>
+                    <div class="card-body">
 
-                    <div class="form-group">
-                        <label asp-for="Gender" class="control-label"></label>
-                        @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
-                        {
-                        new SelectListItem { Value = "2", Text = "Không" },
-                        new SelectListItem { Value = "0", Text = "Nam" },
-                        new SelectListItem { Value = "1", Text = "Nữ" }
-                        }, "Value", "Text"), new { @class = "form-control" })
-
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PhoneNumber" class="control-label"></label>
-                        <input asp-for="PhoneNumber" class="form-control" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        @{
-                            if (Model.Dob != null)
-                            {
-                                string formattedDateOfBirth = Model.Dob.ToString();
-                            }
-
-                        }
-                        <label asp-for="Dob" class="control-label"></label>
-                        <input asp-for="Dob" class="form-control" placeholder="@Html.DisplayFor(model => model.Dob)" asp-format="{0:dd/MM/yyyy}" />
-                        <span asp-validation-for="Dob" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Address" class="control-label"></label>
-                        <input asp-for="Address" class="form-control" />
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Image" class="control-label"></label>
-                        <div class="custom-file">
-                            <input asp-for="Image" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
-                            <div class="image-preview">
-                                <img id="selectedImage">
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (first name)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputFirstName">First name</label>
+                                <div class="form-group">
+                                    <input asp-for="FirstName" class="form-control" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <!-- Form Group (last name)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputLastName">Last name</label>
+                                <input asp-for="LastName" class="form-control" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
                             </div>
                         </div>
-                        <span asp-validation-for="Image" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
+                        <!-- Form Row        -->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (organization name)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputOrgName">Giới Tính</label>
+                                @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
+                                {
+                                new SelectListItem { Value = "2", Text = "Không" },
+                                new SelectListItem { Value = "0", Text = "Nam" },
+                                new SelectListItem { Value = "1", Text = "Nữ" }
+                                }, "Value", "Text"), new { @class = "form-control" })
+                            </div>
+                            <!-- Form Group (location)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputLocation">Địa Chỉ</label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Form Group (email address)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputPhone">Phone number</label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (birthday)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputBirthday">Ngày Sinh</label>
+                                <input asp-for="Dob" class="form-control" placeholder="@Html.DisplayFor(model => model.Dob)" asp-format="{0:dd/MM/yyyy}" />
+                                <span asp-validation-for="Dob" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-xl-8">
+                            <!-- Profile picture card-->
+                            <div class="card mb-4 mb-xl-0">
+                                <div class="card-header">Ảnh Đại Diện</div>
+                                <div class="card-body text-center">
+                                    <!-- Profile picture image-->
+                                    <div class="image-preview">
+                                        <!-- Hiển thị ảnh cũ -->
+                                        @if (!string.IsNullOrEmpty(Model.ImageFileName))
+                                        {
+                                            <img id="selectedImage" src="@Url.Content(Model.ImageFileName)" />
+                                        }
+                                        else
+                                        {
+                                            <!-- Nếu không có ảnh cũ, bạn có thể hiển thị ảnh mặc định hoặc ẩn phần này -->
+                                            <img id="selectedImage" style="display:none;" />
+                                        }
+                                    </div>
+                                    <!-- Profile picture upload button-->
+                                    <input asp-for="Image" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
+                                    <span asp-validation-for="Image" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Save changes button-->
                         <input type="submit" value="Save" class="btn btn-primary" />
+
+                        <a class="btn btn-success" asp-action="Index" asp-controller="User">Về danh sách</a>
+
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 @section Scripts{
     <script>
         function displaySelectedImage(event) {
-            const selectedFile = event.target.files[0];
-            const imgElement = document.getElementById('selectedImage');
+            var input = event.target;
+            var preview = document.getElementById('selectedImage');
 
-            imgElement.style.display = 'block';
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
 
-            const reader = new FileReader();
-            reader.onload = function () {
-                imgElement.src = reader.result;
-            }
+                reader.onload = function (e) {
+                    // Hiển thị ảnh mới
+                    preview.src = e.target.result;
+                };
 
-            if (selectedFile) {
-                reader.readAsDataURL(selectedFile);
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Nếu không chọn ảnh mới, ẩn ảnh cũ
+                preview.style.display = 'none';
             }
         }
     </script>

@@ -16,6 +16,7 @@ using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Common;
 using BlogProject.Apilntegration.Users;
 using BlogProject.Apilntegration.Roles;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlogProject.Admin.Controllers
 {
@@ -30,168 +31,186 @@ namespace BlogProject.Admin.Controllers
             _configuration = configuration;
             _roleApiClient = roleApiClient;
         }
+		//[Authorize(Roles = "admin")]
+		public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
+		{
+			var sessions = HttpContext.Session.GetString("Token");
+			var request = new GetUserPagingRequest()
+			{
 
-        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 1)
-        {
-            var sessions = HttpContext.Session.GetString("Token");
-            var request = new GetUserPagingRequest()
-            {
+				Keyword = keyword,
+				PageIndex = pageIndex,
+				PageSize = pageSize
+			};
+			if (TempData["result"] != null)
+			{
+				ViewBag.SuccessMsg = TempData["result"];
+			}
+			var data = await _userApiClient.GetUserPaging(request);
+			return View(data.ResultObj);
+		}
+		[HttpGet]
+		[Authorize(Roles = "admin")]
+		public IActionResult Create()
+		{
+			return View();
+		}
 
-                Keyword = keyword,
-                PageIndex = pageIndex,
-                PageSize = pageSize
-            };
-            if (TempData["result"] != null)
-            {
-                ViewBag.SuccessMsg = TempData["result"];
-            }
-            var data = await _userApiClient.GetUserPaging(request);
-            return View(data.ResultObj);
-        }
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+		[HttpPost]
+		[Authorize(Roles = "admin")]
+		public async Task<IActionResult> Create(RegisterRequest request)
+		{
+			if (!ModelState.IsValid)
+				return View();
 
-        [HttpPost]
-        public async Task<IActionResult> Create(RegisterRequest request)
-        {
-            if (!ModelState.IsValid)
-                return View();
+			var result = await _userApiClient.RegisterUser(request);
+			if (result.IsSuccessed)
+			{
+				TempData["result"] = "Thêm mới người dùng thành công";
+				return RedirectToAction("Index");
+			}
+			ModelState.AddModelError("", result.Message);
 
-            var result = await _userApiClient.RegisterUser(request);
-            if (result.IsSuccessed)
-            {
-                TempData["result"] = "Thêm mới người dùng thành công";
-                return RedirectToAction("Index");
-            }
-            ModelState.AddModelError("", result.Message);
-
-            return View(request);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Details(Guid id)
-        {
-            var user = await _userApiClient.GetById(id);
-            return View(user.ResultObj);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
-        {
-
-
-            var result = await _userApiClient.GetById(id);
-            if (result.IsSuccessed)
-            {
-                var user = result.ResultObj;
-                var updateRequest = new UserUpdateRequest()
-                {
-                    Id = id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    ImageFileName = user.Image,
-                    Email = user.Email,
-                    Dob = user.DateOfBir,
-                    Gender = user.Gender,
-                    PhoneNumber = user.PhoneNumber,
-                    Address = user.Address,
-                };
-                return View(updateRequest);
-            }
-            return RedirectToAction("Error", "Home");
+			return View(request);
+		}
+		[HttpGet]
+		[Authorize(Roles = "admin")]
+		public async Task<IActionResult> Details(Guid id)
+		{
+			var user = await _userApiClient.GetById(id);
+			return View(user.ResultObj);
+		}
+		[HttpGet]
+		//[Authorize(Roles = "admin,author")]
+		public async Task<IActionResult> Edit(Guid id)
+		{
 
 
-        }
-        [HttpPost]
-        public async Task<IActionResult> Edit(UserUpdateRequest request)
-        {
-            if (!ModelState.IsValid)
-                return View();
+			var result = await _userApiClient.GetById(id);
+			if (result.IsSuccessed)
+			{
+				var user = result.ResultObj;
+				var updateRequest = new UserUpdateRequest()
+				{
+					Id = id,
+					FirstName = user.FirstName,
+					LastName = user.LastName,
+					ImageFileName = user.Image,
+					Email = user.Email,
+					Dob = user.DateOfBir,
+					Gender = user.Gender,
+					PhoneNumber = user.PhoneNumber,
+					Address = user.Address,
+				};
+				return View(updateRequest);
+			}
+			return RedirectToAction("Error", "Home");
 
-            var result = await _userApiClient.UpdateUser(request.Id, request);
-            if (result.IsSuccessed)
-            {
-                TempData["result"] = "Cập nhật người dùng thành công";
-                return RedirectToAction("Index");
-            }
 
-            ModelState.AddModelError("", result.Message);
-            return View(request);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Session.Remove("Token");
-            return RedirectToAction("Index", "Login");
-        }
-        [HttpGet]
-        public IActionResult Delete(Guid id)
-        {
-            return View(new UserDeleteRequest()
-            {
-                Id = id
-            });
-        }
-        [HttpPost]
-        public async Task<IActionResult> Delete(UserDeleteRequest request)
-        {
-            if (!ModelState.IsValid)
-                return View();
+		}
+		[HttpPost]
+		//[Authorize(Roles = "admin,author")]
+		public async Task<IActionResult> Edit(UserUpdateRequest request)
+		{
+			if (!ModelState.IsValid)
+				return View();
 
-            var result = await _userApiClient.DeleteUser(request.Id);
-            if (result.IsSuccessed)
-            {
-                TempData["result"] = "Xóa người dùng thành công";
-                return RedirectToAction("Index");
-            }
+			var result = await _userApiClient.UpdateUser(request.Id, request);
+			if (result.IsSuccessed)
+			{
+				TempData["result"] = "Cập nhật người dùng thành công";
+				return RedirectToAction("Index");
+			}
 
-            ModelState.AddModelError("", result.Message);
-            return View(request);
-        }
-        [HttpGet]
-        public async Task<IActionResult> RoleAssign(Guid id)
-        {
-            var roleAssignRequest = await GetRoleAssignRequest(id);
-            return View(roleAssignRequest);
-        }
+			ModelState.AddModelError("", result.Message);
+			return View(request);
+		}
+		[HttpPost]
 
-        [HttpPost]
-        public async Task<IActionResult> RoleAssign(RoleAssignRequest request)
-        {
-            if (!ModelState.IsValid)
-                return View();
+		public async Task<IActionResult> Logout()
+		{
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			HttpContext.Session.Remove("Token");
+			return RedirectToAction("Index", "Login");
+		}
+		[HttpGet]
+		[Authorize(Roles = "admin")]
+		public IActionResult Delete(Guid id)
+		{
+			return View(new UserDeleteRequest()
+			{
+				Id = id
+			});
+		}
+		[HttpPost]
+		[Authorize(Roles = "admin")]
+		public async Task<IActionResult> Delete(UserDeleteRequest request)
+		{
+			if (!ModelState.IsValid)
+				return View();
 
-            var result = await _userApiClient.RoleAssign(request.Id, request);
+			var result = await _userApiClient.DeleteUser(request.Id);
+			if (result.IsSuccessed)
+			{
+				TempData["result"] = "Xóa người dùng thành công";
+				return RedirectToAction("Index");
+			}
 
-            if (result.IsSuccessed)
-            {
-                TempData["result"] = "Cập nhật quyền thành công";
-                return RedirectToAction("Index");
-            }
+			ModelState.AddModelError("", result.Message);
+			return View(request);
+		}
+		[HttpGet]
+		//[Authorize(Roles = "admin")]
+		public async Task<IActionResult> RoleAssign(Guid id)
+		{
+			var roleAssignRequest = await GetRoleAssignRequest(id);
+			return View(roleAssignRequest);
+		}
 
-            ModelState.AddModelError("", result.Message);
-            var roleAssignRequest = await GetRoleAssignRequest(request.Id);
+		[HttpPost]
+		//[Authorize(Roles = "admin")]
+		public async Task<IActionResult> RoleAssign(RoleAssignRequest request)
+		{
+			if (!ModelState.IsValid)
+				return View();
 
-            return View(roleAssignRequest);
-        }
+			var result = await _userApiClient.RoleAssign(request.Id, request);
 
-        private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid id)
-        {
-            var userObj = await _userApiClient.GetById(id);
-            var roleObj = await _roleApiClient.GetAll();
-            var roleAssignRequest = new RoleAssignRequest();
-            foreach (var role in roleObj.ResultObj)
-            {
-                roleAssignRequest.Roles.Add(new SelectItem()
-                {
-                    Id = role.Id.ToString(),
-                    Name = role.Name,
-                    Selected = userObj.ResultObj.Roles.Contains(role.Name)
-                });
-            }
-            return roleAssignRequest;
-        }
-    }
+			if (result.IsSuccessed)
+			{
+				TempData["result"] = "Cập nhật quyền thành công";
+				return RedirectToAction("Index");
+			}
+
+			ModelState.AddModelError("", result.Message);
+			var roleAssignRequest = await GetRoleAssignRequest(request.Id);
+
+			return View(roleAssignRequest);
+		}
+		[HttpGet]
+		[Authorize(Roles = "admin,author")]
+		public async Task<IActionResult> Profile(Guid id)
+		{
+
+			var profile = await _userApiClient.Profile(id);
+			return View(profile.ResultObj);
+		}
+		private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid id)
+		{
+			var userObj = await _userApiClient.GetById(id);
+			var roleObj = await _roleApiClient.GetAll();
+			var roleAssignRequest = new RoleAssignRequest();
+			foreach (var role in roleObj.ResultObj)
+			{
+				roleAssignRequest.Roles.Add(new SelectItem()
+				{
+					Id = role.Id.ToString(),
+					Name = role.Name,
+					Selected = userObj.ResultObj.Roles.Contains(role.Name)
+				});
+			}
+			return roleAssignRequest;
+		}
+
+	}
 }

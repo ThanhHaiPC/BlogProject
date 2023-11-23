@@ -1,0 +1,433 @@
+﻿@model BlogProject.ViewModel.Catalog.Posts.PostDetailRequest
+@using BlogProject.ViewModel.Catalog.Comments
+@{
+	List<CommentVm> objectList = ViewData["commentList"] as List<CommentVm>;
+}
+@{
+	ViewData["Title"] = "Detail";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+	.avatar-image {
+		width: 70px;
+		height: 70px;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
+	.replyBtn {
+		background-color: #fe4f70;
+		color: white;
+		padding: 1px 15px ;
+		border: none;
+		border-radius: 50px; /* Điều này làm cho góc của nút tròn */
+		cursor: pointer;
+
+	}
+
+	/* (Tùy chọn) Thiết lập một lớp cho ô input để tùy chỉnh giao diện */
+	.replyInput {
+		padding: 7px 20px;
+		border: 1px solid #fe4f70;
+		border-radius: 50px;
+		width:  65%;
+		
+		margin: 10px;
+	}
+
+	/* (Tùy chọn) Thiết lập một lớp cho nút "Submit Reply" */
+	.submitReplyBtn {
+		background-color: #fe4f70;
+		float: right;
+		color: white;
+		padding: 7px 20px;
+		border: none;
+		border-radius: 50px;
+		cursor: pointer;
+		margin : 10px;
+
+	}
+
+	.replyForm {
+		margin-top: 10px;
+	}
+</style>
+<script>
+    // Bắt đầu chờ khi DOM đã được load
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy tất cả các nút "Reply" và lặp qua từng nút để thêm sự kiện click
+        var replyButtons = document.querySelectorAll('.replyBtn');
+        replyButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                // Tìm đến phần input và hiển thị nó khi nút "Reply" được nhấn
+                var replyForm = button.nextElementSibling;
+                replyForm.style.display = 'block';
+            });
+        });
+
+        // (Tùy chọn) Nếu bạn muốn có nút "Submit Reply", bạn có thể thêm sự kiện cho nút đó để xử lý
+        var submitButtons = document.querySelectorAll('.submitReplyBtn');
+        submitButtons.forEach(function (submitButton) {
+            submitButton.addEventListener('click', function () {
+                // Lấy giá trị từ input và xử lý nó (ví dụ: gửi lên server)
+                var replyInput = submitButton.previousElementSibling;
+                var replyText = replyInput.value;
+
+                // (Tùy chọn) Gửi dữ liệu trả lời lên server ở đây...
+
+                // (Tùy chọn) Sau khi xử lý xong, có thể ẩn phần input trả lời
+                replyInput.value = '';
+                replyInput.parentNode.style.display = 'none';
+            });
+        });
+    });
+</script>
+
+<section class="main-content mt-3">
+	<div class="container-xl">
+
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="@Url.Action("index", "home")">Home</a></li>
+				<li class="breadcrumb-item"><a href="#">Inspiration</a></li>
+				<li class="breadcrumb-item active" aria-current="page">@Html.DisplayFor(model => model.Post.Title)</li>
+			</ol>
+		</nav>
+
+		<div class="row gy-4">
+
+			<div class="col-lg-8">
+				<!-- post single -->
+				<div class="post post-single">
+					<!-- post header -->
+					<div class="post-header">
+
+						<h1 class="title mt-0 mb-3">@Html.DisplayFor(model => model.Post.Title)</h1>
+						<ul class="meta list-inline mb-0">
+							<li class="list-inline-item"><a href="#">@Html.DisplayFor(model => model.Post.UserName)</a></li>
+							<li class="list-inline-item"><a href="#">Trending</a></li>
+							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.UploadDate)</li>
+							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.View) Views</li>
+						</ul>
+					</div>
+					<!-- featured image -->
+					<div class="featured-image">
+						<img src="@Html.DisplayFor(model => model.Post.Image)" alt="post-title" />
+					</div>
+					<!-- post content -->
+					<div class="post-content clearfix">
+						@Html.Raw(Model.Post.Content)
+					</div>
+					<!-- post bottom section -->
+					<div class="post-bottom">
+						<div class="row d-flex align-items-center">
+							<div class="col-md-6 col-12 text-center text-md-start">
+								<!-- tags -->
+								<a href="#" class="tag">#Trending</a>
+								<a href="#" class="tag">#Video</a>
+								<a href="#" class="tag">#Featured</a>
+							</div>
+							<div class="col-md-6 col-12">
+								<!-- social icons -->
+								<ul class="social-icons list-unstyled list-inline mb-0 float-md-end">
+									<li class="list-inline-item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+									<li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+									<li class="list-inline-item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+									<li class="list-inline-item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+									<li class="list-inline-item"><a href="#"><i class="fab fa-telegram-plane"></i></a></li>
+									<li class="list-inline-item"><a href="#"><i class="far fa-envelope"></i></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="spacer" data-height="50"></div>
+
+
+
+				<div class="spacer" data-height="50"></div>
+				
+				<!-- section header -->
+				<div class="section-header">
+					
+						<h3 class="section-title">Comments</h3>
+						<img src="~/images/wave.svg" class="wave" alt="wave" />
+					
+				</div>
+				<!-- post comments -->
+				
+				<div  class="comments bordered padding-30 rounded">						
+					<ul id="comments">
+						<!-- comment item -->
+						@await Html.PartialAsync("_CommentList",Model.Comments)									
+							
+					</ul>					
+				</div>
+				
+				
+			@*	<div class="spacer" data-height="50"></div>*@
+
+				<!-- section header -->
+				<div class="section-header">
+					<h3 class="section-title">Leave Comment</h3>
+					<img src="~/images/wave.svg" class="wave" alt="wave" />
+				</div>
+				<!-- comment form -->
+				<div class="comment-form rounded bordered padding-30">
+					
+						<div class="form-group" style="margin-bottom: 20px;">
+							
+						<form id="add-comment-form" asp-page-handler="AddComment" class="row" style="justify-content: center;align-items: center;">
+							<input type="hidden" name="postId" value="@Model.Post.PostID" />
+							<div class="messages"></div>
+
+							<div class="row">
+
+								<div class="column col-md-12">
+									<!-- Comment textarea -->
+									<div class="form-group">
+										<textarea name="content" id="InputComment" class="form-control" rows="4" placeholder="Your comment here..." required="required"></textarea>
+									</div>
+								</div>
+
+
+
+							</div>
+
+							<button type="submit" name="submit" id="submit" value="Submit" style="width: 130px" class="btn btn-default">Submit</button><!-- Submit Button -->
+
+						</form>
+						</div>
+				</div>
+			</div>
+
+			<div class="col-lg-4">
+
+				<!-- sidebar -->
+				<div class="sidebar">
+
+
+					<!-- widget popular posts -->
+					<div class="widget rounded">
+						<div class="widget-header text-center">
+							<h3 class="widget-title">Popular Posts</h3>
+							<img src="~/images/wave.svg" class="wave" alt="wave" />
+						</div>
+						<div class="widget-content">
+							<!-- post -->
+							<div class="post post-list-sm circle">
+								<div class="thumb circle">
+									<span class="number">1</span>
+									<a href="blog-single.html">
+										<div class="inner">
+											<img src="~/images/posts/tabs-1.jpg" alt="post-title" />
+										</div>
+									</a>
+								</div>
+								<div class="details clearfix">
+									<h6 class="post-title my-0"><a href="blog-single.html">3 Easy Ways To Make Your iPhone Faster</a></h6>
+									<ul class="meta list-inline mt-1 mb-0">
+										<li class="list-inline-item">29 March 2021</li>
+									</ul>
+								</div>
+							</div>
+							<!-- post -->
+							<div class="post post-list-sm circle">
+								<div class="thumb circle">
+									<span class="number">2</span>
+									<a href="blog-single.html">
+										<div class="inner">
+											<img src="~/images/posts/tabs-2.jpg" alt="post-title" />
+										</div>
+									</a>
+								</div>
+								<div class="details clearfix">
+									<h6 class="post-title my-0"><a href="blog-single.html">An Incredibly Easy Method That Works For All</a></h6>
+									<ul class="meta list-inline mt-1 mb-0">
+										<li class="list-inline-item">29 March 2021</li>
+									</ul>
+								</div>
+							</div>
+							<!-- post -->
+							<div class="post post-list-sm circle">
+								<div class="thumb circle">
+									<span class="number">3</span>
+									<a href="blog-single.html">
+										<div class="inner">
+											<img src="~/images/posts/tabs-3.jpg" alt="post-title" />
+										</div>
+									</a>
+								</div>
+								<div class="details clearfix">
+									<h6 class="post-title my-0"><a href="blog-single.html">10 Ways To Immediately Start Selling Furniture</a></h6>
+									<ul class="meta list-inline mt-1 mb-0">
+										<li class="list-inline-item">29 March 2021</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- widget categories -->
+					<div class="widget rounded">
+						<div class="widget-header text-center">
+							<h3 class="widget-title">Explore Topics</h3>
+							<img src="~/images/wave.svg" class="wave" alt="wave" />
+						</div>
+						<div class="widget-content">
+							<ul class="list">
+								<li><a href="#">Lifestyle</a><span>(5)</span></li>
+								<li><a href="#">Inspiration</a><span>(2)</span></li>
+								<li><a href="#">Fashion</a><span>(4)</span></li>
+								<li><a href="#">Politic</a><span>(1)</span></li>
+								<li><a href="#">Trending</a><span>(7)</span></li>
+								<li><a href="#">Culture</a><span>(3)</span></li>
+							</ul>
+						</div>
+
+					</div>
+
+
+					<!-- widget post carousel -->
+					<div class="widget rounded">
+						<div class="widget-header text-center">
+							<h3 class="widget-title">Celebration</h3>
+							<img src="~/images/wave.svg" class="wave" alt="wave" />
+						</div>
+						<div class="widget-content">
+							<div class="post-carousel-widget">
+								<!-- post -->
+								<div class="post post-carousel">
+									<div class="thumb rounded">
+										<a href="category.html" class="category-badge position-absolute">How to</a>
+										<a href="blog-single.html">
+											<div class="inner">
+												<img src="~/images/widgets/widget-carousel-1.jpg" alt="post-title" />
+											</div>
+										</a>
+									</div>
+									<h5 class="post-title mb-0 mt-4"><a href="blog-single.html">5 Easy Ways You Can Turn Future Into Success</a></h5>
+									<ul class="meta list-inline mt-2 mb-0">
+										<li class="list-inline-item"><a href="#">Katen Doe</a></li>
+										<li class="list-inline-item">29 March 2021</li>
+									</ul>
+								</div>
+								<!-- post -->
+								<div class="post post-carousel">
+									<div class="thumb rounded">
+										<a href="category.html" class="category-badge position-absolute">Trending</a>
+										<a href="blog-single.html">
+											<div class="inner">
+												<img src="~/images/widgets/widget-carousel-2.jpg" alt="post-title" />
+											</div>
+										</a>
+									</div>
+									<h5 class="post-title mb-0 mt-4"><a href="blog-single.html">Master The Art Of Nature With These 7 Tips</a></h5>
+									<ul class="meta list-inline mt-2 mb-0">
+										<li class="list-inline-item"><a href="#">Katen Doe</a></li>
+										<li class="list-inline-item">29 March 2021</li>
+									</ul>
+								</div>
+								<!-- post -->
+								<div class="post post-carousel">
+									<div class="thumb rounded">
+										<a href="category.html" class="category-badge position-absolute">How to</a>
+										<a href="blog-single.html">
+											<div class="inner">
+												<img src="~/images/widgets/widget-carousel-1.jpg" alt="post-title" />
+											</div>
+										</a>
+									</div>
+									<h5 class="post-title mb-0 mt-4"><a href="blog-single.html">5 Easy Ways You Can Turn Future Into Success</a></h5>
+									<ul class="meta list-inline mt-2 mb-0">
+										<li class="list-inline-item"><a href="#">Katen Doe</a></li>
+										<li class="list-inline-item">29 March 2021</li>
+									</ul>
+								</div>
+							</div>
+							<!-- carousel arrows -->
+							<div class="slick-arrows-bot">
+								<button type="button" data-role="none" class="carousel-botNav-prev slick-custom-buttons" aria-label="Previous"><i class="icon-arrow-left"></i></button>
+								<button type="button" data-role="none" class="carousel-botNav-next slick-custom-buttons" aria-label="Next"><i class="icon-arrow-right"></i></button>
+							</div>
+						</div>
+					</div>
+
+					<!-- widget advertisement -->
+					
+
+					<!-- widget tags -->
+					<div class="widget rounded">
+						<div class="widget-header text-center">
+							<h3 class="widget-title">Tag Clouds</h3>
+							<img src="~/images/wave.svg" class="wave" alt="wave" />
+						</div>
+						<div class="widget-content">
+							<a href="#" class="tag">#Trending</a>
+							<a href="#" class="tag">#Video</a>
+							<a href="#" class="tag">#Featured</a>
+							<a href="#" class="tag">#Gallery</a>
+							<a href="#" class="tag">#Celebrities</a>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+
+	
+	
+	$(document).ready(function () {
+		// BÌNH LUẬN
+		// Thêm comment
+		$('#add-comment-form').submit(function (event) {
+			event.preventDefault();
+			var form = $(this);
+			$.ajax({
+				
+				url: '@Url.Action("AddComment", "Comment")',
+				type: 'POST',
+				data: form.serialize(),
+				success: function () {
+
+					loadComments();
+					
+					
+
+					form.find('textarea[name="content"]').val('');
+				},
+				error: function () {
+					alert('Vui lòng đăng nhập');
+				}
+			});
+		});
+
+	
+		function loadComments() {
+			$.ajax({
+				
+				url: '@Url.Action("GetComments", "Comment")',
+				type: 'GET',
+				data: { postId: '@Model.Post.PostID' },
+				success: function (result) {
+					console.log(result);
+					$('#comments').html(result);
+				}
+			});
+		}
+
+
+
+		
+	});
+</script>

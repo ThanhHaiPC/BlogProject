@@ -1,0 +1,21 @@
+﻿﻿@using BlogProject.ViewModel.Catalog.Comments
+@model List<CommentVm>
+
+@foreach (var comment in Model)
+{
+	<li class="comment rounded">
+		<div class="thumb">
+			<img src="@comment.Avatar" class="avatar-image" />
+		</div>
+		<div class="details">
+			<h4 class="name"><a href="#">@comment.UserName</a></h4>
+			<span class="date">@comment.DateTime</span>
+			<p>@comment.Content</p>
+			<button class="replyBtn btn btn-default btn-sm">Reply</button>
+			<div class="replyForm" style="display:none;">
+				<input type="text" class="replyInput" />
+				<button class="submitReplyBtn">Submit Reply</button>
+			</div>
+		</div>
+	</li>
+}

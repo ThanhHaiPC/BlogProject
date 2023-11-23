@@ -10,6 +10,7 @@ using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -246,7 +247,7 @@ namespace BlogProject.Application.Catalog.Post
 
         public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
         {
-            if (_context.Posts.Include(c=>c.User).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+            if (_context.Posts.Include(c=>c.User).Include(c=>c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
             var post = await _context.Posts
             .OrderByDescending(p => p.View)
             .Take(quantity)
@@ -264,6 +265,8 @@ namespace BlogProject.Application.Catalog.Post
                 postVm.Content = item.Content;
                 postVm.UserName = item.User.UserName;
                 postVm.Image = item.Image;
+                postVm.CategoryName = item.Categories.Name;
+                
                 postList.Add(postVm);
             }
 
@@ -272,26 +275,66 @@ namespace BlogProject.Application.Catalog.Post
 
         public async Task<ApiResult<PostVm>> GetById(int Id)
         {
-            var postId = await _context.Posts.Include(p => p.Categories).FirstOrDefaultAsync(p => p.PostID == Id);
+            var postId = await _context.Posts
+                .Include(p => p.Categories)
+                .Include(p=> p.User)
+                .FirstOrDefaultAsync(p => p.PostID == Id);
 
             var postvm = new PostVm()
             {
                 Title = postId.Title,
                 Desprition = postId.Desprition,
                 Content = postId.Content,
-                View = postId.View + 1,
+                UserName = postId.User.UserName,
                 CategoryName = postId.Categories.Name,
                 Image = postId.Image,
                 UploadDate = postId.UploadDate,
-				
-		    };
-			_context.Entry(postId).Property(x => x.View).IsModified = true;
-			_context.SaveChanges();
+                UserId = postId.UserId,
+                PostID = postId.PostID,
+                Avatar = postId.User.Image,
+                View = postId.View,
+              
+				CountComment = _context.Comments
+					   .Where(c => c.PostID == postId.PostID)
+					   .Count(),
+				CountLike = postId.Like,
+            };
+            _context.SaveChanges();
 			return new ApiSuccessResult<PostVm>(postvm);
 
         }
+        //User's Detail
+		public async Task<ApiResult<PostVm>> DetalUser(int Id)
+		{
+			var postId = await _context.Posts
+				.Include(p => p.Categories)
+				.Include(p => p.User)
+				.FirstOrDefaultAsync(p => p.PostID == Id);
 
-        /*   public async Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request)
+			var postvm = new PostVm()
+			{
+				Title = postId.Title,
+				Desprition = postId.Desprition,
+				Content = postId.Content,
+				UserName = postId.User.UserName,
+				CategoryName = postId.Categories.Name,
+				Image = postId.Image,
+				UploadDate = postId.UploadDate,
+				UserId = postId.UserId,
+				PostID = postId.PostID,
+				Avatar = postId.User.Image,
+				View = postId.View++,
+
+				CountComment = _context.Comments
+					   .Where(c => c.PostID == postId.PostID)
+					   .Count(),
+				CountLike = postId.Like,
+			};
+			_context.SaveChanges();
+			return new ApiSuccessResult<PostVm>(postvm);
+
+		}
+		/*   public async Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request)
            {
                try
                {
@@ -343,8 +386,8 @@ namespace BlogProject.Application.Catalog.Post
                }
            }*/
 
-        //save image
-        private async Task<string> SaveFile(IFormFile file)
+		//save image
+		private async Task<string> SaveFile(IFormFile file)
         {
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
@@ -397,6 +440,36 @@ namespace BlogProject.Application.Catalog.Post
 				Items = postsWithUsernames
 			};
 			return pagedResult;
+		}
+
+		
+
+		public async Task<List<PostVm>> PostRecent(int quantity)
+		{
+			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+			var post = await _context.Posts
+			.OrderByDescending(p => p.UploadDate)
+			.Take(quantity)
+			.ToListAsync();
+
+			List<PostVm> postList = new List<PostVm>();
+			foreach (var item in post)
+			{
+				PostVm postVm = new PostVm();
+				postVm.Title = item.Title;
+				postVm.UserId = item.UserId;
+				postVm.PostID = item.PostID;
+				postVm.UploadDate = item.UploadDate;
+				postVm.View = item.View;
+				postVm.Content = item.Content;
+				postVm.UserName = item.User.UserName;
+				postVm.Image = item.Image;
+				postVm.CategoryName = item.Categories.Name;
+
+				postList.Add(postVm);
+			}
+
+			return postList;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using BlogProject.Apilntegration.Category;
-using BlogProject.Apilntegration.Comment;
+using BlogProject.Apilntegration.Comments;
 using BlogProject.Apilntegration.Posts;
 using BlogProject.Data.EF;
 using BlogProject.ViewModel.Catalog.Posts;
@@ -16,9 +16,9 @@ namespace BlogProject.Admin.Controllers
         private readonly IPostApiClient _postApiClient;
         private readonly IConfiguration _configuration;
         private readonly ICategoryApiClient _categoryApiClient;
-        private readonly ICommentApiClient _commentApiClient;
+        private readonly ICommentsApiClient _commentApiClient;
         private readonly BlogDbContext _context;
-        public PostController(IPostApiClient postApiClient, IConfiguration configuration, ICategoryApiClient categoryApiClient, BlogDbContext context, ICommentApiClient commentApiClient)
+        public PostController(IPostApiClient postApiClient, IConfiguration configuration, ICategoryApiClient categoryApiClient, BlogDbContext context, ICommentsApiClient commentApiClient)
         {
             _postApiClient = postApiClient;
             _configuration = configuration;

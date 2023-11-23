@@ -9,9 +9,9 @@ namespace BlogProject.Data.Enum
 {
     public enum Active
     {
-        [Display(Name = "Chưa đánh giá")]
+        
         no = 0,
-        [Display(Name = "Đã đánh giá")]
+      
         yes = 1
     }
 }

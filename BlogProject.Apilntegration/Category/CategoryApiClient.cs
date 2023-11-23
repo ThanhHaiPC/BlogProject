@@ -41,7 +41,7 @@ namespace BlogProject.Apilntegration.Category
                 return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
 
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
-            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
+       
         }
 
         public async Task<List<CategoryVm>> GetAll()

@@ -23,12 +23,15 @@ namespace BlogProject.WebBlog.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Hàm để lấy danh sách địa điểm
-            var PostList = await _postApiClient.TakeTopByQuantity(6);
+           
+            var PostList = await _postApiClient.RecentPost(1);
             ViewData["ObjectList"] = PostList;
+			var Popular = await _postApiClient.TakeTopByQuantity(4);
+			ViewData["PostPopular"] = Popular;
+			var PostRecent = await _postApiClient.RecentPost(4);
+			ViewData["PostRecent"] = PostRecent;
 
-
-            var user = User.Identity.Name;
+			var user = User.Identity.Name;
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 
             if (user != null && sessions == null)

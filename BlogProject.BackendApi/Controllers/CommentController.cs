@@ -20,15 +20,15 @@ namespace BlogProject.BackendApi.Controllers
 
         
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Create(CommentCreateRequest request)
+      
+        public async Task<IActionResult> Create([FromBody] CommentCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var result = await _commentService.Create(request, userId);
+            
+            var result = await _commentService.Create(request);
 
             if (result.IsSuccessed)
             {
@@ -70,5 +70,31 @@ namespace BlogProject.BackendApi.Controllers
                 return NotFound(); // Return a 404 Not Found if comments are not found for the specified post.
             }
         }
+        [HttpGet("comment/{postId}")]
+        public async Task<IActionResult> CommentOfPost(int postId)
+        {
+            var comment = await _commentService.CommentsByPost(postId);
+            if (comment != null)
+            {
+                return Ok(comment);
+            }
+			else
+			{
+				return NotFound(); // Return a 404 Not Found if comments are not found for the specified post.
+			}
+		}
+        [HttpGet("listComment/{postId}")]
+        public async Task<IActionResult> GetList(int postId)
+        {
+            var comment = await _commentService.GetList(postId);
+			if (comment != null)
+			{
+				return Ok(comment);
+			}
+			else
+			{
+				return NotFound(); // Return a 404 Not Found if comments are not found for the specified post.
+			}
+		}
     }
 }

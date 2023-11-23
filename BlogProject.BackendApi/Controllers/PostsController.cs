@@ -111,8 +111,6 @@ namespace BlogProject.BackendApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-
-
             var posts = await _postService.GetById(id);
             return Ok(posts);
         }
@@ -134,12 +132,27 @@ namespace BlogProject.BackendApi.Controllers
 
 			return Ok(articles);
 		}
-		/* [HttpGet("pagingallfollow")]
+		[HttpGet("detail/{id}")]
+		public async Task<IActionResult> Detail(int id)
+		{
+			var posts = await _postService.DetalUser(id);
+			return Ok(posts);
+		}
+        /* [HttpGet("pagingallfollow")]
          public async Task<IActionResult> GetAllFollowPostPaging([FromQuery] GetUserPagingRequest request)
          {
 
              var products = await _postService.GetPostFollowPaging(request);
              return Ok(products);
          }*/
+
+       
+
+        [HttpGet("recent-post/{quatity}")]
+        public async Task<IActionResult> RecentPost(int quatity)
+        {
+            var posts = await _postService.PostRecent(quatity);
+            return Ok(posts);
+        }
 	}
 }

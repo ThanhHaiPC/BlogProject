@@ -1,4 +1,6 @@
-﻿using BlogProject.Apilntegration.Posts;
+﻿using BlogProject.Apilntegration.Comments;
+using BlogProject.Apilntegration.Posts;
+using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,26 +9,26 @@ namespace BlogProject.WebBlog.Controllers
     public class PostController : Controller
     {
         private readonly IPostApiClient _postApiClient;
-        public PostController(IPostApiClient postApiClient)
+        private readonly ICommentsApiClient _commentApiClient;
+        public PostController(IPostApiClient postApiClient, ICommentsApiClient commentApiClient)
         {
             _postApiClient = postApiClient;
+            _commentApiClient = commentApiClient;
         }
-        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
+        [HttpGet]
+        public async Task<IActionResult> Detail (int id)
         {
-			var sessions = HttpContext.Session.GetString("Token");
-			var request = new GetUserPagingRequest()
-			{
+			var post = await _postApiClient.Detial(id);
+			var comments = await _commentApiClient.GetAllByPostId(id);
 
-				Keyword = keyword,
-				PageIndex = pageIndex,
-				PageSize = pageSize
-			};
-			if (TempData["result"] != null)
+			var model = new PostDetailRequest
 			{
-				ViewBag.SuccessMsg = TempData["result"];
-			}
-			var data = await _postApiClient.GetAllPaging(request);
-			return View(data);
-		}
-    }
+				Post = post.ResultObj,
+				Comments = comments// Đảm bảo kiểu dữ liệu của Comments là List<CommentVm>
+			};
+			return View(model);
+        }
+     
+
+	}
 }

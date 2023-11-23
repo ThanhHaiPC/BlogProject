@@ -105,7 +105,21 @@ namespace BlogProject.Admin.Service
 
         }
 
-        public async Task<List<Posts>> GetAll()
+		public async Task<ApiResult<PostVm>> Detial(int id)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/posts/detail/{id}");
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return JsonConvert.DeserializeObject<ApiResult<PostVm>>(body);
+
+			return JsonConvert.DeserializeObject<ApiResult<PostVm>>(body);
+		}
+
+		public async Task<List<Posts>> GetAll()
         {
             
             var client = _httpClientFactory.CreateClient();
@@ -145,7 +159,34 @@ namespace BlogProject.Admin.Service
 			return data;
 		}
 
-        public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
+		public async Task<List<Posts>> PopularPost()
+		{
+
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/posts/popular-post");
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return JsonConvert.DeserializeObject<List<Posts>>(body);
+
+			return JsonConvert.DeserializeObject<List<Posts>>(body);
+		}
+
+		public async Task<List<PostVm>> RecentPost(int quatity)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/posts/recent-post/{quatity}");
+			var body = await response.Content.ReadAsStringAsync();
+			var users = JsonConvert.DeserializeObject<List<PostVm>>(body);
+			return users;
+		}
+
+		public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
         {
             var client = _httpClientFactory.CreateClient();
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");

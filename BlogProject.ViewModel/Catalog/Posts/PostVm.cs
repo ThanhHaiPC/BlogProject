@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlogProject.ViewModel.Catalog.Comments;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,13 +18,16 @@ namespace BlogProject.ViewModel.Catalog.Posts
         public string Content { get; set; }
         public int? CountLike { get; set; }
         public int? CountComment { get; set; }
+        public string Avatar { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
-        public DateTime UploadDate { get; set; }
+		[DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+		public DateTime UploadDate { get; set; }
         public int View { get; set; }
         public int CategoryId { get; set; }
 
         public string? CategoryName { get; set; }
         public string? Image { get; set; }
-    }
+
+
+	}
 }

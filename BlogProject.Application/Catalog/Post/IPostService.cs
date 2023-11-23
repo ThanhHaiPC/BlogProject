@@ -20,7 +20,10 @@ namespace BlogProject.Application.Catalog.Post
         Task<ApiResult<List<PostVm>>> GetByUserId(string userId);
         Task<ApiResult<List<PostVm>>> Search(string searchTerm);
         Task<ApiResult<PostVm>> GetById(int Id);
-        Task<List<PostVm>> TakeTopByQuantity(int quantity);
+        Task<ApiResult<PostVm>> DetalUser(int Id);
+     
+        Task<List<PostVm>> PostRecent(int quantity);
+		Task<List<PostVm>> TakeTopByQuantity(int quantity);
 		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);
 		/* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
 	}

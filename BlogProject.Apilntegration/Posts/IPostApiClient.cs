@@ -18,7 +18,10 @@ namespace BlogProject.Apilntegration.Posts
         Task<ApiResult<bool>> CreatePost(PostRequest request);
         Task<ApiResult<bool>> DeletePost(int id);
         Task<List<PostVm>> TakeTopByQuantity(int quantity);
-        Task<List<BlogProject.Data.Entities.Posts>> GetAll();
+        Task<List<BlogProject.Data.Entities.Posts>> PopularPost();
+		Task<List<PostVm>> RecentPost(int quatity);
+		Task<List<BlogProject.Data.Entities.Posts>> GetAll();
         Task<ApiResult<PostVm>> GetById(int id);
-    }
+		Task<ApiResult<PostVm>> Detial(int id);
+	}
 }

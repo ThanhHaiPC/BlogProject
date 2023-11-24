@@ -324,7 +324,7 @@ namespace BlogProject.Application.Catalog.Post
 				PostID = postId.PostID,
 				Avatar = postId.User.Image,
 				View = postId.View++,
-
+                CategoryId = postId.CategoryId,
 				CountComment = _context.Comments
 					   .Where(c => c.PostID == postId.PostID)
 					   .Count(),
@@ -470,6 +470,57 @@ namespace BlogProject.Application.Catalog.Post
 			}
 
 			return postList;
+		}
+
+		public async Task<List<PostVm>> GetPostInDay()
+		{
+			DateTime today = DateTime.Today;
+			
+			var post = await _context.Posts
+			.Where(p=>p.UploadDate.Date == today)
+            .Include(p=>p.Categories)
+            .Include(p=>p.User)
+			.ToListAsync();
+
+			List<PostVm> postList = new List<PostVm>();
+			foreach (var item in post)
+			{
+				PostVm postVm = new PostVm();
+				postVm.Title = item.Title;
+				postVm.UserId = item.UserId;
+				postVm.PostID = item.PostID;
+				postVm.UploadDate = item.UploadDate;
+				postVm.View = item.View;
+				postVm.Content = item.Content;
+				postVm.UserName = item.User.UserName;
+				postVm.Image = item.Image;
+				postVm.CategoryName = item.Categories.Name;
+
+				postList.Add(postVm);
+			}
+
+			return postList;
+		}
+
+		public async Task<List<PostVm>> GetPostOfCategory(int categoryId)
+		{
+            var post = await _context.Posts.Include(c=>c.Categories).Include(x=>x.User).Where(x => x.CategoryId == categoryId).ToListAsync();
+
+            List<PostVm> postVms = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title= item.Title;
+                postVm.Desprition = item.Desprition;
+                postVm.Image = item.Image;
+                postVm.Avatar = item.User.Image;
+                postVm.CategoryName = item.Categories.Name;
+                postVm.UploadDate = item.UploadDate;
+                postVm.UserName = item.User.UserName;
+                postVm.CategoryId = item.CategoryId;
+                postVms.Add(postVm);
+            }
+            return postVms;
 		}
 	}
 }

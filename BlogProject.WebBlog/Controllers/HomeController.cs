@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using BlogProject.Apilntegration.Category;
 
 namespace BlogProject.WebBlog.Controllers
 {
@@ -13,12 +14,14 @@ namespace BlogProject.WebBlog.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IPostApiClient _postApiClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICategoryApiClient _categoryApiClient;
 
-        public HomeController(ILogger<HomeController> logger,IPostApiClient postApiClient, IHttpContextAccessor httpContextAccessor)
+        public HomeController(ILogger<HomeController> logger,IPostApiClient postApiClient, IHttpContextAccessor httpContextAccessor, ICategoryApiClient categoryApiClient)
         {
             _logger = logger;
             _postApiClient = postApiClient;
             _httpContextAccessor = httpContextAccessor;
+            _categoryApiClient = categoryApiClient;
         }
 
         public async Task<IActionResult> Index()
@@ -26,11 +29,12 @@ namespace BlogProject.WebBlog.Controllers
            
             var PostList = await _postApiClient.RecentPost(1);
             ViewData["ObjectList"] = PostList;
-			var Popular = await _postApiClient.TakeTopByQuantity(4);
+			var Popular = await _postApiClient.TakeTopByQuantity(3);
 			ViewData["PostPopular"] = Popular;
-			var PostRecent = await _postApiClient.RecentPost(4);
+			var PostRecent = await _postApiClient.RecentPost(3);
 			ViewData["PostRecent"] = PostRecent;
-
+            var Category = await _categoryApiClient.GetAll();
+            ViewData["Category"] = Category;
 			var user = User.Identity.Name;
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 

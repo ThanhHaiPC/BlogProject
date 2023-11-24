@@ -21,7 +21,8 @@ namespace BlogProject.Application.Catalog.Post
         Task<ApiResult<List<PostVm>>> Search(string searchTerm);
         Task<ApiResult<PostVm>> GetById(int Id);
         Task<ApiResult<PostVm>> DetalUser(int Id);
-     
+        Task<List<PostVm>> GetPostInDay();
+        Task<List<PostVm>> GetPostOfCategory(int categoryId);
         Task<List<PostVm>> PostRecent(int quantity);
 		Task<List<PostVm>> TakeTopByQuantity(int quantity);
 		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);

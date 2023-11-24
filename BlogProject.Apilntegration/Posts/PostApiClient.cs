@@ -159,6 +159,30 @@ namespace BlogProject.Admin.Service
 			return data;
 		}
 
+		public async Task<List<PostVm>> GetPostInDay()
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync("/api/posts/post-in-day");
+			var body = await response.Content.ReadAsStringAsync();
+			var users = JsonConvert.DeserializeObject<List<PostVm>>(body);
+			return users;
+		}
+
+		public async Task<List<PostVm>> GetPostOfCategory(int categoryId)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/posts/category/{categoryId}");
+			var body = await response.Content.ReadAsStringAsync();
+			var users = JsonConvert.DeserializeObject<List<PostVm>>(body);
+			return users;
+		}
+
 		public async Task<List<Posts>> PopularPost()
 		{
 

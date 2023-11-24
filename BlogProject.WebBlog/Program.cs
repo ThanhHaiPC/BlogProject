@@ -1,5 +1,6 @@
 
 using BlogProject.Admin.Service;
+using BlogProject.Apilntegration.Category;
 using BlogProject.Apilntegration.Comments;
 using BlogProject.Apilntegration.Posts;
 using BlogProject.Apilntegration.Roles;
@@ -32,6 +33,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IPostApiClient, PostApiClient >();
 builder.Services.AddTransient<ICommentsApiClient, CommentsApiClient>();
+builder.Services.AddTransient<ICategoryApiClient, CategoryApiClient >();
 // Add services to the container.
 IMvcBuilder mvcBuilder = builder.Services.AddRazorPages();
 var envirment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");

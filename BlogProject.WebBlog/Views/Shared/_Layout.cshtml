@@ -1,4 +1,8 @@
-﻿﻿
+﻿@using BlogProject.ViewModel.Catalog.Categories;
+@{
+	List<CategoryVm> categories = ViewData["Category"] as List<CategoryVm>;
+}
+﻿
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
@@ -65,20 +69,14 @@
 			<nav class="navbar navbar-expand-lg">
 				<div class="container-xl">
 					<!-- site logo -->
-					<a class="navbar-brand" href="index.html"><img src="~/images/logo.svg" alt="logo" /></a>
+					<a class="navbar-brand" href="/home/index"><img src="~/images/logo.svg" alt="logo" /></a>
 
 					<div class="collapse navbar-collapse">
 						<!-- menus -->
 						<ul class="navbar-nav mr-auto">
-							<li class="nav-item dropdown active">
-								<a class="nav-link dropdown-toggle" href="index.html">Home</a>
-								<ul class="dropdown-menu">
-									<li><a class="dropdown-item" href="index.html">Magazine</a></li>
-									<li><a class="dropdown-item" href="personal.html">Personal</a></li>
-									<li><a class="dropdown-item" href="personal-alt.html">Personal Alt</a></li>
-									<li><a class="dropdown-item" href="minimal.html">Minimal</a></li>
-									<li><a class="dropdown-item" href="classic.html">Classic</a></li>
-								</ul>
+							<li class="nav-item ">
+								<a class="nav-link " href="/home/index">Home</a>
+								
 							</li>
 							<li class="nav-item">
 								<a class="nav-link" href="category.html">Lifestyle</a>
@@ -130,45 +128,7 @@
 		@RenderBody()
 
 		<!-- instagram feed -->
-		<div class="instagram">
-			<div class="container-xl">
-				<!-- button -->
-				<a href="#" class="btn btn-default btn-instagram">Katen on Instagram</a>
-				<!-- images -->
-				<div class="instagram-feed d-flex flex-wrap">
-					<div class="insta-item col-sm-2 col-6 col-md-2">
-						<a href="#">
-							<img src="~/images/insta/insta-1.jpg" alt="insta-title" />
-						</a>
-					</div>
-					<div class="insta-item col-sm-2 col-6 col-md-2">
-						<a href="#">
-							<img src="~/images/insta/insta-2.jpg" alt="insta-title" />
-						</a>
-					</div>
-					<div class="insta-item col-sm-2 col-6 col-md-2">
-						<a href="#">
-							<img src="~/images/insta/insta-3.jpg" alt="insta-title" />
-						</a>
-					</div>
-					<div class="insta-item col-sm-2 col-6 col-md-2">
-						<a href="#">
-							<img src="~/images/insta/insta-4.jpg" alt="insta-title" />
-						</a>
-					</div>
-					<div class="insta-item col-sm-2 col-6 col-md-2">
-						<a href="#">
-							<img src="~/images/insta/insta-5.jpg" alt="insta-title" />
-						</a>
-					</div>
-					<div class="insta-item col-sm-2 col-6 col-md-2">
-						<a href="#">
-							<img src="~/images/insta/insta-6.jpg" alt="insta-title" />
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
+
 
 		<!-- footer -->
 		<footer>
@@ -217,7 +177,7 @@
 				<button class="btn btn-default btn-lg" type="submit"><i class="icon-magnifier"></i></button>
 			</form>
 		</div>
-	</div>m
+	</div>
 
 	<!-- canvas menu -->
 	<div class="canvas-menu d-flex align-items-end flex-column">
@@ -225,36 +185,16 @@
 		<button type="button" class="btn-close" aria-label="Close"></button>
 
 		<!-- logo -->
-		<div class="logo">
-			<img src="~/images/logo.svg" alt="Katen" />
+		<div class="logo" >
+			<h2>Các Chủ Đề</h2>
 		</div>
 
 		<!-- menu -->
 		<nav>
 			<ul class="vertical-menu">
-				<li class="active">
-					<a href="index.html">Home</a>
-					<ul class="submenu">
-						<li><a href="index.html">Magazine</a></li>
-						<li><a href="personal.html">Personal</a></li>
-						<li><a href="personal-alt.html">Personal Alt</a></li>
-						<li><a href="minimal.html">Minimal</a></li>
-						<li><a href="classic.html">Classic</a></li>
-					</ul>
-				</li>
-				<li><a href="category.html">Lifestyle</a></li>
-				<li><a href="category.html">Inspiration</a></li>
-				<li>
-					<a href="#">Pages</a>
-					<ul class="submenu">
-						<li><a href="category.html">Category</a></li>
-						<li><a href="blog-single.html">Blog Single</a></li>
-						<li><a href="blog-single-alt.html">Blog Single Alt</a></li>
-						<li><a href="about.html">About</a></li>
-						<li><a href="contact.html">Contact</a></li>
-					</ul>
-				</li>
-				<li><a href="contact.html">Contact</a></li>
+				@foreach(var items in categories){
+					<li><a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@items.id">@items.name</a></li>
+				}
 			</ul>
 		</nav>
 

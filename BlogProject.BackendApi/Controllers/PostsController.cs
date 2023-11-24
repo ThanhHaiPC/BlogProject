@@ -154,5 +154,18 @@ namespace BlogProject.BackendApi.Controllers
             var posts = await _postService.PostRecent(quatity);
             return Ok(posts);
         }
+		[HttpGet("post-in-day")]
+		public async Task<IActionResult> GetPostInDay()
+		{
+			var posts = await _postService.GetPostInDay();
+			return Ok(posts);
+		}
+
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetPostOfCategory(int categoryId)
+        {
+            var posts = await _postService.GetPostOfCategory(categoryId);
+            return Ok(posts);
+        }
 	}
 }

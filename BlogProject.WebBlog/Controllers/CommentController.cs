@@ -14,7 +14,8 @@ namespace BlogProject.WebBlog.Controllers
 		{
 			_commentApiClient = commentApiClient;
 		}
-		[HttpPost]	
+		[HttpPost]
+		[Authorize]
 		public async Task<IActionResult> AddComment(int postId, string content)
 		{
 			if (User.Identity.Name == null)

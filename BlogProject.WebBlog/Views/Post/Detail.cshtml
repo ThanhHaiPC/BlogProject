@@ -1,7 +1,13 @@
 ﻿@model BlogProject.ViewModel.Catalog.Posts.PostDetailRequest
 @using BlogProject.ViewModel.Catalog.Comments
+@using BlogProject.ViewModel.Catalog.Posts
+@using BlogProject.ViewModel.Catalog.Categories
 @{
 	List<CommentVm> objectList = ViewData["commentList"] as List<CommentVm>;
+	List<PostVm> recentPost = ViewData["PostRecent"] as List<PostVm>;
+	List<PostVm> popularPost = ViewData["PostPopular"] as List<PostVm>;
+	List<PostVm> postInDay = ViewData["PostInDay"] as List<PostVm>;
+	
 }
 @{
 	ViewData["Title"] = "Detail";
@@ -9,6 +15,12 @@
 }
 
 <style>
+	.post-image {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		object-fit: cover;
+	}
 	.avatar-image {
 		width: 70px;
 		height: 70px;
@@ -84,17 +96,18 @@
     });
 </script>
 
+
 <section class="main-content mt-3">
 	<div class="container-xl">
-
+		
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="@Url.Action("index", "home")">Home</a></li>
-				<li class="breadcrumb-item"><a href="#">Inspiration</a></li>
+				<li class="breadcrumb-item"><a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@Model.Post.CategoryId">@Html.DisplayFor(model => model.Post.CategoryName)</a></li>
 				<li class="breadcrumb-item active" aria-current="page">@Html.DisplayFor(model => model.Post.Title)</li>
 			</ol>
 		</nav>
-
+		
 		<div class="row gy-4">
 
 			<div class="col-lg-8">
@@ -106,14 +119,18 @@
 						<h1 class="title mt-0 mb-3">@Html.DisplayFor(model => model.Post.Title)</h1>
 						<ul class="meta list-inline mb-0">
 							<li class="list-inline-item"><a href="#">@Html.DisplayFor(model => model.Post.UserName)</a></li>
-							<li class="list-inline-item"><a href="#">Trending</a></li>
+							<li class="list-inline-item"><a href="">@Html.DisplayFor(Model => Model.Post.CategoryName)</a></li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.UploadDate)</li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.View) Views</li>
 						</ul>
 					</div>
 					<!-- featured image -->
-					<div class="featured-image">
+					@*<div class="featured-image">
 						<img src="@Html.DisplayFor(model => model.Post.Image)" alt="post-title" />
+					</div>*@
+					<!-- post content -->
+					<div class="post-content clearfix">
+						@Html.DisplayFor(model => model.Post.Desprition)
 					</div>
 					<!-- post content -->
 					<div class="post-content clearfix">
@@ -128,17 +145,7 @@
 								<a href="#" class="tag">#Video</a>
 								<a href="#" class="tag">#Featured</a>
 							</div>
-							<div class="col-md-6 col-12">
-								<!-- social icons -->
-								<ul class="social-icons list-unstyled list-inline mb-0 float-md-end">
-									<li class="list-inline-item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-									<li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-									<li class="list-inline-item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-									<li class="list-inline-item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-									<li class="list-inline-item"><a href="#"><i class="fab fa-telegram-plane"></i></a></li>
-									<li class="list-inline-item"><a href="#"><i class="far fa-envelope"></i></a></li>
-								</ul>
-							</div>
+							
 						</div>
 					</div>
 
@@ -218,135 +225,61 @@
 						</div>
 						<div class="widget-content">
 							<!-- post -->
-							<div class="post post-list-sm circle">
-								<div class="thumb circle">
-									<span class="number">1</span>
-									<a href="blog-single.html">
-										<div class="inner">
-											<img src="~/images/posts/tabs-1.jpg" alt="post-title" />
-										</div>
-									</a>
+							@for (int i = 0; i < popularPost.Count; i++)
+							{
+								<div class="post post-list-sm circle">
+									<div class="thumb circle">
+										<span class="number">@(i + 1)</span>
+										<a asp-action="Detail" asp-controller="Post" asp-route-ID="@popularPost[i].PostID">
+											<div class="inner">
+												<img src="@popularPost[i].Image" class="post-image" alt="post-title" />
+											</div>
+										</a>
+									</div>
+									<div class="details clearfix">
+										<h6 class="post-title my-0"><a asp-action="Detail" asp-controller="Post" asp-route-ID="@popularPost[i].PostID">@popularPost[i].Title</a></h6>
+										<ul class="meta list-inline mt-1 mb-0">
+											<li class="list-inline-item">@popularPost[i].UploadDate.ToString("dd/MM/yyyy")</li>
+										</ul>
+									</div>
 								</div>
-								<div class="details clearfix">
-									<h6 class="post-title my-0"><a href="blog-single.html">3 Easy Ways To Make Your iPhone Faster</a></h6>
-									<ul class="meta list-inline mt-1 mb-0">
-										<li class="list-inline-item">29 March 2021</li>
-									</ul>
-								</div>
-							</div>
-							<!-- post -->
-							<div class="post post-list-sm circle">
-								<div class="thumb circle">
-									<span class="number">2</span>
-									<a href="blog-single.html">
-										<div class="inner">
-											<img src="~/images/posts/tabs-2.jpg" alt="post-title" />
-										</div>
-									</a>
-								</div>
-								<div class="details clearfix">
-									<h6 class="post-title my-0"><a href="blog-single.html">An Incredibly Easy Method That Works For All</a></h6>
-									<ul class="meta list-inline mt-1 mb-0">
-										<li class="list-inline-item">29 March 2021</li>
-									</ul>
-								</div>
-							</div>
-							<!-- post -->
-							<div class="post post-list-sm circle">
-								<div class="thumb circle">
-									<span class="number">3</span>
-									<a href="blog-single.html">
-										<div class="inner">
-											<img src="~/images/posts/tabs-3.jpg" alt="post-title" />
-										</div>
-									</a>
-								</div>
-								<div class="details clearfix">
-									<h6 class="post-title my-0"><a href="blog-single.html">10 Ways To Immediately Start Selling Furniture</a></h6>
-									<ul class="meta list-inline mt-1 mb-0">
-										<li class="list-inline-item">29 March 2021</li>
-									</ul>
-								</div>
-							</div>
+
+							}
+						
 						</div>
 					</div>
 
 					<!-- widget categories -->
-					<div class="widget rounded">
-						<div class="widget-header text-center">
-							<h3 class="widget-title">Explore Topics</h3>
-							<img src="~/images/wave.svg" class="wave" alt="wave" />
-						</div>
-						<div class="widget-content">
-							<ul class="list">
-								<li><a href="#">Lifestyle</a><span>(5)</span></li>
-								<li><a href="#">Inspiration</a><span>(2)</span></li>
-								<li><a href="#">Fashion</a><span>(4)</span></li>
-								<li><a href="#">Politic</a><span>(1)</span></li>
-								<li><a href="#">Trending</a><span>(7)</span></li>
-								<li><a href="#">Culture</a><span>(3)</span></li>
-							</ul>
-						</div>
-
-					</div>
+				
 
 
 					<!-- widget post carousel -->
 					<div class="widget rounded">
 						<div class="widget-header text-center">
-							<h3 class="widget-title">Celebration</h3>
+							<h3 class="widget-title">Các Tin Tức Trong Ngày</h3>
 							<img src="~/images/wave.svg" class="wave" alt="wave" />
 						</div>
 						<div class="widget-content">
 							<div class="post-carousel-widget">
 								<!-- post -->
+								@foreach(var items in postInDay){
 								<div class="post post-carousel">
 									<div class="thumb rounded">
-										<a href="category.html" class="category-badge position-absolute">How to</a>
-										<a href="blog-single.html">
+										<a href="category.html" class="category-badge position-absolute">@items.CategoryName</a>
+											<a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">
 											<div class="inner">
-												<img src="~/images/widgets/widget-carousel-1.jpg" alt="post-title" />
+												<img src="@items.Image" alt="post-title" />
 											</div>
 										</a>
 									</div>
-									<h5 class="post-title mb-0 mt-4"><a href="blog-single.html">5 Easy Ways You Can Turn Future Into Success</a></h5>
+										<h5 class="post-title mb-0 mt-4"><a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">@items.Title</a></h5>
 									<ul class="meta list-inline mt-2 mb-0">
-										<li class="list-inline-item"><a href="#">Katen Doe</a></li>
-										<li class="list-inline-item">29 March 2021</li>
+										<li class="list-inline-item"><a href="#">@items.UserName</a></li>
+										<li class="list-inline-item">@items.UploadDate.ToString("dd/MM/yyyy")</li>
 									</ul>
 								</div>
-								<!-- post -->
-								<div class="post post-carousel">
-									<div class="thumb rounded">
-										<a href="category.html" class="category-badge position-absolute">Trending</a>
-										<a href="blog-single.html">
-											<div class="inner">
-												<img src="~/images/widgets/widget-carousel-2.jpg" alt="post-title" />
-											</div>
-										</a>
-									</div>
-									<h5 class="post-title mb-0 mt-4"><a href="blog-single.html">Master The Art Of Nature With These 7 Tips</a></h5>
-									<ul class="meta list-inline mt-2 mb-0">
-										<li class="list-inline-item"><a href="#">Katen Doe</a></li>
-										<li class="list-inline-item">29 March 2021</li>
-									</ul>
-								</div>
-								<!-- post -->
-								<div class="post post-carousel">
-									<div class="thumb rounded">
-										<a href="category.html" class="category-badge position-absolute">How to</a>
-										<a href="blog-single.html">
-											<div class="inner">
-												<img src="~/images/widgets/widget-carousel-1.jpg" alt="post-title" />
-											</div>
-										</a>
-									</div>
-									<h5 class="post-title mb-0 mt-4"><a href="blog-single.html">5 Easy Ways You Can Turn Future Into Success</a></h5>
-									<ul class="meta list-inline mt-2 mb-0">
-										<li class="list-inline-item"><a href="#">Katen Doe</a></li>
-										<li class="list-inline-item">29 March 2021</li>
-									</ul>
-								</div>
+								}
+							
 							</div>
 							<!-- carousel arrows -->
 							<div class="slick-arrows-bot">

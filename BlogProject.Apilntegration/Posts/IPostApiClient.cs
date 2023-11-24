@@ -23,5 +23,7 @@ namespace BlogProject.Apilntegration.Posts
 		Task<List<BlogProject.Data.Entities.Posts>> GetAll();
         Task<ApiResult<PostVm>> GetById(int id);
 		Task<ApiResult<PostVm>> Detial(int id);
+        Task<List<PostVm>> GetPostInDay();
+        Task<List<PostVm>> GetPostOfCategory(int categoryId);
 	}
 }

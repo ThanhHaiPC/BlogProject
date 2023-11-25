@@ -4,6 +4,7 @@ using BlogProject.Application.Catalog.Likes;
 using BlogProject.Application.System.Users;
 using BlogProject.Data.EF;
 using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Like;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
@@ -206,7 +207,9 @@ namespace BlogProject.Application.Catalog.Post
 					CountComment = _context.Comments
 					   .Where(c => c.PostID == x.p.PostID)
 					   .Count(),
-                    
+                    CountLike = _context.Likes
+                        .Where(c=>c.PostID == x.p.PostID)
+                        .Count()
 				}).ToListAsync();
             //4. Select and projection
             var pagedResult = new PagedResult<PostVm>()
@@ -297,7 +300,9 @@ namespace BlogProject.Application.Catalog.Post
 				CountComment = _context.Comments
 					   .Where(c => c.PostID == postId.PostID)
 					   .Count(),
-				CountLike = postId.Like,
+				CountLike = _context.Likes
+					   .Where(c => c.PostID == postId.PostID)
+					   .Count(),
             };
             _context.SaveChanges();
 			return new ApiSuccessResult<PostVm>(postvm);
@@ -328,7 +333,9 @@ namespace BlogProject.Application.Catalog.Post
 				CountComment = _context.Comments
 					   .Where(c => c.PostID == postId.PostID)
 					   .Count(),
-				CountLike = postId.Like,
+				CountLike = _context.Likes
+					   .Where(c => c.PostID == postId.PostID)
+					   .Count(),
 			};
 			_context.SaveChanges();
 			return new ApiSuccessResult<PostVm>(postvm);
@@ -522,5 +529,31 @@ namespace BlogProject.Application.Catalog.Post
             }
             return postVms;
 		}
+
+		public async Task<ApiResult<bool>> Like(LikeVm request, string userId)
+		{
+            var  userID = await _userManager.FindByIdAsync(userId);
+			var existingLike = _context.Likes.FirstOrDefault(l => l.PostID == request.Id && l.UserId == userID.Id);
+			if (existingLike != null)
+			{
+				_context.Likes.Remove(existingLike);
+				await _context.SaveChangesAsync();
+
+				return new ApiSuccessResult<bool>();
+			}
+			else
+			{
+				var addLikes = new Like();
+				addLikes.UserId = userID.Id;
+				addLikes.PostID  = request.Id;
+				addLikes.Date = DateTime.Now;
+
+				_context.Likes.Add(addLikes);
+				await _context.SaveChangesAsync();
+			}
+
+			return new ApiSuccessResult<bool>();
+		}
 	}
+	
 }

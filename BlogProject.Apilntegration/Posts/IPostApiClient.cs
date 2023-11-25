@@ -1,4 +1,5 @@
 ﻿using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Like;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
@@ -24,6 +25,7 @@ namespace BlogProject.Apilntegration.Posts
         Task<ApiResult<PostVm>> GetById(int id);
 		Task<ApiResult<PostVm>> Detial(int id);
         Task<List<PostVm>> GetPostInDay();
+        Task<ApiResult<bool>> Like(LikeVm request);
         Task<List<PostVm>> GetPostOfCategory(int categoryId);
 	}
 }

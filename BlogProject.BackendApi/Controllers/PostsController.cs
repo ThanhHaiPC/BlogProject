@@ -1,4 +1,5 @@
 ﻿using BlogProject.Application.Catalog.Post;
+using BlogProject.ViewModel.Catalog.Like;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -167,5 +168,19 @@ namespace BlogProject.BackendApi.Controllers
             var posts = await _postService.GetPostOfCategory(categoryId);
             return Ok(posts);
         }
+        [HttpPost("addlike")]
+		public async Task<IActionResult> AddLike([FromBody] LikeVm request)
+		{
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			var result = await _postService.Like(request, userId);
+				if (!result.IsSuccessed)
+				{
+					return BadRequest(result);
+				}
+				return Ok(result);
+			
+
+			
+		}
 	}
 }

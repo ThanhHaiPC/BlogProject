@@ -6,6 +6,9 @@ using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using BlogProject.ViewModel.Catalog.Like;
+using BlogProject.ViewModel.Catalog.Comments;
 
 namespace BlogProject.WebBlog.Controllers
 {
@@ -53,6 +56,33 @@ namespace BlogProject.WebBlog.Controllers
            
             return View(post);
         }
+		[Authorize]
+		[HttpPost]
+		public async Task<IActionResult> Like(int postId)
+		{
 
-    }
+			if (User.Identity.Name == null)
+			{
+				return BadRequest();
+			}
+
+			var addlike = new LikeVm
+			{
+
+
+				Username = User.Identity.Name,
+				Id = postId,		
+				
+			};
+			var result = await _postApiClient.Like(addlike);
+
+			if (result.IsSuccessed)
+			{
+				return Ok();
+			}
+
+			return BadRequest();
+		}
+
+	}
 }

@@ -1,4 +1,5 @@
 ﻿using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Like;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
@@ -26,6 +27,7 @@ namespace BlogProject.Application.Catalog.Post
         Task<List<PostVm>> PostRecent(int quantity);
 		Task<List<PostVm>> TakeTopByQuantity(int quantity);
 		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);
+        Task<ApiResult<bool>> Like(LikeVm request, string userId);
 		/* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
 	}
 }

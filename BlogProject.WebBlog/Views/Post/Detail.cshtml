@@ -119,7 +119,7 @@
 						<h1 class="title mt-0 mb-3">@Html.DisplayFor(model => model.Post.Title)</h1>
 						<ul class="meta list-inline mb-0">
 							<li class="list-inline-item"><a href="#">@Html.DisplayFor(model => model.Post.UserName)</a></li>
-							<li class="list-inline-item"><a href="">@Html.DisplayFor(Model => Model.Post.CategoryName)</a></li>
+							<li class="list-inline-item"><a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@Model.Post.CategoryId">@Html.DisplayFor(Model => Model.Post.CategoryName)</a></li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.UploadDate)</li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.View) Views</li>
 						</ul>
@@ -289,8 +289,11 @@
 						</div>
 					</div>
 
-					<!-- widget advertisement -->
-					
+					<!-- Area Like -->
+					<div id="like-container">
+						<span id="like-count">@Model.Post.CountLike</span> Likes
+						<button id="like-button" >Like</button>
+					</div>
 
 					<!-- widget tags -->
 					<div class="widget rounded">
@@ -358,7 +361,21 @@
 				}
 			});
 		}
-
+		//LIKE
+		$("#like-button").on("click", function () {
+			$.ajax({
+				url: "/Post/Like",
+				type: 'POST',
+				data: { postId: '@Model.Post.PostID' },
+				success: function (data) {
+					console.log("ádasd");
+					window.location.reload();
+				},
+				error: function () {
+					alert("Đã xảy ra lỗi khi thực hiện like.");
+				}
+			});
+		});
 
 
 		

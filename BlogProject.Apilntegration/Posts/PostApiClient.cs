@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using BlogProject.ViewModel.Catalog.Categories;
 using BlogProject.Data.Entities;
+using BlogProject.ViewModel.Catalog.Like;
+using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace BlogProject.Admin.Service
 {
@@ -181,6 +184,22 @@ namespace BlogProject.Admin.Service
 			var body = await response.Content.ReadAsStringAsync();
 			var users = JsonConvert.DeserializeObject<List<PostVm>>(body);
 			return users;
+		}
+
+		public async Task<ApiResult<bool>> Like(LikeVm request)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var json = JsonConvert.SerializeObject(request);
+			var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+			var response = await client.PostAsync("/api/posts/addlike/",httpContent);
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
+
+			return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
 		}
 
 		public async Task<List<Posts>> PopularPost()

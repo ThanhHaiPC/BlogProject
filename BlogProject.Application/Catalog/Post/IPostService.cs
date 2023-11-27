@@ -28,6 +28,7 @@ namespace BlogProject.Application.Catalog.Post
 		Task<List<PostVm>> TakeTopByQuantity(int quantity);
 		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);
         Task<ApiResult<bool>> Like(LikeVm request, string userId);
+        Task<Like> CheckLike(string UserName, int Id);
 		/* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
 	}
 }

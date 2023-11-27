@@ -177,10 +177,19 @@ namespace BlogProject.BackendApi.Controllers
 				{
 					return BadRequest(result);
 				}
-				return Ok(result);
-			
+				return Ok(result);					
+		}
+        [HttpGet("check")]
+        public async Task<IActionResult> CheckLike([FromQuery] LikeVm request)
+        {
+			var result = await _postService.CheckLike(request.Username, request.Id);
+			if (result != null)
+			{
+				return Ok();
+			}
 
-			
+			return BadRequest();
+
 		}
 	}
 }

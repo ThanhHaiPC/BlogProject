@@ -64,6 +64,19 @@
 	.replyForm {
 		margin-top: 10px;
 	}
+
+	#like-icon {
+		width: 20px; /* Điều chỉnh kích thước icon theo mong muốn */
+		height: 20px;
+		margin-left: 5px; /* Điều chỉnh khoảng cách giữa icon và văn bản */
+	}
+
+	#like-button.liked {
+		background-color: blue; /* Màu nền khi đã like */
+		color: #fff; /* Màu chữ khi đã like */
+	}
+
+	 
 </style>
 <script>
     // Bắt đầu chờ khi DOM đã được load
@@ -122,8 +135,12 @@
 							<li class="list-inline-item"><a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@Model.Post.CategoryId">@Html.DisplayFor(Model => Model.Post.CategoryName)</a></li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.UploadDate)</li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.View) Views</li>
+
 						</ul>
+
+						
 					</div>
+
 					<!-- featured image -->
 					@*<div class="featured-image">
 						<img src="@Html.DisplayFor(model => model.Post.Image)" alt="post-title" />
@@ -139,6 +156,33 @@
 					<!-- post bottom section -->
 					<div class="post-bottom">
 						<div class="row d-flex align-items-center">
+							
+							<div class="col-md-6 col-12 text-center text-md-start">
+
+								@if (@ViewBag.CheckLike == true)
+								{
+									
+									<a title="Bỏ thích" a-like-id="@Model.Post.PostID" id="like-count" class="like-post btn btn-danger">
+										<span class="u-icon u-text-white"></span>
+										<i class="fa fa-solid fa-heart liked" style="color: yellow"></i>
+										&nbsp;Bỏ Thích @Model.Post.CountLike
+
+									</a>
+								}
+								else
+								{
+
+									<a title="Thích" a-like-id="@Model.Post.PostID" id="like-count" class="like-post  btn btn-success">
+										<span class="u-icon u-text-white">
+										</span><i class="fa fa-solid fa-heart "></i>
+										&nbsp;Thích @Model.Post.CountLike
+
+									</a>
+									
+								}
+								
+
+							</div>
 							<div class="col-md-6 col-12 text-center text-md-start">
 								<!-- tags -->
 								<a href="#" class="tag">#Trending</a>
@@ -151,8 +195,7 @@
 
 				</div>
 
-				<div class="spacer" data-height="50"></div>
-
+				
 
 
 				<div class="spacer" data-height="50"></div>
@@ -173,7 +216,6 @@
 							
 					</ul>					
 				</div>
-				
 				
 			@*	<div class="spacer" data-height="50"></div>*@
 
@@ -289,11 +331,7 @@
 						</div>
 					</div>
 
-					<!-- Area Like -->
-					<div id="like-container">
-						<span id="like-count">@Model.Post.CountLike</span> Likes
-						<button id="like-button" >Like</button>
-					</div>
+					
 
 					<!-- widget tags -->
 					<div class="widget rounded">
@@ -361,23 +399,45 @@
 				}
 			});
 		}
-		//LIKE
-		$("#like-button").on("click", function () {
-			$.ajax({
-				url: "/Post/Like",
-				type: 'POST',
-				data: { postId: '@Model.Post.PostID' },
-				success: function (data) {
-					console.log("ádasd");
-					window.location.reload();
-				},
-				error: function () {
-					alert("Vui lòng đăng nhập.");
-				}
-			});
+		// LIKE
+		$('.like-post').click(function (event) {
+			event.preventDefault();
+			var Id = $(this).attr('a-like-id');
+			var likeIcon = $('a.like-post i');
+
+			if (likeIcon.hasClass('liked')) {
+
+				$.ajax({
+					url: '/Post/Like',
+					type: 'POST',
+					
+					data: { postId: '@Model.Post.PostID' },
+					success: function (response) {
+						window.location.reload();
+					},
+					error: function () {
+						alert('Có lỗi xảy ra khi xóa thích bài viết');
+
+					}
+				});
+			} else {
+				$.ajax({
+					url: '/Post/Like',
+					type: 'POST',
+					
+					data: { postId: '@Model.Post.PostID' },
+					success: function (response) {
+						window.location.reload();
+					},
+					error: function () {
+						alert('Vui lòng đăng nhập');
+
+						// alert('Có lỗi xảy ra khi lưu bài viết');
+					}
+				});
+			}
+
 		});
-
-
 		
 	});
 </script>

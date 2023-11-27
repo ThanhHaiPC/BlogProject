@@ -37,14 +37,16 @@ namespace BlogProject.Application.Catalog.Post
         /*    private readonly ICommentService _commentService;*/
         private readonly ILikeService _likeService;
 
-        public PostService(BlogDbContext context, UserManager<User> userManager, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
+        public PostService(BlogDbContext context, UserManager<User> userManager, IUserService userService, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
         {
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
             /* _commentService = commentService;*/
             _likeService = likeService;
-        }
+			_userService= userService;
+
+		}
 
         public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
         {
@@ -553,6 +555,13 @@ namespace BlogProject.Application.Catalog.Post
 			}
 
 			return new ApiSuccessResult<bool>();
+		}
+
+		public async Task<Like> CheckLike(string UserName, int Id)
+		{
+            var user = await _userService.GetIdByUserName(UserName);
+            var check = await _context.Likes.FirstOrDefaultAsync(x=>x.PostID == Id && x.UserId == user);
+            return check;
 		}
 	}
 	

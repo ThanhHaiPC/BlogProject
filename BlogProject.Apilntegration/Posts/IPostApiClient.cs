@@ -26,6 +26,7 @@ namespace BlogProject.Apilntegration.Posts
 		Task<ApiResult<PostVm>> Detial(int id);
         Task<List<PostVm>> GetPostInDay();
         Task<ApiResult<bool>> Like(LikeVm request);
-        Task<List<PostVm>> GetPostOfCategory(int categoryId);
+		Task<ApiResult<bool>> Check(LikeVm request);
+		Task<List<PostVm>> GetPostOfCategory(int categoryId);
 	}
 }

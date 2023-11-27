@@ -34,7 +34,22 @@ namespace BlogProject.Admin.Service
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ApiResult<bool>> CreatePost(PostRequest request)
+		public async Task<ApiResult<bool>> Check(LikeVm request)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+			var response = await client.GetAsync($"/api/posts/check?Username={request.Username}&Id={request.Id}");
+
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return new ApiSuccessResult<bool>();
+			return new ApiErrorResult<bool>();
+		}
+
+		public async Task<ApiResult<bool>> CreatePost(PostRequest request)
         {
             var sessions = _httpContextAccessor
                 .HttpContext

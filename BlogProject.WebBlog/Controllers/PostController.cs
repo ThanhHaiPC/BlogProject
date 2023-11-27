@@ -28,6 +28,11 @@ namespace BlogProject.WebBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail (int id)
         {
+			var likeVm = new LikeVm();
+
+			likeVm.Id = id;
+			likeVm.Username = User.Identity.Name;
+
 			var Popular = await _postApiClient.TakeTopByQuantity(3);
 			ViewData["PostPopular"] = Popular;
 			var PostRecent = await _postApiClient.RecentPost(3);
@@ -38,6 +43,12 @@ namespace BlogProject.WebBlog.Controllers
 			ViewData["Category"] = Category;
 			var post = await _postApiClient.Detial(id);
 			var comments = await _commentApiClient.GetAllByPostId(id);
+			var checkLike = await _postApiClient.Check(likeVm);
+			if (checkLike.IsSuccessed == true)
+			{
+				ViewBag.CheckLike = true;
+			}
+			else { ViewBag.CheckLike = false; }
 
 			var model = new PostDetailRequest
 			{
@@ -78,7 +89,8 @@ namespace BlogProject.WebBlog.Controllers
 
 			if (result.IsSuccessed)
 			{
-				return Ok();
+				var post = await _postApiClient.GetById(postId);
+				return Ok(post);
 			}
 
 			return BadRequest();

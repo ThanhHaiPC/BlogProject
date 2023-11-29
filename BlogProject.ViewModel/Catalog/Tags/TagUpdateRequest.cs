@@ -8,6 +8,10 @@ namespace BlogProject.ViewModel.Catalog.Tags
 {
     public class TagUpdateRequest
     {
+        public int TagId { get; set; }
+        public int? PostID { get; set; }
         public string TagName { get; set; }
+        public DateTime UploadDate { get; set; }
+        public int View { get; set; }
     }
 }

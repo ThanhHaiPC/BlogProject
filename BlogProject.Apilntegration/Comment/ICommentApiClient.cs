@@ -12,5 +12,8 @@ namespace BlogProject.Apilntegration.Comment
     public interface ICommentApiClient
     {
         Task<PagedResult<CommentVm>> GetByPostId(int postId, GetUserPagingRequest request);
+        Task<List<CommentVm>> GetAllByPostId(int postId);
+        Task<List<CommentVm>> GetById(int id);
+        Task<ApiResult<bool>> Create(CommentCreateRequest request);
     }
 }

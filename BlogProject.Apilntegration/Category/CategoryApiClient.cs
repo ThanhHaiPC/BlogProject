@@ -26,21 +26,22 @@ namespace BlogProject.Apilntegration.Category
                     IConfiguration configuration)
             : base(httpClientFactory, httpContextAccessor, configuration)
         {
-
+            _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<ApiResult<bool>> DeleteCategory(int idCategory)
         {
-            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
             var client = _httpClientFactory.CreateClient();
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
-            var response = await client.DeleteAsync($"/api/categories/{idCategory}");
+            var response = await client.DeleteAsync($"/api/Categories/{idCategory}");
             var body = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
                 return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
 
-            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
         }
 
@@ -49,22 +50,23 @@ namespace BlogProject.Apilntegration.Category
             return await GetListAsync<CategoryVm>("api/Categories/getall");
         }
 
-        public async Task<ApiResult<CategoryRequest>> GetById(int id)
-        {
-            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
-            var response = await client.GetAsync($"/api/Categories/{id}");
-            var body = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<ApiSuccessResult<CategoryRequest>>(body);
+		public async Task<ApiResult<CategoryRequest>> GetById(int id)
+		{
 
-            return JsonConvert.DeserializeObject<ApiErrorResult<CategoryRequest>>(body);
-        }
+			var sessions = _httpContextAccessor.HttpContext?.Session?.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/Categories/{id}");
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return JsonConvert.DeserializeObject<ApiSuccessResult<CategoryRequest>>(body);
+
+			return JsonConvert.DeserializeObject<ApiErrorResult<CategoryRequest>>(body);
+		}
 
 
-        public async Task<ApiResult<bool>> UpdateCategory(int idCategory, CategoryRequest request)
+		public async Task<ApiResult<bool>> UpdateCategory(int idCategory, CategoryRequest request)
         {
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
@@ -98,13 +100,14 @@ namespace BlogProject.Apilntegration.Category
 
         public async Task<ApiResult<PagedResult<CategoryRequest>>> GetUsersPagings(GetUserPagingRequest request)
         {
+            
             var client = _httpClientFactory.CreateClient();
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
 
-            var response = await client.GetAsync($"/api/categoriess/paging?pageIndex=" +
+            var response = await client.GetAsync($"/api/categories/paging?pageIndex=" +
                 $"{request.PageIndex}&pageSize={request.PageSize}&Keyword={request.Keyword}");
 
             var body = await response.Content.ReadAsStringAsync();

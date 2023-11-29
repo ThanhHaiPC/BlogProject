@@ -3,15 +3,13 @@
     ViewData["Title"] = "Register";
     Layout = null;
 }
-<link rel="apple-touch-icon" href="icon.png">
+<!-- MATERIAL DESIGN ICONIC FONT -->
+<link rel="stylesheet" href="~/assets1/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
 
-<meta name="theme-color" content="#030303">
-<!-- google fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;0,700;1,300;1,500&family=Poppins:ital,wght@0,300;0,500;0,700;1,300;1,400&display=swap"
-      rel="stylesheet">
-<link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+<!-- STYLE CSS -->
+<link rel="stylesheet" href="~/assets1/css/style.css">
 
-<section class="wrap__section">
+@* <section class="wrap__section">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -97,6 +95,92 @@
                     </article><!-- card-body.// -->
                 </div>
                 <!-- end register -->
+            </div>
+        </div>
+    </div>
+</section> *@
+<section class="wrap__section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="wrapper" style="background-image: url('/assets1/images/1.jpg');">
+                    <div class="inner">
+                        <div class="image-holder">
+                            <img src="~/assets1/images/1.jpg" alt="">
+                        </div>
+                        <form asp-action="Register" asp-controller="Account" method="post" class="form-horizontal">
+                            <h3>Registration Form</h3>
+                            <div class="control-group">
+                                <div class="controls">
+                                    <input type="text" asp-for="FirstName" placeholder="First Name" class="form-control">
+                                    <span asp-validation-for="FirstName" class="text-error"></span>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                @*  <label class="control-label" for="inputLnam">Last name <sup>*</sup></label> *@
+                                <div class="controls">
+                                    <input type="text" asp-for="LastName" placeholder="Last Name" class="form-control">
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                @* <label class="control-label" for="input_email">Email <sup>*</sup></label> *@
+                                <div class="controls">
+                                    <input type="email" asp-for="Email" placeholder="Email" class="form-control">
+                                    <span asp-validation-for="Email" class="text-error"></span>
+                                </div>
+                            </div>
+                            <label class="control-label" for="input_email">Giới tính <sup>*</sup></label>
+                            <div class="form-group">
+                                @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
+                                {
+                                new SelectListItem { Value = "2", Text = "Không" },
+                                new SelectListItem { Value = "0", Text = "Nam" },
+                                new SelectListItem { Value = "1", Text = "Nữ" }
+                                }, "Value", "Text"), "Chọn", new { @class = "form-control" })
+
+                            </div>
+                            <label class="control-label" for="input_email">Ngày sinh <sup>*</sup></label>
+                            <div class="form-group">
+
+                                <input asp-for="DateOfBir" class="form-control" />
+                                <span asp-validation-for="DateOfBir" class="text-danger"></span>
+                            </div>
+                            <div class="control-group">
+
+                                <div class="controls">
+                                    <input type="text" asp-for="UserName" placeholder="User Name" class="form-control">
+                                </div>
+                            </div>
+                            <div class="control-group">
+
+                                <div class="controls">
+                                    <input type="password" asp-for="Password" placeholder="Password" class="form-control">
+                                </div>
+                            </div>
+                            <div class="control-group">
+
+                                <div class="controls">
+                                    <input type="password" asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control">
+                                </div>
+                            </div>
+                            <div class="control-group">
+
+                                <div class="controls">
+                                    <input type="text" asp-for="PhoneNumber" placeholder="Mobile Phone" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-block"> Register </button>
+                            </div> <!-- form-group// -->
+                            @*   <div class="form-group">
+                            <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" checked="">
+                            <span class="custom-control-label"> I am agree with <a href="#">terms and contitions</a> </span>
+                            </label>
+                            </div> <!-- form-group end.// --> *@
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

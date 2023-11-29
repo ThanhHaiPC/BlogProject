@@ -1,4 +1,5 @@
 ﻿using BlogProject.Utilities.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -60,6 +61,12 @@ namespace BlogProject.Apilntegration
                 return data;
             }
             throw new Exception(body);
+        }
+
+        [Authorize]
+        public string GetToken()
+        {
+            return _httpContextAccessor.HttpContext.Session.GetString("Token");
         }
     }
 }

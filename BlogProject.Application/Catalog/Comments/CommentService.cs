@@ -7,6 +7,7 @@ using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,28 @@ namespace BlogProject.Application.Catalog.Comments
             _postService = postService;
         }
 
+        public async Task<List<CommentVm>> CommentsByPost(int postId)
+        {
+            var comment = await _context.Comments
+                .Where(x => x.PostID == postId)
+                .OrderByDescending(x => x.Date)
+                .Include(x => x.User)
+                .ToListAsync();
+            var commentVm = new List<CommentVm>();
+            foreach (var item in comment)
+            {
+                CommentVm vm = new CommentVm();
+                vm.postId = postId;
+                vm.UserName = item.User.UserName;
+                vm.Avatar = item.User.Image;
+                vm.Content = item.Content;
+                vm.DateTime = item.Date;
+
+                commentVm.Add(vm);
+            }
+            return commentVm;
+        }
+
         public async Task<int> CountAsyncById(int id)
         {
             return await _context.Comments.Where(x => x.PostID == id).CountAsync();
@@ -38,31 +61,25 @@ namespace BlogProject.Application.Catalog.Comments
             return _context.Comments.Where(x => x.PostID == id).Count();
         }
 
-        public async Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId)
+        public async Task<ApiResult<bool>> Create(CommentCreateRequest request)
         {
 
-            
-            var user = await _userManager.FindByIdAsync(userId);
+            Guid userId = await _userService.GetIdByUserName(request.UserName);
+            var comment = new Comment();
+            comment.UserId = userId;
+            comment.PostID = request.PostID ?? 0;
 
-            // Tạo một đối tượng Comment từ dữ liệu trong request
-            var comment = new Comment
-            {
-                UserId = user.Id,
-                PostID = request.PostID ?? 0,
-                Date = DateTime.Now,
-                Content = request.Content,
-                Like = 0
-            };
+            comment.Date = DateTime.Now;
+            comment.Content = request.Content;
+            comment.Like = 0;
 
-            // Lưu đối tượng Comment vào cơ sở dữ liệu 
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            // Lấy thông tin bài viết liên quan đến comment
             var post = await _context.Posts.Where(x => x.PostID == request.PostID).FirstOrDefaultAsync();
+            var content = request.UserName + " vừa bình luận bài viết '" + post.Title + "' của bạn lúc " + DateTime.Now.ToString("HH:mm, dd/MM/yyyy");
 
-            // Tạo nội dung thông báo
-            var content = $"{request.UserName} vừa bình luận bài viết '{post.Title}' của bạn lúc {DateTime.Now.ToString("HH:mm, dd/MM/yyyy")}";
+
             return new ApiSuccessResult<bool>();
 
         }
@@ -85,6 +102,7 @@ namespace BlogProject.Application.Catalog.Comments
         {
             var commentId = await _context.Comments
                .Include(c => c.User)
+               .OrderByDescending(x => x.Date)
                .Where(p => p.PostID == postId)
                .ToListAsync();
 
@@ -113,6 +131,22 @@ namespace BlogProject.Application.Catalog.Comments
                 Items = data
             };
             return pagedResult;
+        }
+
+        public async Task<List<CommentVm>> GetList(int postId)
+        {
+            var comment = await _context.Comments.Include(x => x.User).OrderByDescending(o => o.Date).Where(x => x.PostID == postId).ToListAsync();
+            List<CommentVm> result = new List<CommentVm>();
+            foreach (var commentVm in comment)
+            {
+                CommentVm cm = new CommentVm();
+                cm.Content = commentVm.Content;
+                cm.DateTime = commentVm.Date;
+                cm.Avatar = commentVm.User.Image;
+                cm.UserName = commentVm.User.UserName;
+                result.Add(cm);
+            }
+            return result;
         }
     }
 }

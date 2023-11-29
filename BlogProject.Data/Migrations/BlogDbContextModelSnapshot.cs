@@ -257,6 +257,9 @@ namespace BlogProject.Data.Migrations
                     b.Property<int>("OrderNo")
                         .HasColumnType("int");
 
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -379,7 +382,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "30356f16-07d7-4b35-ba2b-40a0bbb57879",
+                            ConcurrencyStamp = "083bd11d-b1ee-4e49-86e0-d1ebc0c41a0f",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -387,7 +390,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "c3662776-1e86-4c9a-94cb-2949f9b6d063",
+                            ConcurrencyStamp = "3899ccdf-64c0-48f8-aae4-bbe631bb7ec5",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -409,14 +412,15 @@ namespace BlogProject.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("View")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
                     b.HasKey("TagID");
-
-                    b.HasIndex("PostID");
 
                     b.ToTable("Tag", (string)null);
                 });
@@ -521,7 +525,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "b6e8c769-a466-4e23-83c0-9448e7a1696c",
+                            ConcurrencyStamp = "4c8ea487-d7a7-499a-9c8f-0a0b7d5681f6",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -531,7 +535,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAMFuYwb7VWnGf9Am8YDwNGB0wpi0WVu8XPaQjfoN6SetDkHS7a73VW/j6prDmt3iA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEN3wFT/h6NnjI6jSB//Huhopkq9cN8lh76ijVg4KahHBql/9b3/L3aEp0wVtC0yVhA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -690,6 +694,21 @@ namespace BlogProject.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PostsTag", b =>
+                {
+                    b.Property<int>("PostID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagID")
+                        .HasColumnType("int");
+
+                    b.HasKey("PostID", "TagID");
+
+                    b.HasIndex("TagID");
+
+                    b.ToTable("PostsTag");
+                });
+
             modelBuilder.Entity("BlogProject.Data.Entities.Comment", b =>
                 {
                     b.HasOne("BlogProject.Data.Entities.Posts", "Post")
@@ -804,17 +823,6 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BlogProject.Data.Entities.Tag", b =>
-                {
-                    b.HasOne("BlogProject.Data.Entities.Posts", "Post")
-                        .WithMany("Tag")
-                        .HasForeignKey("PostID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
-                });
-
             modelBuilder.Entity("BlogProject.Data.Entities.Video", b =>
                 {
                     b.HasOne("BlogProject.Data.Entities.Posts", "Post")
@@ -885,6 +893,21 @@ namespace BlogProject.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PostsTag", b =>
+                {
+                    b.HasOne("BlogProject.Data.Entities.Posts", null)
+                        .WithMany()
+                        .HasForeignKey("PostID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlogProject.Data.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BlogProject.Data.Entities.Category", b =>
                 {
                     b.Navigation("Posts");
@@ -900,8 +923,6 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Comment");
 
                     b.Navigation("Likes");
-
-                    b.Navigation("Tag");
 
                     b.Navigation("Video");
                 });

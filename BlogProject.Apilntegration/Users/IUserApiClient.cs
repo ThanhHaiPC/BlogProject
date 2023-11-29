@@ -13,5 +13,6 @@ namespace BlogProject.Apilntegration.Users
         Task<ApiResult<UserVm>> GetById(Guid id);
 		Task<ApiResult<UserVm>> Profile(Guid id);
 		Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
-    }
+		Task<ApiResult<UserVm>> GetByUserName(string username);
+	}
 }

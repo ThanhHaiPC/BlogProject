@@ -9,6 +9,8 @@ namespace BlogProject.ViewModel.Catalog.Posts
 {
     public class PostRequest
     {
+        public int PostId { get; set; }
+        public string? UserId { get; set; }
         public int CategoryId { get; set; }
         public string Desprition { get; set; }
         public string Title { get; set; }

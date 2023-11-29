@@ -78,7 +78,19 @@ namespace BlogProject.Apilntegration.Users
             return users;
         }
 
+        public async Task<ApiResult<UserVm>> GetByUserName(string username)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+            var response = await client.GetAsync($"/api/users/setting/{username}");
+            var body = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return JsonConvert.DeserializeObject<ApiSuccessResult<UserVm>>(body);
 
+            return JsonConvert.DeserializeObject<ApiErrorResult<UserVm>>(body);
+        }
 
         public async Task<ApiResult<bool>> RegisterUser(RegisterRequest registerRequest)
         {

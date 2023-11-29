@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using BlogProject.Apilntegration.Category;
 
 namespace BlogProject.WebBlog.Controllers
 {
@@ -16,10 +18,12 @@ namespace BlogProject.WebBlog.Controllers
     {
         private readonly IUserApiClient _userApiClient;
         private readonly IConfiguration _configuration;
-        public AccountController(IUserApiClient userApiClient, IConfiguration configuration)
+        private readonly ICategoryApiClient _categoryApiPost;
+        public AccountController(IUserApiClient userApiClient, IConfiguration configuration,ICategoryApiClient categoryApiClient)
         {
             _userApiClient = userApiClient;
             _configuration = configuration;
+            _categoryApiPost = categoryApiClient;
         }
 
         [HttpGet]
@@ -101,8 +105,42 @@ namespace BlogProject.WebBlog.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+		[HttpPost]
+		public async Task<IActionResult> Logout()
+		{
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			HttpContext.Session.Remove("Token");
+			return RedirectToAction("Index", "Home");
+		}
 
-        private ClaimsPrincipal ValidateToken(string jwtToken)
+		[HttpGet]
+		public async Task<IActionResult> AccountSetting(string UserName)
+		{
+			if (UserName != null)
+			{
+				var Category = await _categoryApiPost.GetAll();
+				ViewData["Category"] = Category;
+				var result = await _userApiClient.GetByUserName(UserName);
+				if (TempData["result"] != null)
+				{
+					ViewBag.SuccessMsg = TempData["result"];
+				}
+				ViewBag.UserName = User.Identity.Name;
+				return View(result.ResultObj);
+			}
+			else
+			{
+				var result = await _userApiClient.GetByUserName(User.Identity.Name);
+				if (TempData["result"] != null)
+				{
+					ViewBag.SuccessMsg = TempData["result"];
+				}
+				ViewBag.UserName = User.Identity.Name;
+				return View(result.ResultObj);
+			}
+		}
+
+		private ClaimsPrincipal ValidateToken(string jwtToken)
         {
             IdentityModelEventSource.ShowPII = true;
 

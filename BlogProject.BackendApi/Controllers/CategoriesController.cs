@@ -53,8 +53,8 @@ namespace BlogProject.BackendApi.Controllers
             var result = await _categoryService.Delete(idCategory);
             return Ok(result);
         }
-
-        [HttpGet("{id}")]
+		[AllowAnonymous]
+		[HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var user = await _categoryService.GetById(id);

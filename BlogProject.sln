@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.Admin", "BlogPr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.Apilntegration", "BlogProject.Apilntegration\BlogProject.Apilntegration.csproj", "{141B208E-7A44-49BA-8C23-3F968AF7E365}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogProject.Utilities", "BlogProject.Utilities\BlogProject.Utilities.csproj", "{D1DC072C-A123-466A-9CC4-F6587BEBF057}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlogProject.Utilities", "BlogProject.Utilities\BlogProject.Utilities.csproj", "{D1DC072C-A123-466A-9CC4-F6587BEBF057}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

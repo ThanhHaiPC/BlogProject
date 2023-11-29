@@ -56,7 +56,7 @@ namespace BlogProject.BackendApi.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("setting/{username}")]
+        [HttpGet("setting/{username}/id")]
         public async Task<IActionResult> GetIdByUserName(string username)
         {
             var user = await _userService.GetIdByUserName(username);
@@ -84,7 +84,14 @@ namespace BlogProject.BackendApi.Controllers
             var user = await _userService.GetById(id);
             return Ok(user);
         }
-        [HttpPut("{id}")]
+		[AllowAnonymous]
+		[HttpGet("setting/{username}")]
+		public async Task<IActionResult> GetByUserName(string username)
+		{
+			var user = await _userService.GetByUserName(username);
+			return Ok(user);
+		}
+		[HttpPut("{id}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Update([FromForm] UserUpdateRequest request, Guid id)
         {

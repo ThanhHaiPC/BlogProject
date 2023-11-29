@@ -323,5 +323,29 @@ namespace BlogProject.Application.System.Users
             }
             return "https://localhost:5001/" + "/Images/" + uniqueFileName;
         }
-    }
+
+		public async Task<ApiResult<UserVm>> GetByUserName(string username)
+		{
+			var user = await _userManager.FindByNameAsync(username);
+			if (user == null)
+			{
+				return new ApiErrorResult<UserVm>("User không tồn tại");
+			}
+			var roles = await _userManager.GetRolesAsync(user);
+			var userVm = new UserVm()
+			{
+				Id = user.Id,
+				Image = user.Image,
+				Email = user.Email,
+				FirstName = user.FirstName,
+                LastName = user.LastName,
+				DateOfBir = user.DateOfBir,
+				Gender = user.Gender,
+				UserName = user.UserName,
+				Roles = roles,
+				Address = user.Address
+			};
+			return new ApiSuccessResult<UserVm>(userVm);
+		}
+	}
 }

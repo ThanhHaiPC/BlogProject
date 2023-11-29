@@ -105,6 +105,9 @@
                             <th>
                                 Hình ảnh đại diện
                             </th>
+                            <th>
+                                Trạng thái
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
@@ -144,6 +147,10 @@
                                     <img src="@item.Image" style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="User Image">
                                 </td>
                                 <td>
+                                    <!-- Display enable/disable toggle button -->
+                                    <button class="toggle-status"  data-id="@item.PostID"  data-active="@item.Active">@(item.Active ? "Disable" : "Enable")</button>
+                                </td>
+                                <td>
                                     @Html.ActionLink("Edit", "Edit", new {  id=item.PostID  }) |
                                     @Html.ActionLink("Details", "Details", new {  id=item.PostID }) |
                                     @Html.ActionLink("Delete", "Delete", new {  id=item.PostID })
@@ -157,3 +164,33 @@
         </div>
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '.toggle-status', function () {
+            var button = $(this); // Reference to the clicked button
+            var postId = button.data('id');
+            var currentStatus = button.data('active');
+            var check = currentStatus ? 0 : 1;
+            var request = { IdPost: item.PostID, Number: check };
+
+            $.ajax({
+                type: 'POST',
+                url: '/Post/StatusChange',
+                data: { IdPost: item.PostID, Number: check },
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log('Post status updated successfully!');
+                 
+                    button.text(check === 0 ? "Enable" : "Disable");
+                    // Update the data attribute for the next click
+                    button.data('active', check === 0);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                    
+                }
+            });
+        });
+    });
+</script>

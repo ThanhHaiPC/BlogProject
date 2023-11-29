@@ -1,7 +1,7 @@
-﻿@using BlogProject.ViewModel.Common
+﻿@using BlogProject.ViewModel.Common;
 @model PagedResult<BlogProject.ViewModel.Catalog.Categories.CategoryRequest>
 @{
-    ViewData["Title"] = "Danh mục";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -75,3 +75,4 @@
         @await Component.InvokeAsync("Pager", Model)
     </div>
 </div>
+

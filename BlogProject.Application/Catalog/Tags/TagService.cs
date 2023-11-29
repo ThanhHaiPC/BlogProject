@@ -3,6 +3,8 @@ using BlogProject.Data.Entities;
 using BlogProject.Data.Enum;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.Catalog.Tags;
+using BlogProject.ViewModel.Common;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,39 +22,32 @@ namespace BlogProject.Application.Catalog.Tags
         {
             _dbContext = dbContext;
         }
-  
-        public async  Task<int> CreateTag(TagCreateRequest request)
+
+        public async Task<ApiResult<bool>> Create(TagCreateRequest request)
         {
-           
-            // Here, you would typically add logic to create a new tag in your database.
-            var post = await _dbContext.Posts.FirstOrDefaultAsync(p => p.PostID == request.PostID);
-            // For example, if you're using Entity Framework, you can create a new Tag entity:
-            var newTag = new Tag
-                {
-             
+            var PostExists = await _dbContext.Posts.AnyAsync(c => c.PostID == request.PostID);
+            if (!PostExists)
+            {
+                return new ApiErrorResult<bool>("PostID không tồn tại");
+            }
+            var add = new Tag
+            {
                 TagName = request.TagName,
-                    // Set other properties if necessary
-                };
+                UploadDate = DateTime.Now,
+                PostID = request.PostID,
+            };
+            _dbContext.Tags.Add(add);
+            await _dbContext.SaveChangesAsync();
 
-                 _dbContext.Tags.Add(newTag);
-                await _dbContext.SaveChangesAsync();
-
-                // After saving the new tag to the database, you can return its ID.
-                return newTag.TagID;          
+            return new ApiSuccessResult<bool>();
         }
 
-        public async  Task<bool> DeleteTag(int tagId)
+        public async  Task<ApiResult<bool>> DeleteTag(int tagId)
         {
             var tag = await _dbContext.Tags.FindAsync(tagId);
-            if (tag == null)
-            {
-                // Tag not found, return false or handle the situation accordingly.
-                return false;
-            }
-
             _dbContext.Tags.Remove(tag);
             await _dbContext.SaveChangesAsync();
-            return true;
+            return new ApiSuccessResult<bool>();
         }
 
         public async  Task<List<TagVm>> GetAllTags()
@@ -70,30 +65,88 @@ namespace BlogProject.Application.Catalog.Tags
             return tagVms;
         }
 
-        public async  Task<List<Tag>> GetPostsForTag(int tagId)
+        public async  Task<List<PostVm>> GetPostsForTag(int PostId)
         {
-            var comments = await _dbContext.Tags
-            .Where(c => c.PostID == tagId)
+            var posts = await _dbContext.Posts
+            .Where(c => c.TagId == PostId)
+            .Include(c=>c.User)
+            .Include(c=>c.Categories)
+            
             .ToListAsync();
+            List<PostVm> postVms = new List<PostVm>();
+            foreach (var post in posts)
+            {
+                PostVm postVm = new PostVm();
+                post.Title = postVm.Title;
+                post.Desprition = postVm.Desprition;
+                post.Image = postVm.Image;
+                post.User.UserName = postVm.UserName;
+                post.Categories.Name = postVm.CategoryName;
+                post.UploadDate = postVm.UploadDate;
+                postVms.Add(postVm);
 
-            return comments;
+            }
+            return postVms;
         }
 
-       
-        public async  Task<TagVm> GetTagById(int tagId)
+
+        public async Task<ApiResult<TagVm>> GetTagById(int tagId)
         {
             var tag = await _dbContext.Tags.FirstOrDefaultAsync(t => t.TagID == tagId);
+
+            if (tag == null)
+            {
+                // Handle the case where the tag is not found based on the provided tagId
+                return null; // Or throw an exception or return a default TagVm object
+            }
+
             var tagVm = new TagVm
             {
                 TagId = tag.TagID,
                 TagName = tag.TagName,
+                PostID = tag.PostID,
+                UploadDate = tag.UploadDate,
+                View = tag.View
+                // Include other properties here as needed based on your TagVm structure
             };
 
-            return tagVm;
+            return new ApiSuccessResult<TagVm>(tagVm);
         }
 
-       
-        public async  Task<bool> UpdateTag(int tagId, TagUpdateRequest request)
+        public async  Task<ApiResult<PagedResult<TagVm>>> GetTagPaging(GetUserPagingRequest request)
+		{
+            var query = from t in _dbContext.Tags
+                        select new { t };
+
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.t.TagName.Contains(request.Keyword)); // Thay vì tìm kiếm trong tiêu đề và mô tả, ở đây ta tìm kiếm trong tên tag
+            }
+
+            int totalRow = await query.CountAsync();
+
+            var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new TagVm()
+                {
+                    TagId = x.t.TagID, // Sử dụng Id của tag
+                    TagName = x.t.TagName,
+                    // Các thông tin khác về tag mà bạn muốn hiển thị
+                    // Ví dụ: Description, CountPost (số lượng bài viết liên quan đến tag này)
+                }).ToListAsync();
+
+            var pagedResult = new PagedResult<TagVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+
+            return new  ApiSuccessResult<PagedResult<TagVm>>(pagedResult);
+        }
+
+        public async Task<bool> UpdateTag(int tagId, TagUpdateRequest request)
         {
             var tag = await _dbContext.Tags.FindAsync(tagId);
 
@@ -103,7 +156,5 @@ namespace BlogProject.Application.Catalog.Tags
             await _dbContext.SaveChangesAsync();
             return true;
         }
-
-       
     }
 }

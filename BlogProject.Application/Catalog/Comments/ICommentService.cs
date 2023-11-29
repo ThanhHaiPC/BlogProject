@@ -12,10 +12,12 @@ namespace BlogProject.Application.Catalog.Comments
 {
     public interface ICommentService 
     {
-        Task<ApiResult<bool>> Create(CommentCreateRequest request, string userId);
+        Task<ApiResult<bool>> Create(CommentCreateRequest request);
         Task<ApiResult<bool>> Delete(int id);
         Task<List<Comment>> GetById(int id);
         Task<PagedResult<CommentVm>> GetCommentsByPost(int postId, GetUserPagingRequest request);
+        Task<List<CommentVm>> CommentsByPost(int postId);
+        Task<List<CommentVm>> GetList(int postId);
         Task<int> CountAsyncById(int id);
         int CountById(int id);
     }

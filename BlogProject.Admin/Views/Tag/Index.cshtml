@@ -1,0 +1,91 @@
+﻿@using BlogProject.ViewModel.Common;
+@model PagedResult<BlogProject.ViewModel.Catalog.Tags.TagVm>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        /* CSS styles */
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        @if (ViewBag.SuccessMsg != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @ViewBag.SuccessMsg
+            </div>
+        }
+    </div>
+
+    <div class="card mb-12">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <a asp-action="Create" class="btn btn-success">Tạo Tag bài viết</a>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <form asp-action="Index" method="get">
+                        <div class="row">
+                            <div class="col-md-3 user-search-btn">
+                                <button type="submit" class="btn btn-primary">
+                                    Tìm
+                                </button>
+                                <button type="button" onclick="window.location.href='/Tag/Index'" class="btn btn-dark">
+                                    <i class="fa fa-arrow-rotate-right"></i>
+                                </button>
+                            </div>
+                            <div class="col-md-9">
+                                <input type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tag ID</th>
+                        <th>Tag Name</th>
+                        <th>View</th>
+                        <th>Upload Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.TagId)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TagName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.View)</td>
+                            <td>@Html.DisplayFor(modelItem => item.UploadDate)</td>
+                            <td>
+                                <a title="Sửa" href="@Url.Action("Edit", new { tagId=item.TagId })">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a title="Xóa" href="@Url.Action("Delete", new { tagId=item.TagId })">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="5" style="border-bottom: 2px solid #e9ecef;"></td>
+                    </tr>
+                </tbody>
+            </table>
+            @await Component.InvokeAsync("Pager", Model)
+        </div>
+    </div>
+</body>
+</html>

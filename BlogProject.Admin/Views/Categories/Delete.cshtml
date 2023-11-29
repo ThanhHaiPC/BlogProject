@@ -1,4 +1,4 @@
-﻿@model BlogProject.ViewModel.Catalog.Categories.CategoryRequest
+﻿@model BlogProject.ViewModel.Catalog.Categories.CategoryDeleteRequest
 @{
     ViewData["Title"] = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -21,14 +21,14 @@
                 <dl class="row">
                     <span>Hãy chắc chắn rằng bạn muốn xóa danh mục này</span>
                     <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => model.CategoriesID)
+                        @Html.DisplayNameFor(model => model.Id)
                     </dt>
                     <dd class="col-sm-6">
-                        @Html.DisplayFor(model => model.CategoriesID)
+                        @Html.DisplayFor(model => model.Id)
                     </dd>
                     <div class="col-sm-4 d-xxl-inline-flex">
                         <form asp-action="Delete" style="text-align: end">
-                            <input asp-for="CategoriesID" type="hidden" />
+                            <input asp-for="Id" type="hidden" />
                             <input type="submit" value="Xóa" class="btn btn-danger" />
                             <a class="btn btn-success" asp-action="Index" asp-controller="Categories">Về danh sách</a>
                         </form>

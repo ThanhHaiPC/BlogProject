@@ -13,6 +13,7 @@ namespace BlogProject.Data.Entities
         public int PostID { get; set; }
 
         public int CategoryId { get; set; }
+        public int TagId {  get; set; }
         public Guid UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }

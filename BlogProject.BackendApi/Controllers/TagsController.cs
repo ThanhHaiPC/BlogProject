@@ -1,7 +1,9 @@
 ﻿using BlogProject.Application.Catalog.Tags;
 using BlogProject.ViewModel.Catalog.Tags;
+using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlogProject.BackendApi.Controllers
 {
@@ -24,28 +26,17 @@ namespace BlogProject.BackendApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            int newTagId = await _tagService.CreateTag(request);
-            if (newTagId > 0)
-            {
-                return Ok(newTagId);
-            }
-            else
-            {
-                return BadRequest("Failed to create the tag.");
-            }
+            var tag = await _tagService.Create(request);
+            if (!tag.IsSuccessed)
+                return BadRequest(tag);
+
+            return Ok(tag);
         }
         [HttpDelete("{tagId}")]
         public async Task<IActionResult> DeleteTag(int tagId)
         {
             var result = await _tagService.DeleteTag(tagId);
-            if (result)
-            {
-                return Ok("Tag deleted successfully");
-            }
-            else
-            {
-                return NotFound("Tag not found or failed to delete.");
-            }
+            return Ok(result);
         }
 
         [HttpPut("{tagId}")]
@@ -81,10 +72,10 @@ namespace BlogProject.BackendApi.Controllers
                 return NotFound("Tag not found.");
             }
         }
-        [HttpGet("get-posts-for-tag/{tagId}")]
-        public async Task<IActionResult> GetPostsForTag(int tagId)
+        [HttpGet("get-posts-for-tag/{PostId}")]
+        public async Task<IActionResult> GetPostsForTag(int PostId)
         {
-            var comments = await _tagService.GetPostsForTag(tagId);
+            var comments = await _tagService.GetPostsForTag(PostId);
 
             if (comments != null)
             {
@@ -94,6 +85,13 @@ namespace BlogProject.BackendApi.Controllers
             {
                 return NotFound(); // Return a 404 Not Found if comments are not found for the specified post.
             }
+        }
+        [HttpGet("get-all-paging")]
+        public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
+        {
+
+            var post = await _tagService.GetTagPaging(request);
+            return Ok(post);
         }
     }
 }

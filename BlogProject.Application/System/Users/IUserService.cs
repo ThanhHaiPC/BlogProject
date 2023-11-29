@@ -26,5 +26,6 @@ namespace BlogProject.Application.System.Users
         string GetUserNameById(Guid Id);
         Task<ApiResult<bool>> RoleAssign(RoleAssignRequest request, Guid id);
 		Task<ApiResult<UserVm>> Profile(string? id);
+		Task<ApiResult<UserVm>> GetByUserName(string username);
 	}
 }

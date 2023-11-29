@@ -11,6 +11,7 @@ namespace BlogProject.ViewModel.Catalog.Comments
         public int postId { get; set; }
         public Guid userId { get; set; }
         public string UserName { get; set; }
+        public string Avatar { get; set; }
         public string Content { get; set; }
         public DateTime DateTime { get; set; }
     }

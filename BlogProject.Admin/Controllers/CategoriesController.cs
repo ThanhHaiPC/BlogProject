@@ -14,8 +14,9 @@ namespace BlogProject.Admin.Controllers
         {
             _categoryApiClient = categoryApiClient;
         }
-        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
         {
+
             var request = new GetUserPagingRequest()
             {
                 Keyword = keyword,
@@ -30,6 +31,7 @@ namespace BlogProject.Admin.Controllers
             }
             return View(data.ResultObj);
         }
+
 
         [HttpGet]
         public IActionResult Create()
@@ -93,18 +95,19 @@ namespace BlogProject.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int idCategory)
         {
-            return View(new CategoryRequest()
+            return View(new CategoryDeleteRequest()
             {
-                CategoriesID = idCategory
+                Id = idCategory
             });
         }
         [HttpPost]
-        public async Task<IActionResult> Delete(CategoryRequest request)
+        public async Task<IActionResult> Delete(CategoryDeleteRequest request)
         {
             if (!ModelState.IsValid)
+            {
                 return View();
-
-            var result = await _categoryApiClient.DeleteCategory(request.CategoriesID);
+            }
+            var result = await _categoryApiClient.DeleteCategory(request.Id);
             if (result.IsSuccessed)
             {
                 TempData["result"] = "Xóa danh mục thành công";

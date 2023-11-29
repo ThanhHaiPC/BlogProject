@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,13 @@ namespace BlogProject.Data.Entities
         public string TagName { get; set; }
 
         public int View {  get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime UploadDate { get; set; }
         public int PostID { get; set; }
 
 
         // RelationShip
-        public Posts Post { get; set; }
+        public List<Posts> Post { get; set; }
        
     }
 }

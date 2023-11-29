@@ -32,7 +32,6 @@ namespace BlogProject.Admin.Controllers
                 var sessions = HttpContext.Session.GetString("Token");
                 var request = new GetUserPagingRequest()
                 {
-
                     Keyword = keyword,
                     PageIndex = pageIndex,
                     PageSize = pageSize

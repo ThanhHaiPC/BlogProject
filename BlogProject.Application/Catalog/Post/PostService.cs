@@ -120,13 +120,13 @@ namespace BlogProject.Application.Catalog.Post
         }
 
 
-        public async Task<ApiResult<List<PostVm>>> GetByUserId(string userId)
+        public async Task<List<PostVm>> GetByUserId(string userId)
         {
-            try
-            {
+            
                 var posts = await _context.Posts
              .Where(p => p.UserId == Guid.Parse(userId))
-             .Include(p => p.User)
+             .Include(p => p.User  )
+             .Include(p=> p.Categories )
              .ToListAsync();
 
                 var postsWithUsernames = posts.Select(post => new PostVm
@@ -139,15 +139,13 @@ namespace BlogProject.Application.Catalog.Post
                     View = post.View,
                     CategoryId = post.CategoryId,
                     Desprition = post.Desprition,
+                    CategoryName = post.Categories.Name,
                     Image = post.Image,
                 }).ToList();
 
-                return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
-            }
-            catch (Exception ex)
-            {
-                return new ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
-            }
+                return (postsWithUsernames);
+            
+            
         }
 
         public async Task<ApiResult<List<PostVm>>> Search(string searchTerm)
@@ -187,7 +185,7 @@ namespace BlogProject.Application.Catalog.Post
 
             if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword));
+                query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword) || x.p.Categories.Name.Contains(request.Keyword));
             }
 
             int totalRow = await query.CountAsync();
@@ -205,13 +203,15 @@ namespace BlogProject.Application.Catalog.Post
                     View = x.p.View,
                     UploadDate = x.p.UploadDate,
                     CategoryName = x.p.Categories.Name,
+                    CategoryId = x.p.CategoryId,
                     PostID = x.p.PostID,
 					CountComment = _context.Comments
 					   .Where(c => c.PostID == x.p.PostID)
 					   .Count(),
                     CountLike = _context.Likes
                         .Where(c=>c.PostID == x.p.PostID)
-                        .Count()
+                        .Count(),
+                    Avatar = x.p.User.Image
 				}).ToListAsync();
             //4. Select and projection
             var pagedResult = new PagedResult<PostVm>()

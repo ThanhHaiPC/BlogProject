@@ -28,5 +28,6 @@ namespace BlogProject.Apilntegration.Posts
         Task<ApiResult<bool>> Like(LikeVm request);
 		Task<ApiResult<bool>> Check(LikeVm request);
 		Task<List<PostVm>> GetPostOfCategory(int categoryId);
+        Task<List<PostVm>> GetByUserId(string userId);
 	}
 }

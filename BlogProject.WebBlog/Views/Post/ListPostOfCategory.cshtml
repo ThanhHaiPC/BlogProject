@@ -32,11 +32,11 @@
                         <!-- post -->
                         <div class="post post-grid rounded bordered">
                             <div class="thumb top-rounded">
-                                    <a href="category.html" class="category-badge position-absolute">@Html.DisplayFor(modelItem => item.CategoryName)</a>
+                                    <a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@item.CategoryId" class="category-badge position-absolute">@Html.DisplayFor(modelItem => item.CategoryName)</a>
                                 <span class="post-format">
                                     <i class="icon-picture"></i>
                                 </span>
-                                <a href="blog-single.html">
+                                    <a asp-action="Detail" asp-controller="Post" asp-route-id="@item.PostID">
                                     <div class="inner">
                                             <img style="width:356px ; height:237px" src="@Html.DisplayFor(modelItem => item.Image)" alt="post-title" />
                                     </div>
@@ -44,10 +44,10 @@
                             </div>
                             <div class="details">
                                 <ul class="meta list-inline mb-0">
-                                        <li class="list-inline-item"><a href="#"><img class="avatar-image" src="@Html.DisplayFor(modelItem => item.Avatar)" class="author" alt="author" />@Html.DisplayFor(modelItem => item.UserName)</a></li>
+                                        <li class="list-inline-item"><a asp-action="UserPost" asp-controller="Post" asp-route-userId="@item.UserId"><img class="avatar-image" src="@Html.DisplayFor(modelItem => item.Avatar)" class="author" alt="author" />@Html.DisplayFor(modelItem => item.UserName)</a></li>
                                         <li class="list-inline-item">@Html.DisplayFor(modelItem => item.UploadDate)</li>
                                 </ul>
-                                    <h5 class="post-title mb-3 mt-3"><a href="blog-single.html">@Html.DisplayFor(modelItem => item.Title)</a></h5>
+                                    <h5 class="post-title mb-3 mt-3"><a asp-action="Detail" asp-controller="Post" asp-route-id="@item.PostID">@Html.DisplayFor(modelItem => item.Title)</a></h5>
                                     <p class="excerpt mb-0">@Html.DisplayFor(modelItem => item.Desprition)</p>
                             </div>
                             <div class="post-bottom clearfix d-flex align-items-center">

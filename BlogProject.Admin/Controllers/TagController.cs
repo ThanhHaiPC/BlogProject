@@ -76,7 +76,7 @@ namespace BlogProject.Admin.Controllers
                     TagName = user.TagName,
                     PostID = user.PostID,
                     UploadDate = user.UploadDate,
-                    View = user.View
+               
 
                 };
                 return View(updateRequest);

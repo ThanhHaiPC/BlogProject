@@ -121,16 +121,16 @@ namespace BlogProject.Application.Catalog.Post
 		}
 
 
-		public async Task<ApiResult<List<PostVm>>> GetByUserId(string userId)
-		{
-			try
-			{
-				var posts = await _context.Posts
-			 .Where(p => p.UserId == Guid.Parse(userId))
-			 .Include(p => p.User)
-			 .ToListAsync();
-
-				var postsWithUsernames = posts.Select(post => new PostVm
+        public async Task<List<PostVm>> GetByUserId(string userId)
+        {
+			
+                var posts = await _context.Posts
+             .Where(p => p.UserId == Guid.Parse(userId))
+             .Include(p => p.User)
+          
+             .Include(p => p.Categories)
+             .ToListAsync();
+                var postsWithUsernames = posts.Select(post => new PostVm
 				{
 					PostID = post.PostID,
 					UserName = post.User.UserName,
@@ -143,12 +143,8 @@ namespace BlogProject.Application.Catalog.Post
 					Image = post.Image,
 				}).ToList();
 
-				return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
-			}
-			catch (Exception ex)
-			{
-				return new ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
-			}
+                return (postsWithUsernames);
+            
 		}
 
 		public async Task<ApiResult<List<PostVm>>> Search(string searchTerm)
@@ -528,6 +524,8 @@ namespace BlogProject.Application.Catalog.Post
 				postVm.UploadDate = item.UploadDate;
 				postVm.UserName = item.User.UserName;
 				postVm.CategoryId = item.CategoryId;
+				postVm.PostID = item.PostID;
+				
 				postVms.Add(postVm);
 			}
 			return postVms;

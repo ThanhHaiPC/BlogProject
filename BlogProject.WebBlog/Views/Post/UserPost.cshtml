@@ -1,0 +1,59 @@
+﻿@model List<BlogProject.ViewModel.Catalog.Posts.PostVm>
+@using BlogProject.ViewModel.Catalog.Categories
+@using BlogProject.ViewModel.System.Users
+@{
+    ViewData["Title"] = "UserPost";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    UserVm user = ViewData["user"] as UserVm;
+}
+<style>
+    .avatar-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+<div class="widget rounded">
+    <div class="widget-about data-bg-image text-center" data-bg-image="images/map-bg.png">
+        <img class="avatar-image" src="@user.Image" alt="logo" class="mb-4" />
+        <p class="mb-4">@user.UserName</p>
+
+        <ul class="social-icons list-unstyled list-inline mb-0">
+            <li class="list-inline-item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fab fa-instagram"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fab fa-medium"></i></a></li>
+            <li class="list-inline-item"><a href="#"><i class="fab fa-youtube"></i></a></li>
+        </ul>
+    </div>
+</div>
+
+<section class="hero-carousel">
+    <div class="row post-carousel-featured post-carousel">
+        <!-- post -->
+        @foreach (var item in Model)
+        {
+
+            <div class="post featured-post-md">
+                <div class="details clearfix">
+                    <a href="category.html" class="category-badge">@Html.DisplayFor(modelItem => item.CategoryName)</a>
+                    <h4 class="post-title"><a href="blog-single.html">@Html.DisplayFor(modelItem => item.Title)</a></h4>
+                    <ul class="meta list-inline mb-0">
+                        <li class="list-inline-item"><a href="#">@Html.DisplayFor(modelItem => item.UserName)</a></li>
+                        <li class="list-inline-item">@Html.DisplayFor(modelItem => item.UploadDate)</li>
+                    </ul>
+                </div>
+                <a href="blog-single.html">
+                    <div class="thumb rounded">
+                        <div class="inner data-bg-image" data-bg-image="@Html.DisplayFor(modelItem => item.Image)"></div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</section>

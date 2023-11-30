@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using BlogProject.ViewModel.Catalog.Like;
 using BlogProject.ViewModel.Catalog.Comments;
 using BlogProject.Apilntegration.Tags;
+using BlogProject.Apilntegration.Users;
 
 namespace BlogProject.WebBlog.Controllers
 {
@@ -20,14 +21,16 @@ namespace BlogProject.WebBlog.Controllers
 		private readonly ICategoryApiClient _categoryApiClient;
 		private readonly IHttpContextAccessor _contextAccessor;
 		private readonly ITagApiClient _tagApiClient;
-		public PostController(IPostApiClient postApiClient, ICommentApiClient commentApiClient, ICategoryApiClient categoryApiClient, IHttpContextAccessor contextAccessor,ITagApiClient tagApiClient)
+        private readonly IUserApiClient _userApiClient;
+        public PostController(IPostApiClient postApiClient, IUserApiClient userApiClient, ICommentApiClient commentApiClient, ICategoryApiClient categoryApiClient, IHttpContextAccessor contextAccessor,ITagApiClient tagApiClient)
 		{
 			_postApiClient = postApiClient;
 			_commentApiClient = commentApiClient;
 			_categoryApiClient = categoryApiClient;
 			_contextAccessor = contextAccessor;
 			_tagApiClient = tagApiClient;
-		}
+            _userApiClient = userApiClient;
+        }
 		[HttpGet]
 		public async Task<IActionResult> Detail(int id)
 		{
@@ -100,8 +103,32 @@ namespace BlogProject.WebBlog.Controllers
 
 			return BadRequest();
 		}
-		
-      
 
-	}
+        [HttpGet]
+        public async Task<IActionResult> Search(string keyword, int pageIndex = 1, int pageSize = 5)
+        {
+            var Category = await _categoryApiClient.GetAll();
+            ViewData["Category"] = Category;
+            var request = new GetUserPagingRequest()
+            {
+                Keyword = keyword,
+                PageIndex = pageIndex,
+                PageSize = pageSize
+            };
+
+            var data = await _postApiClient.GetAllPaging(request);
+            return View(data);
+        }
+        [HttpGet]
+        public async Task<IActionResult> UserPost(string userId)
+        {
+            var Category = await _categoryApiClient.GetAll();
+            ViewData["Category"] = Category;
+            var user = await _userApiClient.GetById(Guid.Parse(userId));
+            ViewData["user"] = user.ResultObj;
+            var post = await _postApiClient.GetByUserId(userId);
+            return View(post);
+        }
+
+    }
 }

@@ -106,7 +106,7 @@ namespace BlogProject.Application.Catalog.Tags
                 TagName = tag.TagName,
                 PostID = tag.PostID,
                 UploadDate = tag.UploadDate,
-                View = tag.View
+          
                 // Include other properties here as needed based on your TagVm structure
             };
 

@@ -170,7 +170,7 @@ namespace BlogProject.Application.System.Users
             user.Gender = request.Gender;
             user.LastName = request.LastName;
             user.Address = request.Address;
-
+            user.PhoneNumber = request.PhoneNumber;
             if (request.Image != null)
             {
                 //if (user.Image != null)

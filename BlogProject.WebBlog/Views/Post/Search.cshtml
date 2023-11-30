@@ -1,0 +1,62 @@
+﻿@using BlogProject.ViewModel.Common;
+@model PagedResult<BlogProject.ViewModel.Catalog.Posts.PostVm>
+
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .avatar-image {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+<!-- section main content -->
+<section class="main-content-lg">
+    <div class="container-minimal">
+        @foreach (var item in Model.Items)
+        {
+            <!-- post -->
+            <div class="post post-xl">
+                <!-- top section -->
+                <div class="post-top">
+                    <ul class="meta list-inline mb-0">
+                        <li class="list-inline-item"><a href="#"><img src="@Html.DisplayFor(modelItem => item.Avatar)" class="avatar-image" alt="author" />@Html.DisplayFor(modelItem => item.UserName)</a></li>
+                        <li class="list-inline-item">@Html.DisplayFor(modelItem => item.UploadDate)</li>
+                        <li class="list-inline-item"><i class="icon-bubble"></i> (@Html.DisplayFor(modelItem => item.CountComment))</li>
+                    </ul>
+                    <h5 class="post-title mb-0 mt-4"><a asp-action="Detail" asp-controller="Post" asp-route-ID="@item.PostID">@Html.DisplayFor(modelItem => item.Title)</a></h5>
+                </div>
+                <!-- thumbnail -->
+                <div class="thumb rounded">
+                    <a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@item.CategoryId" class="category-badge lg position-absolute">@Html.DisplayFor(modelItem => item.CategoryName)</a>
+
+                    <a href="blog-single.html">
+                        <div class="inner">
+                            <img src="@Html.DisplayFor(modelItem => item.Image)" alt="post-title" />
+                        </div>
+                    </a>
+                </div>
+                <!-- details -->
+                <div class="details">
+                    <p class="excerpt mb-0">@Html.DisplayFor(modelItem => item.Desprition)</p>
+                </div>
+                <div class="post-bottom clearfix d-flex align-items-center">
+
+                    <div class="float-end d-none d-md-block">
+                        <a asp-action="Detail" asp-controller="Post" asp-route-ID="@item.PostID" class="more-link">Continue reading<i class="icon-arrow-right"></i></a>
+                    </div>
+                    <div class="more-button d-block d-md-none float-end">
+                        <a asp-action="Detail" asp-controller="Post" asp-route-ID="@item.PostID"><span class="icon-options"></span></a>
+                    </div>
+                </div>
+            </div>
+
+        }
+        <!-- pagination -->
+
+    </div>
+</section>

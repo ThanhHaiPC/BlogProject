@@ -19,7 +19,7 @@ namespace BlogProject.Data.Configurations
             builder.Property(x => x.TagID).UseIdentityColumn();
 
             builder.Property(x => x.TagName).IsRequired();
-            builder.Property(x => x.View).HasDefaultValue(0);
+           
 
             // Relationship
             builder.HasMany(x => x.Post).WithMany(x => x.Tag);

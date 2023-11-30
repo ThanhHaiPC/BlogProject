@@ -29,5 +29,6 @@ namespace BlogProject.Apilntegration.Posts
 		Task<ApiResult<bool>> Check(LikeVm request);
 		Task<List<PostVm>> GetPostOfCategory(int categoryId);
         Task<ApiResult<bool>> StatusChange(PostEnable postEnable);
+        Task<List<PostVm>> GetByUserId(string userId);
     }
 }

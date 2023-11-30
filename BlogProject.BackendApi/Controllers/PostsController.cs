@@ -77,9 +77,9 @@ namespace BlogProject.BackendApi.Controllers
 			return Ok(post);
 		}
 		[HttpGet("get-by-user")]
-		public async Task<IActionResult> GetByUserId()
-		{
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        public async Task<IActionResult> GetByUserId(string userId)
+        {
+           
 
 			if (string.IsNullOrEmpty(userId))
 			{

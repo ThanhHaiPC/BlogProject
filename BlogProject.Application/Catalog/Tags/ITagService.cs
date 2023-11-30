@@ -15,7 +15,7 @@ namespace BlogProject.Application.Catalog.Tags
     public interface ITagService
     {
         Task<ApiResult<bool>> Create(TagCreateRequest request);
-        Task<bool> UpdateTag(int tagId, TagUpdateRequest request);
+        Task<ApiResult<bool>> UpdateTag(int tagId, TagUpdateRequest request);
         Task<ApiResult<bool>> DeleteTag(int tagId);
         Task<List<TagVm>> GetAllTags();
         Task<ApiResult<TagVm>> GetTagById(int tagId);

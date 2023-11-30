@@ -28,9 +28,10 @@ namespace BlogProject.ViewModel.System.Users
         public string? Email { get; set; }
         [Display(Name = "Ảnh đại diện")]
         public string? Image { get; set; }
+        [Display(Name = "Ảnh đại diện")]
+        public string ImageFileName { get; set; }
         [Display(Name = "Giới tính")]
         public Gender? Gender { get; set; }
-
         [Display(Name = "Ngày sinh")]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? DateOfBir { get; set; }

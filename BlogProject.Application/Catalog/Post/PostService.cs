@@ -29,322 +29,322 @@ using static System.Net.Mime.MediaTypeNames;
 namespace BlogProject.Application.Catalog.Post
 {
 
-	public class PostService : IPostService
-	{
-		private readonly BlogDbContext _context;
-		private readonly UserManager<User> _userManager;
-		private readonly IUserService _userService;
-		private readonly IWebHostEnvironment _webHostEnvironment;
-		/*    private readonly ICommentService _commentService;*/
-		private readonly ILikeService _likeService;
+    public class PostService : IPostService
+    {
+        private readonly BlogDbContext _context;
+        private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        /*    private readonly ICommentService _commentService;*/
+        private readonly ILikeService _likeService;
 
-		public PostService(BlogDbContext context, UserManager<User> userManager, IUserService userService, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
-		{
-			_context = context;
-			_userManager = userManager;
-			_webHostEnvironment = webHostEnvironment;
-			/* _commentService = commentService;*/
-			_likeService = likeService;
-			_userService = userService;
+        public PostService(BlogDbContext context, UserManager<User> userManager, IUserService userService, IWebHostEnvironment webHostEnvironment/*, ICommentService commentService*/, ILikeService likeService)
+        {
+            _context = context;
+            _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
+            /* _commentService = commentService;*/
+            _likeService = likeService;
+            _userService = userService;
 
-		}
+        }
 
-		public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
-		{
-			if (request.Title == null)
-			{
-				return new ApiErrorResult<bool>("Tiêu đề trống");
-			}
-			if (request.Desprition == null)
-			{
-				return new ApiErrorResult<bool>("Mô tả trống");
-			}
-			if (request.Content == null)
-			{
-				return new ApiErrorResult<bool>("Chưa nhập nội dung");
-			}
-			/* if (request.CategoryId == null || request.CategoryId <= 0)
+        public async Task<ApiResult<bool>> Create(PostRequest request, string userId)
+        {
+            if (request.Title == null)
+            {
+                return new ApiErrorResult<bool>("Tiêu đề trống");
+            }
+            if (request.Desprition == null)
+            {
+                return new ApiErrorResult<bool>("Mô tả trống");
+            }
+            if (request.Content == null)
+            {
+                return new ApiErrorResult<bool>("Chưa nhập nội dung");
+            }
+            /* if (request.CategoryId == null || request.CategoryId <= 0)
              {
                  return new ApiErrorResult<bool>("CategoryId không hợp lệ");
              }*/
 
-			// Check if the specified CategoryId exists in the database
-			var categoryExists = await _context.Categories.AnyAsync(c => c.CategoriesID == request.CategoryId);
-			if (!categoryExists)
-			{
-				return new ApiErrorResult<bool>("CategoryId không tồn tại");
-			}
+            // Check if the specified CategoryId exists in the database
+            var categoryExists = await _context.Categories.AnyAsync(c => c.CategoriesID == request.CategoryId);
+            if (!categoryExists)
+            {
+                return new ApiErrorResult<bool>("CategoryId không tồn tại");
+            }
 
-			List<Posts> posts = await _context.Posts.Where(x => x.Title == request.Title).ToListAsync();
-			if (posts.Count != 0)
-			{
-				return new ApiErrorResult<bool>("Bài viết đã tồn tại");
-			}
-
-
-			var user = await _userManager.FindByIdAsync(userId);
-			// Tạo một đối tượng Post từ dữ liệu PostViewModel
-			var add = new Posts
-			{
-
-				Title = request.Title,
-				Content = request.Content,
-				UserId = user.Id, // Thiết lập UserId dựa trên thông tin đăng nhập
-				UploadDate = DateTime.Now,
-				Desprition = request.Desprition,
-				CategoryId = request.CategoryId,
-				Image = await SaveFile(request.Image),
-
-			};
+            List<Posts> posts = await _context.Posts.Where(x => x.Title == request.Title).ToListAsync();
+            if (posts.Count != 0)
+            {
+                return new ApiErrorResult<bool>("Bài viết đã tồn tại");
+            }
 
 
-			_context.Posts.Add(add);
-			await _context.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(userId);
+            // Tạo một đối tượng Post từ dữ liệu PostViewModel
+            var add = new Posts
+            {
 
-			return new ApiSuccessResult<bool>();
-		}
+                Title = request.Title,
+                Content = request.Content,
+                UserId = user.Id, // Thiết lập UserId dựa trên thông tin đăng nhập
+                UploadDate = DateTime.Now,
+                Desprition = request.Desprition,
+                CategoryId = request.CategoryId,
+                Image = await SaveFile(request.Image),
 
-		public async Task<ApiResult<bool>> Delete(int Id)
-		{
-			var post = await _context.Posts.FirstOrDefaultAsync(a => a.PostID == Id);
-			_context.Posts.Remove(post);
-			await _context.SaveChangesAsync();
-			return new ApiSuccessResult<bool>();
-		}
-
-		public async Task<ApiResult<List<Posts>>> GetAll()
-		{
-			var posts = await _context.Posts.Include(p => p.User).ToListAsync();
+            };
 
 
-			return new ApiSuccessResult<List<Posts>>(posts);
-		}
+            _context.Posts.Add(add);
+            await _context.SaveChangesAsync();
+
+            return new ApiSuccessResult<bool>();
+        }
+
+        public async Task<ApiResult<bool>> Delete(int Id)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(a => a.PostID == Id);
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync();
+            return new ApiSuccessResult<bool>();
+        }
+
+        public async Task<ApiResult<List<Posts>>> GetAll()
+        {
+            var posts = await _context.Posts.Include(p => p.User).ToListAsync();
 
 
-		public async Task<ApiResult<List<PostVm>>> GetByUserId(string userId)
-		{
-			try
-			{
-				var posts = await _context.Posts
-			 .Where(p => p.UserId == Guid.Parse(userId))
-			 .Include(p => p.User)
-			 .ToListAsync();
-
-				var postsWithUsernames = posts.Select(post => new PostVm
-				{
-					PostID = post.PostID,
-					UserName = post.User.UserName,
-					Title = post.Title,
-					Content = post.Content,
-					UploadDate = post.UploadDate,
-					View = post.View,
-					CategoryId = post.CategoryId,
-					Desprition = post.Desprition,
-					Image = post.Image,
-				}).ToList();
-
-				return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
-			}
-			catch (Exception ex)
-			{
-				return new ApiErrorResult<List<PostVm>>($"An error occurred while retrieving posts by user ID: {ex.Message}");
-			}
-		}
-
-		public async Task<ApiResult<List<PostVm>>> Search(string searchTerm)
-		{
-			try
-			{
-				var posts = await _context.Posts
-					.Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm))
-					.Include(p => p.User)
-					.ToListAsync();
-
-				var postsWithUsernames = posts.Select(post => new PostVm
-				{
-					PostID = post.PostID,
-					UserName = post.User.UserName,
-					Title = post.Title,
-					Content = post.Content,
-					UploadDate = post.UploadDate,
-					View = post.View,
-					CategoryId = post.CategoryId,
-					Desprition = post.Desprition,
-					Image = post.Image,
-				}).ToList();
-
-				return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
-			}
-			catch (Exception ex)
-			{
-				return new ApiErrorResult<List<PostVm>>($"An error occurred while searching for posts: {ex.Message}");
-			}
-		}
-
-		public async Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request)
-		{
-			var query = from p in _context.Posts
-						select new { p };
-
-			if (!string.IsNullOrEmpty(request.Keyword))
-			{
-				query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword));
-			}
-
-			int totalRow = await query.CountAsync();
-
-			var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
-				.Take(request.PageSize)
-				.Select(x => new PostVm()
-				{
-
-					Title = x.p.Title,
-					Content = x.p.Content,
-					UserName = x.p.User.UserName,
-					Desprition = x.p.Desprition,
-					Image = x.p.Image,
-					View = x.p.View,
-					UploadDate = x.p.UploadDate,
-					CategoryName = x.p.Categories.Name,
-					PostID = x.p.PostID,
-					CountComment = _context.Comments
-					   .Where(c => c.PostID == x.p.PostID)
-					   .Count(),
-					CountLike = _context.Likes
-						.Where(c => c.PostID == x.p.PostID)
-						.Count()
-				}).ToListAsync();
-			//4. Select and projection
-			var pagedResult = new PagedResult<PostVm>()
-			{
-				TotalRecords = totalRow,
-				PageIndex = request.PageIndex,
-				PageSize = request.PageSize,
-				Items = data
-			};
-			return pagedResult;
-		}
-
-		public async Task<ApiResult<bool>> Update(PostUpdateRequest request, int id)
-		{
-			if (id == null)
-			{
-				return new ApiErrorResult<bool>("Lỗi cập nhập");
-			}
-			var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
-			var categories = _context.Categories.ToList(); // Thay Categories bằng tên thật của bảng Category
+            return new ApiSuccessResult<List<Posts>>(posts);
+        }
 
 
+        public async Task<List<PostVm>> GetByUserId(string userId)
+        {
 
-			post.Desprition = request.Desprition;
-			post.Title = request.Title;
-			post.Content = request.Content;
-			post.CategoryId = (int)request.CategoryId;
-			if (request.Image != null)
-			{
+            var posts = await _context.Posts
+         .Where(p => p.UserId == Guid.Parse(userId))
+         .Include(p => p.User)
+         .Include(p => p.Categories)
+         .ToListAsync();
 
-				post.Image = await SaveFile(request.Image);
-			}
+            var postsWithUsernames = posts.Select(post => new PostVm
+            {
+                PostID = post.PostID,
+                UserName = post.User.UserName,
+                Title = post.Title,
+                Content = post.Content,
+                UploadDate = post.UploadDate,
+                View = post.View,
+                CategoryId = post.CategoryId,
+                Desprition = post.Desprition,
+                CategoryName = post.Categories.Name,
+                Image = post.Image,
+            }).ToList();
 
-			_context.Posts.Update(post);
-			_context.SaveChanges();
-			return new ApiSuccessResult<bool>(true);
-		}
+            return (postsWithUsernames);
 
-		public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
-		{
-			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
-			var post = await _context.Posts
-			.OrderByDescending(p => p.View)
-			.Take(quantity)
-			.ToListAsync();
 
-			List<PostVm> postList = new List<PostVm>();
-			foreach (var item in post)
-			{
-				PostVm postVm = new PostVm();
-				postVm.Title = item.Title;
-				postVm.UserId = item.UserId;
-				postVm.PostID = item.PostID;
-				postVm.UploadDate = item.UploadDate;
-				postVm.View = item.View;
-				postVm.Content = item.Content;
-				postVm.UserName = item.User.UserName;
-				postVm.Image = item.Image;
-				postVm.CategoryName = item.Categories.Name;
+        }
 
-				postList.Add(postVm);
-			}
+        public async Task<ApiResult<List<PostVm>>> Search(string searchTerm)
+        {
+            try
+            {
+                var posts = await _context.Posts
+                    .Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm))
+                    .Include(p => p.User)
+                    .ToListAsync();
 
-			return postList;
-		}
+                var postsWithUsernames = posts.Select(post => new PostVm
+                {
+                    PostID = post.PostID,
+                    UserName = post.User.UserName,
+                    Title = post.Title,
+                    Content = post.Content,
+                    UploadDate = post.UploadDate,
+                    View = post.View,
+                    CategoryId = post.CategoryId,
+                    Desprition = post.Desprition,
+                    Image = post.Image,
+                }).ToList();
 
-		public async Task<ApiResult<PostVm>> GetById(int Id)
-		{
-			var postId = await _context.Posts
-				.Include(p => p.Categories)
-				.Include(p => p.User)
-				.FirstOrDefaultAsync(p => p.PostID == Id);
+                return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<List<PostVm>>($"An error occurred while searching for posts: {ex.Message}");
+            }
+        }
 
-			var postvm = new PostVm()
-			{
-				Title = postId.Title,
-				Desprition = postId.Desprition,
-				Content = postId.Content,
-				UserName = postId.User.UserName,
-				CategoryName = postId.Categories.Name,
-				Image = postId.Image,
-				UploadDate = postId.UploadDate,
-				UserId = postId.UserId,
-				PostID = postId.PostID,
-				Avatar = postId.User.Image,
-				View = postId.View,
+        public async Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request)
+        {
+            var query = from p in _context.Posts
+                        select new { p };
 
-				CountComment = _context.Comments
-					   .Where(c => c.PostID == postId.PostID)
-					   .Count(),
-				CountLike = _context.Likes
-					   .Where(c => c.PostID == postId.PostID)
-					   .Count(),
-			};
-			_context.SaveChanges();
-			return new ApiSuccessResult<PostVm>(postvm);
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword) || x.p.Categories.Name.Contains(request.Keyword));
+            }
 
-		}
-		//User's Detail
-		public async Task<ApiResult<PostVm>> DetalUser(int Id)
-		{
-			var postId = await _context.Posts
-				.Include(p => p.Categories)
-				.Include(p => p.User)
-				.FirstOrDefaultAsync(p => p.PostID == Id);
+            int totalRow = await query.CountAsync();
 
-			var postvm = new PostVm()
-			{
-				Title = postId.Title,
-				Desprition = postId.Desprition,
-				Content = postId.Content,
-				UserName = postId.User.UserName,
-				CategoryName = postId.Categories.Name,
-				Image = postId.Image,
-				UploadDate = postId.UploadDate,
-				UserId = postId.UserId,
-				PostID = postId.PostID,
-				Avatar = postId.User.Image,
-				View = postId.View++,
-				CategoryId = postId.CategoryId,
-				CountComment = _context.Comments
-					   .Where(c => c.PostID == postId.PostID)
-					   .Count(),
-				CountLike = _context.Likes
-					   .Where(c => c.PostID == postId.PostID)
-					   .Count(),
-			};
-			_context.SaveChanges();
-			return new ApiSuccessResult<PostVm>(postvm);
+            var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new PostVm()
+                {
 
-		}
-		/*   public async Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request)
+                    Title = x.p.Title,
+                    Content = x.p.Content,
+                    UserName = x.p.User.UserName,
+                    Desprition = x.p.Desprition,
+                    Image = x.p.Image,
+                    View = x.p.View,
+                    UploadDate = x.p.UploadDate,
+                    CategoryName = x.p.Categories.Name,
+                    CategoryId = x.p.CategoryId,
+                    PostID = x.p.PostID,
+                    CountComment = _context.Comments
+                       .Where(c => c.PostID == x.p.PostID)
+                       .Count(),
+                    CountLike = _context.Likes
+                        .Where(c => c.PostID == x.p.PostID)
+                        .Count(),
+                    Avatar = x.p.User.Image
+                }).ToListAsync();
+            //4. Select and projection
+            var pagedResult = new PagedResult<PostVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+            return pagedResult;
+        }
+
+        public async Task<ApiResult<bool>> Update(PostUpdateRequest request, int id)
+        {
+            if (id == null)
+            {
+                return new ApiErrorResult<bool>("Lỗi cập nhập");
+            }
+            var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostID == id);
+            var categories = _context.Categories.ToList(); // Thay Categories bằng tên thật của bảng Category
+
+
+
+            post.Desprition = request.Desprition;
+            post.Title = request.Title;
+            post.Content = request.Content;
+            post.CategoryId = (int)request.CategoryId;
+            if (request.Image != null)
+            {
+
+                post.Image = await SaveFile(request.Image);
+            }
+
+            _context.Posts.Update(post);
+            _context.SaveChanges();
+            return new ApiSuccessResult<bool>(true);
+        }
+
+        public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
+        {
+            if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+            var post = await _context.Posts
+            .OrderByDescending(p => p.View)
+            .Take(quantity)
+            .ToListAsync();
+
+            List<PostVm> postList = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title = item.Title;
+                postVm.UserId = item.UserId;
+                postVm.PostID = item.PostID;
+                postVm.UploadDate = item.UploadDate;
+                postVm.View = item.View;
+                postVm.Content = item.Content;
+                postVm.UserName = item.User.UserName;
+                postVm.Image = item.Image;
+                postVm.CategoryName = item.Categories.Name;
+
+                postList.Add(postVm);
+            }
+
+            return postList;
+        }
+
+        public async Task<ApiResult<PostVm>> GetById(int Id)
+        {
+            var postId = await _context.Posts
+                .Include(p => p.Categories)
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.PostID == Id);
+
+            var postvm = new PostVm()
+            {
+                Title = postId.Title,
+                Desprition = postId.Desprition,
+                Content = postId.Content,
+                UserName = postId.User.UserName,
+                CategoryName = postId.Categories.Name,
+                Image = postId.Image,
+                UploadDate = postId.UploadDate,
+                UserId = postId.UserId,
+                PostID = postId.PostID,
+                Avatar = postId.User.Image,
+                View = postId.View,
+
+                CountComment = _context.Comments
+                       .Where(c => c.PostID == postId.PostID)
+                       .Count(),
+                CountLike = _context.Likes
+                       .Where(c => c.PostID == postId.PostID)
+                       .Count(),
+            };
+            _context.SaveChanges();
+            return new ApiSuccessResult<PostVm>(postvm);
+
+        }
+        //User's Detail
+        public async Task<ApiResult<PostVm>> DetalUser(int Id)
+        {
+            var postId = await _context.Posts
+                .Include(p => p.Categories)
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.PostID == Id);
+
+            var postvm = new PostVm()
+            {
+                Title = postId.Title,
+                Desprition = postId.Desprition,
+                Content = postId.Content,
+                UserName = postId.User.UserName,
+                CategoryName = postId.Categories.Name,
+                Image = postId.Image,
+                UploadDate = postId.UploadDate,
+                UserId = postId.UserId,
+                PostID = postId.PostID,
+                Avatar = postId.User.Image,
+                View = postId.View++,
+                CategoryId = postId.CategoryId,
+                CountComment = _context.Comments
+                       .Where(c => c.PostID == postId.PostID)
+                       .Count(),
+                CountLike = _context.Likes
+                       .Where(c => c.PostID == postId.PostID)
+                       .Count(),
+            };
+            _context.SaveChanges();
+            return new ApiSuccessResult<PostVm>(postvm);
+
+        }
+        /*   public async Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request)
            {
                try
                {
@@ -396,175 +396,174 @@ namespace BlogProject.Application.Catalog.Post
                }
            }*/
 
-		//save image
-		private async Task<string> SaveFile(IFormFile file)
-		{
-			string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+        //save image
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
 
-			// Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
-			string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+            // Xác định đường dẫn tới thư mục lưu trữ hình ảnh trong thư mục gốc (wwwroot)
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
 
-			// Tạo đường dẫn đầy đủ tới tệp hình ảnh
-			string imagePath = Path.Combine(uploadPath, uniqueFileName);
+            // Tạo đường dẫn đầy đủ tới tệp hình ảnh
+            string imagePath = Path.Combine(uploadPath, uniqueFileName);
 
-			// Lưu tệp hình ảnh
-			using (var stream = new FileStream(imagePath, FileMode.Create))
-			{
-				file.CopyTo(stream);
-			}
-			return "https://localhost:5001/" + "/Images/" + uniqueFileName;
-		}
+            // Lưu tệp hình ảnh
+            using (var stream = new FileStream(imagePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            return "https://localhost:5001/" + "/Images/" + uniqueFileName;
+        }
 
-		public async Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request)
-		{
-			var posts = await _context.Posts
-					 .Where(p => p.UserId == Guid.Parse(userId))
-					 .Include(p => p.User)
-					 .ToListAsync();
-			if (!string.IsNullOrEmpty(request.Keyword))
-			{
-				posts = (List<Posts>)posts.Where(x => x.Title.Contains(request.Keyword) || x.Desprition.Contains(request.Keyword));
-			}
-			int totalRow = posts.Count();
-			var postsWithUsernames = posts.Select(post => new PostVm
-			{
-				PostID = post.PostID,
-				UserName = post.User.UserName,
-				Title = post.Title,
-				Content = post.Content,
-				UploadDate = post.UploadDate,
-				View = post.View,
-				CategoryId = post.CategoryId,
-				Desprition = post.Desprition,
-				Image = post.Image,
-				CountComment = _context.Comments
-					   .Where(c => c.PostID == post.PostID)
-					   .Count(),
-			}).ToList();
+        public async Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request)
+        {
+            var posts = await _context.Posts
+                     .Where(p => p.UserId == Guid.Parse(userId))
+                     .Include(p => p.User)
+                     .ToListAsync();
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                posts = (List<Posts>)posts.Where(x => x.Title.Contains(request.Keyword) || x.Desprition.Contains(request.Keyword));
+            }
+            int totalRow = posts.Count();
+            var postsWithUsernames = posts.Select(post => new PostVm
+            {
+                PostID = post.PostID,
+                UserName = post.User.UserName,
+                Title = post.Title,
+                Content = post.Content,
+                UploadDate = post.UploadDate,
+                View = post.View,
+                CategoryId = post.CategoryId,
+                Desprition = post.Desprition,
+                Image = post.Image,
+                CountComment = _context.Comments
+                       .Where(c => c.PostID == post.PostID)
+                       .Count(),
+            }).ToList();
 
-			var pagedResult = new PagedResult<PostVm>()
-			{
-				TotalRecords = totalRow,
-				PageIndex = request.PageIndex,
-				PageSize = request.PageSize,
-				Items = postsWithUsernames
-			};
-			return pagedResult;
-		}
+            var pagedResult = new PagedResult<PostVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = postsWithUsernames
+            };
+            return pagedResult;
+        }
 
 
 
-		public async Task<List<PostVm>> PostRecent(int quantity)
-		{
-			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
-			var post = await _context.Posts
-			.OrderByDescending(p => p.UploadDate)
-			.Take(quantity)
-			.ToListAsync();
+        public async Task<List<PostVm>> PostRecent(int quantity)
+        {
+            if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+            var post = await _context.Posts
+            .OrderByDescending(p => p.UploadDate)
+            .Take(quantity)
+            .ToListAsync();
 
-			List<PostVm> postList = new List<PostVm>();
-			foreach (var item in post)
-			{
-				PostVm postVm = new PostVm();
-				postVm.Title = item.Title;
-				postVm.UserId = item.UserId;
-				postVm.PostID = item.PostID;
-				postVm.UploadDate = item.UploadDate;
-				postVm.View = item.View;
-				postVm.Content = item.Content;
-				postVm.UserName = item.User.UserName;
-				postVm.Image = item.Image;
-				postVm.CategoryName = item.Categories.Name;
+            List<PostVm> postList = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title = item.Title;
+                postVm.UserId = item.UserId;
+                postVm.PostID = item.PostID;
+                postVm.UploadDate = item.UploadDate;
+                postVm.View = item.View;
+                postVm.Content = item.Content;
+                postVm.UserName = item.User.UserName;
+                postVm.Image = item.Image;
+                postVm.CategoryName = item.Categories.Name;
 
-				postList.Add(postVm);
-			}
+                postList.Add(postVm);
+            }
 
-			return postList;
-		}
+            return postList;
+        }
 
-		public async Task<List<PostVm>> GetPostInDay()
-		{
-			DateTime today = DateTime.Today;
+        public async Task<List<PostVm>> GetPostInDay()
+        {
+            DateTime today = DateTime.Today;
 
-			var post = await _context.Posts
-			.Where(p => p.UploadDate.Date == today)
-			.Include(p => p.Categories)
-			.Include(p => p.User)
-			.ToListAsync();
+            var post = await _context.Posts
+            .Where(p => p.UploadDate.Date == today)
+            .Include(p => p.Categories)
+            .Include(p => p.User)
+            .ToListAsync();
 
-			List<PostVm> postList = new List<PostVm>();
-			foreach (var item in post)
-			{
-				PostVm postVm = new PostVm();
-				postVm.Title = item.Title;
-				postVm.UserId = item.UserId;
-				postVm.PostID = item.PostID;
-				postVm.UploadDate = item.UploadDate;
-				postVm.View = item.View;
-				postVm.Content = item.Content;
-				postVm.UserName = item.User.UserName;
-				postVm.Image = item.Image;
-				postVm.CategoryName = item.Categories.Name;
+            List<PostVm> postList = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title = item.Title;
+                postVm.UserId = item.UserId;
+                postVm.PostID = item.PostID;
+                postVm.UploadDate = item.UploadDate;
+                postVm.View = item.View;
+                postVm.Content = item.Content;
+                postVm.UserName = item.User.UserName;
+                postVm.Image = item.Image;
+                postVm.CategoryName = item.Categories.Name;
 
-				postList.Add(postVm);
-			}
+                postList.Add(postVm);
+            }
 
-			return postList;
-		}
+            return postList;
+        }
 
-		public async Task<List<PostVm>> GetPostOfCategory(int categoryId)
-		{
-			var post = await _context.Posts.Include(c => c.Categories).Include(x => x.User).Where(x => x.CategoryId == categoryId).ToListAsync();
+        public async Task<List<PostVm>> GetPostOfCategory(int categoryId)
+        {
+            var post = await _context.Posts.Include(c => c.Categories).Include(x => x.User).Where(x => x.CategoryId == categoryId).ToListAsync();
 
-			List<PostVm> postVms = new List<PostVm>();
-			foreach (var item in post)
-			{
-				PostVm postVm = new PostVm();
-				postVm.Title = item.Title;
-				postVm.Desprition = item.Desprition;
-				postVm.Image = item.Image;
-				postVm.Avatar = item.User.Image;
-				postVm.CategoryName = item.Categories.Name;
-				postVm.UploadDate = item.UploadDate;
-				postVm.UserName = item.User.UserName;
-				postVm.CategoryId = item.CategoryId;
-				postVms.Add(postVm);
-			}
-			return postVms;
-		}
+            List<PostVm> postVms = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title = item.Title;
+                postVm.Desprition = item.Desprition;
+                postVm.Image = item.Image;
+                postVm.Avatar = item.User.Image;
+                postVm.CategoryName = item.Categories.Name;
+                postVm.UploadDate = item.UploadDate;
+                postVm.UserName = item.User.UserName;
+                postVm.CategoryId = item.CategoryId;
+                postVms.Add(postVm);
+            }
+            return postVms;
+        }
 
-		public async Task<ApiResult<bool>> Like(LikeVm request, string userId)
-		{
-			var userID = await _userManager.FindByIdAsync(userId);
-			var existingLike = _context.Likes.FirstOrDefault(l => l.PostID == request.Id && l.UserId == userID.Id);
-			if (existingLike != null)
-			{
-				_context.Likes.Remove(existingLike);
-				await _context.SaveChangesAsync();
+        public async Task<ApiResult<bool>> Like(LikeVm request, string userId)
+        {
+            var userID = await _userManager.FindByIdAsync(userId);
+            var existingLike = _context.Likes.FirstOrDefault(l => l.PostID == request.Id && l.UserId == userID.Id);
+            if (existingLike != null)
+            {
+                _context.Likes.Remove(existingLike);
+                await _context.SaveChangesAsync();
 
-				return new ApiSuccessResult<bool>();
-			}
-			else
-			{
-				var addLikes = new Like();
-				addLikes.UserId = userID.Id;
-				addLikes.PostID = request.Id;
-				addLikes.Date = DateTime.Now;
+                return new ApiSuccessResult<bool>();
+            }
+            else
+            {
+                var addLikes = new Like();
+                addLikes.UserId = userID.Id;
+                addLikes.PostID = request.Id;
+                addLikes.Date = DateTime.Now;
 
-				_context.Likes.Add(addLikes);
-				await _context.SaveChangesAsync();
-			}
+                _context.Likes.Add(addLikes);
+                await _context.SaveChangesAsync();
+            }
 
-			return new ApiSuccessResult<bool>();
-		}
+            return new ApiSuccessResult<bool>();
+        }
 
-		public async Task<Like> CheckLike(string UserName, int Id)
-		{
-			var user = await _userService.GetIdByUserName(UserName);
-			var check = await _context.Likes.FirstOrDefaultAsync(x => x.PostID == Id && x.UserId == user);
-			return check;
-		}
-
+        public async Task<Like> CheckLike(string UserName, int Id)
+        {
+            var user = await _userService.GetIdByUserName(UserName);
+            var check = await _context.Likes.FirstOrDefaultAsync(x => x.PostID == Id && x.UserId == user);
+            return check;
+        }
         public async Task<ApiResult<bool>> Enable(PostEnable request)
         {
             int check = int.Parse(request.Number);

@@ -1,0 +1,94 @@
+﻿@model BlogProject.ViewModel.System.Users.UserVm
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="h-100 gradient-custom-2">
+    <div class="container py-5 h-100">
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="col-lg-9 col-xl-7">
+                <div class="card">
+                    <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
+                        <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                            @if (!string.IsNullOrEmpty(Model.Image))
+                            {
+                                <img src="@Model.Image"
+                                     alt="Avatar" class="img-fluid img-thumbnail mt-4 mb-2"
+                                     style="width: 150px; height: 150px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <img src="~/images/AVATAR.png"
+                                     alt="Default Avatar" class="img-fluid img-thumbnail mt-4 mb-2"
+                                     style="width: 150px;">
+                            }
+                        </div>
+                        <div class="ms-3" style="margin-top: 130px;">
+                            <h5>@(Model.FirstName ?? "Đang cập nhập") @(Model.LastName ?? "")</h5>
+                            <p style="padding-bottom: 8px;" title="Tên tài khoản">@Model.UserName</p>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 text-black">
+                        <div class="mb-5">
+                            <p class="lead fw-normal mb-1" style="margin-top: 0px;">Thông tin</p>
+                            <div class="p-4" style="background-color: #f8f9fa; min-height: 50px;">
+                                <form asp-action="Edit" asp-controller="Account" method="post" enctype="multipart/form-data">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-group">
+                                        <input asp-for="Id" class="form-control" readonly hidden />
+                                        <input asp-for="UserName" class="form-control" readonly hidden />
+                                    </div>
+                                    <div class="form-group">
+                                        <h6>FirstName</h6>
+                                        <input asp-for="FirstName" class="form-control" />
+                                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <h6>LastName</h6>
+                                        <input asp-for="LastName" class="form-control" />
+                                        <span asp-validation-for="LastName" class="text-danger"></span>
+                                    </div>
+                                    <!-- Other form inputs -->
+                                    <div class="form-group">
+                                        <label asp-for="Image" class="control-label"></label>
+                                        <input asp-for="Image" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
+                                        <span asp-validation-for="Image" class="text-danger"></span>
+                                        <div class="image-preview">
+                                            <img id="selectedImage" style="display: none;">
+                                            <img id="oldImage" src="@Model.ImageFileName" style="max-width: 100%; max-height: 100%;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="padding-top: 16px; display: flex; justify-content: center;">
+                                        <input type="submit" value="Cập nhập" class="btn btn-success" style="margin-right: 12px;" />
+                                        <button asp-controller="Account" asp-action="AccountSetting" formmethod="get" class="btn btn-danger">Hủy</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function displaySelectedImage(event) {
+        const selectedFile = event.target.files[0];
+        const imgElement = document.getElementById('selectedImage');
+        const oldImgElement = document.getElementById('oldImage');
+        imgElement.style.display = 'block';
+        const reader = new FileReader();
+        reader.onload = function () {
+            imgElement.src = reader.result;
+        }
+        if (selectedFile) {
+            reader.readAsDataURL(selectedFile);
+        } else {
+            imgElement.style.display = 'none';
+        }
+        // Ẩn hình cũ nếu có
+        oldImgElement.style.display = 'none';
+    }
+</script>

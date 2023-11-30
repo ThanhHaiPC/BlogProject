@@ -133,7 +133,7 @@
 
 						<h1 class="title mt-0 mb-3">@Html.DisplayFor(model => model.Post.Title)</h1>
 						<ul class="meta list-inline mb-0">
-							<li class="list-inline-item"><a href="#">@Html.DisplayFor(model => model.Post.UserName)</a></li>
+							<li class="list-inline-item"><a asp-action="UserPost" asp-controller="Post" asp-route-userId="@Model.Post.UserId">@Html.DisplayFor(model => model.Post.UserName)</a></li>
 							<li class="list-inline-item"><a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@Model.Post.CategoryId">@Html.DisplayFor(Model => Model.Post.CategoryName)</a></li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.UploadDate)</li>
 							<li class="list-inline-item">@Html.DisplayFor(model => model.Post.View) Views</li>
@@ -309,7 +309,7 @@
 								@foreach(var items in postInDay){
 								<div class="post post-carousel">
 									<div class="thumb rounded">
-										<a href="category.html" class="category-badge position-absolute">@items.CategoryName</a>
+											<a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@items.CategoryId" class="category-badge position-absolute">@items.CategoryName</a>
 											<a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">
 											<div class="inner">
 												<img src="@items.Image" alt="post-title" />
@@ -318,7 +318,7 @@
 									</div>
 										<h5 class="post-title mb-0 mt-4"><a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">@items.Title</a></h5>
 									<ul class="meta list-inline mt-2 mb-0">
-										<li class="list-inline-item"><a href="#">@items.UserName</a></li>
+										<li class="list-inline-item"><a asp-action="UserPost" asp-controller="Post" asp-route-userId="@items.UserId">@items.UserName</a></li>
 										<li class="list-inline-item">@items.UploadDate.ToString("dd/MM/yyyy")</li>
 									</ul>
 								</div>

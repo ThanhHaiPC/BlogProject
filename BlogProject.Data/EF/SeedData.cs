@@ -102,7 +102,7 @@ namespace BlogProject.Data.EF
             var roleId = new Guid("E208AEB8-558D-4796-BB3A-B010A6504C4F");
             var roleId1 = new Guid("CBCF8873-71A9-4FD2-B0D3-D16243A77CE8");
             var adminId = new Guid("C8C8BA75-93DC-4E6E-8DC2-AFF296F3BAEA");
-
+            var roleId2 = new Guid("6C758DA6-4974-4D2D-A417-1DACF1BD6222");
             modelBuilder.Entity<Role>().HasData(
                 new Role
                 {
@@ -117,7 +117,16 @@ namespace BlogProject.Data.EF
                     Name = "user",
                     NormalizedName = "user",
                     Description = "User Role"
-                });
+
+                },
+                 new Role
+                 {
+                     Id = roleId2,
+                     Name = "author",
+                     NormalizedName = "author",
+                     Description = "Author Role"
+
+                 });
 
 
             var hasher = new PasswordHasher<User>();

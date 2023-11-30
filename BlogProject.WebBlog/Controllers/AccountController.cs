@@ -11,6 +11,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using BlogProject.Apilntegration.Category;
+using BlogProject.Data.Entities;
+
 
 namespace BlogProject.WebBlog.Controllers
 {
@@ -139,8 +141,54 @@ namespace BlogProject.WebBlog.Controllers
 				return View(result.ResultObj);
 			}
 		}
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
 
-		private ClaimsPrincipal ValidateToken(string jwtToken)
+            var result = await _userApiClient.GetById(id);
+            var Category = await _categoryApiPost.GetAll();
+            ViewData["Category"] = Category;
+            if (result.IsSuccessed)
+            {
+                var user = result.ResultObj;
+                var updateRequest = new UserUpdateRequest()
+                {
+                    Id = id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    UserName = user.UserName,
+                    ImageFileName = user.Image,
+                    Email = user.Email,
+                    Dob = user.DateOfBir,
+                    Gender = user.Gender,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address
+                };
+                return View(updateRequest);
+            }
+            return RedirectToAction("Error", "Home");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserUpdateRequest request)
+        {
+            var Category = await _categoryApiPost.GetAll();
+            ViewData["Category"] = Category;
+
+            if (!ModelState.IsValid)
+                return View();
+
+            var result = await _userApiClient.UpdateUser(request.Id, request);
+            if (result.IsSuccessed)
+            {
+                TempData["result"] = "Bạn đã cập nhật thông tin thành công";
+                return RedirectToAction("AccountSetting");
+            }
+
+            ModelState.AddModelError("", result.Message);
+            return RedirectToAction("Error", "Home"); ;
+        }
+        private ClaimsPrincipal ValidateToken(string jwtToken)
         {
             IdentityModelEventSource.ShowPII = true;
 

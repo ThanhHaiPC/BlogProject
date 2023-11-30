@@ -33,18 +33,15 @@
                                      style="width: 150px;">
                             }
                             <!-- Edit button -->
-                            @if (User.Identity.Name == Model.UserName)
-                            {
-                                <a href="@Url.Action("Edit", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
-                                   style="z-index: 1;">
-                                    Chỉnh sửa
-                                </a>
-                            }
+                            <a href="@Url.Action("Edit", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
+                               style="z-index: 1;">
+                                Chỉnh sửa
+                            </a>
                         </div>
                         <div class="ms-3" style="margin-top: 130px;">
                             <!-- Username and Name -->
                             <h5>
-                                @(Model.FirstName ?? "Đang cập nhập");
+                                @(Model.FirstName ?? "Đang cập nhập")
                                 @(Model.LastName ?? "")
                             </h5>
                             <p style="padding-bottom: 8px;" title="Tên tài khoản">@Model.UserName</p>
@@ -52,10 +49,15 @@
                     </div>
                     <!-- Additional content -->
                     <div class="p-3 text-black" style="background-color: #f8f9fa;">
-                        <!-- Statistics -->
-                        <div class="Compatible d-flex justify-content-end text-center py-1">
-                            <!-- Statistics elements -->
-                            <!-- Bạn có thể giữ phần này nếu cần -->
+                        <!-- User information -->
+                        <div class="card-body p-4 text-black">
+                            <h5>Thông tin người dùng</h5>
+                            <p><strong>Tên:</strong> @(Model.FirstName ?? "Đang cập nhập") @(Model.LastName ?? "")</p>
+                            <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+                            <p><strong>Email:</strong> @Model.Email</p>
+                            <p><strong>Ngày sinh:</strong> @(Model.DateOfBir.HasValue ? Model.DateOfBir.Value.ToString("dd-MM-yyyy") : "Chưa cập nhật")</p>
+                            <p><strong>Địa chỉ:</strong> @Model.Address</p>
+                            <p><strong>Giới tính:</strong> @(Model.Gender == null ? "Chưa cập nhật" : Model.Gender.ToString())</p>
                         </div>
                     </div>
                     <!-- Success message -->
@@ -66,11 +68,6 @@
                                 @ViewBag.SuccessMsg
                             </div>
                         }
-                    </div>
-                    <!-- Information section -->
-                    <div class="card-body p-4 text-black">
-                        <!-- User information -->
-                        <!-- Bạn có thể giữ phần này nếu cần -->
                     </div>
                 </div>
             </div>

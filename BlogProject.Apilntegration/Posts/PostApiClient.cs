@@ -139,15 +139,14 @@ namespace BlogProject.Admin.Service
 
 		public async Task<List<Posts>> GetAll()
 		{
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]); // Set your API base URL
 
-			var client = _httpClientFactory.CreateClient();
-
-			var response = await client.GetAsync("/api/posts");
-			var body = await response.Content.ReadAsStringAsync();
-			List<Posts> posts = JsonConvert.DeserializeObject<List<Posts>>(body);
-
-			return posts;
-		}
+            var response = await client.GetAsync("/api/posts");
+            var body = await response.Content.ReadAsStringAsync();
+            List<Posts> posts = JsonConvert.DeserializeObject<List<Posts>>(body);
+            return posts;
+        }
 
 		public async Task<PagedResult<PostVm>> GetAllPaging(GetUserPagingRequest request)
 		{
@@ -170,7 +169,19 @@ namespace BlogProject.Admin.Service
 			return JsonConvert.DeserializeObject<ApiResult<PostVm>>(body);
 		}
 
-		public async Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request)
+        public async Task<List<PostVm>> GetByUserId(string userId)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+            var response = await client.GetAsync($"/api/posts/get-by-user?userId={userId}");
+            var body = await response.Content.ReadAsStringAsync();
+            var users = JsonConvert.DeserializeObject<List<PostVm>>(body);
+            return users;
+        }
+
+        public async Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request)
 		{
 			var data = await GetAsync<PagedResult<PostVm>>($"/api/Posts/role?pageIndex=" +
 				 $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");

@@ -101,7 +101,7 @@
                     <div class="form-group">
                         <label asp-for="Image" class="control-label"></label>
                         <div class="custom-file">
-                            <input asp-for="Image" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
+                            <input asp-for="Image"  class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
                             <div class="image-preview">
                                 <img id="selectedImage" style="display: none;">
                                 <img id="oldImage" src="@Model.ImageFileName" style="max-width: 100%; max-height: 100%;">

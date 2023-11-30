@@ -16,18 +16,21 @@ namespace BlogProject.ViewModel.System.Users
         public Guid Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        [Display(Name = "Tên tài khoản")]
+        public string? UserName { get; set; }
         [Display(Name = "Thêm ảnh đại diện")]
         [NotMapped]
         public IFormFile? Image { get; set; }
         [Display(Name = "Ảnh đại diện")]
-        public string? ImageFileName { get; set; }
+        public string ImageFileName { get; set; }
         [Display(Name = "Giới tính")]
         public Gender? Gender { get; set; }
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-        [Display(Name = "Ngày sinh")]
-        [DataType(DataType.Date)]
+        
+      /*  [Display(Name = "Ngày sinh")]
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        public DateTime? DateOfBir { get; set; }*/
         public DateTime? Dob { get; set; }
         public string? Address { get; set; }
     }

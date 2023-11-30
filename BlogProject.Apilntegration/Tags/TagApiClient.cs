@@ -122,8 +122,8 @@ namespace BlogProject.Apilntegration.Tags
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PutAsync($"/api/Tags/{tagId}", httpContent);
-
             var body = await response.Content.ReadAsStringAsync();
+
             if (response.IsSuccessStatusCode)
                 return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);

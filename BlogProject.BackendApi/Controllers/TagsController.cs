@@ -43,7 +43,7 @@ namespace BlogProject.BackendApi.Controllers
         public async Task<IActionResult> UpdateTag(int tagId, TagUpdateRequest request)
         {
             var result = await _tagService.UpdateTag(tagId, request);
-            if (result)
+            if (result.IsSuccessed)
             {
                 return Ok("Tag updated successfully");
             }

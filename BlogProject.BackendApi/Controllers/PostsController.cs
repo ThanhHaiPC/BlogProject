@@ -76,21 +76,21 @@ namespace BlogProject.BackendApi.Controllers
 			var post = await _postService.GetPaged(request);
 			return Ok(post);
 		}
-		[HttpGet("get-by-user")]
-		public async Task<IActionResult> GetByUserId()
-		{
-			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        [HttpGet("get-by-user")]
+        public async Task<IActionResult> GetByUserId(string userId)
+        {
 
-			if (string.IsNullOrEmpty(userId))
-			{
-				return BadRequest("User ID not found.");
-			}
 
-			var posts = await _postService.GetByUserId(userId);
-			return Ok(posts);
-		}
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID not found.");
+            }
 
-		[HttpGet("search")]
+            var posts = await _postService.GetByUserId(userId);
+            return Ok(posts);
+        }
+
+        [HttpGet("search")]
 		public async Task<IActionResult> Search([FromQuery] string searchTerm)
 		{
 			if (string.IsNullOrEmpty(searchTerm))

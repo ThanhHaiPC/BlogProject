@@ -18,8 +18,8 @@ namespace BlogProject.Application.Catalog.Post
 		Task<ApiResult<bool>> Create(PostRequest request, string userId);
 		Task<ApiResult<bool>> Update(PostUpdateRequest request, int Id);
 		Task<ApiResult<bool>> Delete(int Id);
-		Task<ApiResult<List<PostVm>>> GetByUserId(string userId);
-		Task<ApiResult<List<PostVm>>> Search(string searchTerm);
+        Task<List<PostVm>> GetByUserId(string userId);
+        Task<ApiResult<List<PostVm>>> Search(string searchTerm);
 		Task<ApiResult<PostVm>> GetById(int Id);
 		Task<ApiResult<PostVm>> DetalUser(int Id);
 		Task<List<PostVm>> GetPostInDay();
@@ -30,6 +30,7 @@ namespace BlogProject.Application.Catalog.Post
 		Task<ApiResult<bool>> Like(LikeVm request, string userId);
 		Task<Like> CheckLike(string UserName, int Id);
         Task<ApiResult<bool>> Enable(PostEnable request);
+
         /* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
     }
 }

@@ -43,10 +43,10 @@
 					
 						<h2 class="post-title"><a  asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">@items.Title</a></h2>
 							
-						<ul class="meta list-inline mb-0">
-							<li class="list-inline-item"><a href="#">@items.UserName</a></li>
+							<ul class="meta list-inline mb-0">
+								<li class="list-inline-item"><a asp-action="UserPost" asp-controller="Post" asp-route-userId="@items.UserId">@items.UserName</a></li>
 								<li class="list-inline-item">@items.UploadDate.ToString("dd/MM/yyyy")</li>
-						</ul>
+							</ul>
 					</div>
 						<a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">
 						<div class="thumb rounded">

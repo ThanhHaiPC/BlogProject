@@ -109,7 +109,7 @@ namespace BlogProject.Admin.Controllers
 
 		}
 		[HttpPost]
-		//[Authorize(Roles = "admin,author")]
+		[Authorize(Roles = "admin,author")]
 		public async Task<IActionResult> Edit(UserUpdateRequest request)
 		{
 			if (!ModelState.IsValid)
@@ -160,7 +160,7 @@ namespace BlogProject.Admin.Controllers
 			return View(request);
 		}
 		[HttpGet]
-		//[Authorize(Roles = "admin")]
+		[Authorize(Roles = "admin")]
 		public async Task<IActionResult> RoleAssign(Guid id)
 		{
 			var roleAssignRequest = await GetRoleAssignRequest(id);

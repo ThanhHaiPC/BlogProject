@@ -1,4 +1,5 @@
 ﻿
+using BlogProject.Apilntegration.Posts;
 using BlogProject.Apilntegration.Tags;
 using BlogProject.Data.EF;
 using BlogProject.ViewModel.Catalog.Categories;
@@ -13,11 +14,11 @@ namespace BlogProject.Admin.Controllers
     public class TagController : Controller
     {
         private readonly ITagApiClient _tagApiClient;
- 
-        public TagController(ITagApiClient tagApiClient)
+        private readonly IPostApiClient _postApiClient;
+        public TagController(ITagApiClient tagApiClient,IPostApiClient postApiClient)
         {
             _tagApiClient = tagApiClient;
-           
+            _postApiClient = postApiClient;
         }
         public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)      
         {
@@ -67,9 +68,11 @@ namespace BlogProject.Admin.Controllers
         public async Task<IActionResult> Edit(int tagId)
         {
             var result = await _tagApiClient.GetById(tagId);
+
             if (result.IsSuccessed)
             {
                 var user = result.ResultObj;
+               
                 var updateRequest = new TagVm()
                 {
                     TagId = user.TagId,
@@ -85,12 +88,12 @@ namespace BlogProject.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, TagUpdateRequest request)
+        public async Task<IActionResult> Edit(int  tagId, TagUpdateRequest request)
         {
             if (!ModelState.IsValid)
                 return View();
 
-            var result = await _tagApiClient.UpdateTag(id, request);
+            var result = await _tagApiClient.UpdateTag(tagId, request);
             if (result.IsSuccessed != null)
             {
                 TempData["result"] = "Cập nhập tag bài viết  thành công";

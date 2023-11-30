@@ -146,15 +146,34 @@ namespace BlogProject.Application.Catalog.Tags
             return new  ApiSuccessResult<PagedResult<TagVm>>(pagedResult);
         }
 
-        public async Task<bool> UpdateTag(int tagId, TagUpdateRequest request)
+        public async Task<ApiResult<bool>> UpdateTag(int tagId, TagUpdateRequest request)
         {
             var tag = await _dbContext.Tags.FindAsync(tagId);
 
-            tag.TagName = request.TagName;
+            if (tag == null)
+            {
+                return new ApiErrorResult<bool>();
+            }
 
-            _dbContext.Tags.Update(tag);
-            await _dbContext.SaveChangesAsync();
-            return true;
+            try
+            {
+                // Update the properties based on your TagUpdateRequest
+                tag.TagID = request.TagId;
+                tag.TagName = request.TagName;
+                tag.PostID = request.PostID;
+                tag.UploadDate = request.UploadDate;
+                tag.View = request.View;
+
+                _dbContext.Tags.Update(tag);
+                await _dbContext.SaveChangesAsync();
+
+                return new ApiSuccessResult<bool>();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                return new ApiErrorResult<bool>();
+            }
         }
     }
 }

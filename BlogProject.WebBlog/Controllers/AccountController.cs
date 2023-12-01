@@ -139,7 +139,7 @@ namespace BlogProject.WebBlog.Controllers
 				return View(result.ResultObj);
 			}
 		}
-
+      
 		private ClaimsPrincipal ValidateToken(string jwtToken)
         {
             IdentityModelEventSource.ShowPII = true;

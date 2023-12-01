@@ -10,6 +10,7 @@ namespace BlogProject.ViewModel.System.Users
     public class GetUserPagingRequest : PagingRequestBase
     {
         public string? Keyword { get; set; }
-        /*public string? Name { get; set; }*/
-    }
+		public string? UserName { get; set; }
+		/*public string? Name { get; set; }*/
+	}
 }

@@ -8,6 +8,7 @@ namespace BlogProject.ViewModel.Catalog.Like
 {
     public class LikeVm
     {
+        
         public string Username { get; set; }
         public int Id { get; set; }
     }

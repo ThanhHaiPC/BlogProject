@@ -119,8 +119,10 @@
 							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
 								@if (User.Identity.IsAuthenticated)
 								{
-									<li><a class="dropdown-item" href="#">@User.Identity.Name</a></li>
-									<li><a class="dropdown-item" asp-action="AccountSetting" asp-controller="Account" asp-route-UserName="@User.Identity.Name">Thông tin tài khoản</a></li>
+									<li><a class="dropdown-item" asp-action="AccountSetting" asp-controller="Account" asp-route-UserName="@User.Identity.Name">@User.Identity.Name</a></li>
+									<li><a class="dropdown-item" asp-action="HistoryLike" asp-controller="Post" asp-route-UserName="@User.Identity.Name">Các bài viết đã thích</a></li>
+
+									<li><a class="dropdown-item" asp-action="Index" asp-controller="Follow" asp-route-user="@User.Identity.Name">Đang theo dõi</a></li>
 									<form method="post" asp-controller="Account" asp-action="Logout">
 										<button type="submit" class="dropdown-item">Đăng xuất</button>
 									</form>

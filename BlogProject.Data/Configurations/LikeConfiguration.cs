@@ -21,7 +21,7 @@ namespace BlogProject.Data.Configurations
 
             builder.HasOne(x => x.User).WithMany(x => x.Like).HasForeignKey(x => x.UserId);
 
-            builder.HasOne(x => x.Post).WithMany(x => x.Likes).HasForeignKey(x => x.PostID);
+            builder.HasOne(x => x.Post).WithMany(x => x.Likes).HasForeignKey(x=>x.PostID);
         }
     }
 }

@@ -16,20 +16,36 @@
         border-radius: 50%;
         object-fit: cover;
     }
+
+    #followButton.followed {
+        background-color: blue; /* Màu nền khi đã like */
+        color: #fff; /* Màu chữ khi đã like */
+    }
 </style>
+
 <div class="widget rounded">
     <div class="widget-about data-bg-image text-center" data-bg-image="images/map-bg.png">
         <img class="avatar-image" src="@user.Image" alt="logo" class="mb-4" />
         <p class="mb-4">@user.UserName</p>
-
-        <ul class="social-icons list-unstyled list-inline mb-0">
-            <li class="list-inline-item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fab fa-medium"></i></a></li>
-            <li class="list-inline-item"><a href="#"><i class="fab fa-youtube"></i></a></li>
-        </ul>
+        @if (@user.UserName != User.Identity.Name)
+        {
+            @if (@ViewBag.CheckFollow == true)
+            {
+                <a title="Hủy theo dõi" id="follow-count" class="followButton btn btn-danger">
+                    <span class="u-icon u-text-white"></span>
+                    <i class="fa fa-solid fa-user-friends followed" style="color: green"></i>
+                    &nbsp;Hủy theo dõi @user.CountFollow
+                </a>
+            }
+            else
+            {
+                <a title="Theo dõi" id="follow-count" class="followButton btn btn-primary">
+                    <span class="u-icon u-text-white"></span>
+                    <i class="fa fa-solid fa-user"></i>
+                    &nbsp;Theo dõi @user.CountFollow
+                </a>
+            }
+        }
     </div>
 </div>
 
@@ -57,3 +73,46 @@
         }
     </div>
 </section>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.followButton').click(function (even) {
+            var likeIcon = $('a.follow-user i');
+            if(likeIcon.hasClass('followed')){
+                $.ajax({
+                    url: '/Follow/AddFollow',
+                    type: 'POST',
+                    data: {
+                        followerName: '@user.UserName',
+                        followeeName: '@User.Identity.Name'
+                    },
+                    success: function () {
+
+                        console.log("trungtin");
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error following user:', error);
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: '/Follow/AddFollow',
+                    type: 'POST',
+                    data: {
+                        followerName: '@user.UserName',
+                        followeeName: '@User.Identity.Name'
+                    },
+                    success: function () {
+
+                        console.log("trungtin");
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error following user:', error);
+                    }
+                });
+            }
+        });
+    });
+</script>

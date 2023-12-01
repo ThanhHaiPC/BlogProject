@@ -12,7 +12,7 @@ namespace BlogProject.Data.Entities
         public int TagID { get; set; }
         public string TagName { get; set; }
 
-       
+        public int View { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UploadDate { get; set; }
         public int PostID { get; set; }

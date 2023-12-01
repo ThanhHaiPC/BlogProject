@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace BlogProject.Apilntegration.Users
@@ -192,5 +193,51 @@ namespace BlogProject.Apilntegration.Users
 
 			return JsonConvert.DeserializeObject<ApiErrorResult<UserVm>>(body);
 		}
-	}
+		public async Task<ApiResult<PagedResult<FollowVm>>> GetFollowersPagings(GetUserPagingRequest request)
+		{
+			var client = _httpClientFactory.CreateClient();
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+			var response = await client.GetAsync($"/api/users/pagingFollowers?pageIndex=" +
+				$"{request.PageIndex}&pageSize={request.PageSize}&Keyword={request.Keyword}&UserName={request.UserName}");
+
+			var body = await response.Content.ReadAsStringAsync();
+			var users = JsonConvert.DeserializeObject<ApiSuccessResult<PagedResult<FollowVm>>>(body);
+			return users;
+		}
+
+		public async Task<ApiResult<bool>> Follow(FollowViewModel request)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+			var response = await client.PostAsJsonAsync("/api/users/follow", request);
+
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
+
+			return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
+		}
+
+        public async Task<ApiResult<bool>> CheckFollow(FollowViewModel request)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+            var response = await client.GetAsync($"api/Users/CheckFollow?FollowerName={request.FollowerName}&FolloweeName={request.FolloweeName}");
+
+            var body = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return new ApiSuccessResult<bool>();
+            return new ApiErrorResult<bool>();
+        }
+    }
 }

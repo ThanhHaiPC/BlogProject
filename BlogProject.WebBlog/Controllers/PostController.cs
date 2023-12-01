@@ -126,9 +126,26 @@ namespace BlogProject.WebBlog.Controllers
             ViewData["Category"] = Category;
             var user = await _userApiClient.GetById(Guid.Parse(userId));
             ViewData["user"] = user.ResultObj;
-            var post = await _postApiClient.GetByUserId(userId);
+			var followee = User.Identity.Name;
+			var follower = await _userApiClient.GetById(Guid.Parse( userId));
+            FollowViewModel follow = new FollowViewModel()
+            {
+                FolloweeName = followee,
+                FollowerName = follower.ResultObj.UserName,
+
+            };
+			var followed = await _userApiClient.CheckFollow(follow);
+			ViewBag.CheckFollow = followed.IsSuccessed;
+			var post = await _postApiClient.GetByUserId(userId);
             return View(post);
         }
-
+		[HttpGet]
+		public async Task<IActionResult> HistoryLike(string userName)
+		{
+			var Category = await _categoryApiClient.GetAll();
+			ViewData["Category"] = Category;
+			var post = await _postApiClient.History(userName);
+			return View(post);
+		}
     }
 }

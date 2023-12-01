@@ -30,6 +30,7 @@ namespace BlogProject.Application.Catalog.Post
 		Task<ApiResult<bool>> Like(LikeVm request, string userId);
 		Task<Like> CheckLike(string UserName, int Id);
         Task<ApiResult<bool>> Enable(PostEnable request);
+        Task<List<Posts>> History(string userId);
         /* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/
     }
 }

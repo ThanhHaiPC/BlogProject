@@ -36,6 +36,9 @@ namespace BlogProject.ViewModel.System.Users
         public DateTime? DateOfBir { get; set; }
         [Display(Name = "Địa chỉ")]
         public string? Address { get; set; }
+        public int CountFollow { get;set; }
+
         public IList<string>? Roles { get; set; }
+
     }
 }

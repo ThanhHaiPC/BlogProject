@@ -264,6 +264,9 @@ namespace BlogProject.Application.System.Users
                 Image = user.Image,
                 Gender = user.Gender,
                 Address = user.Address,
+                CountFollow = await _dataContext.Follows
+                                    .Where(x => x.FollowerId == user.Id)
+                                    .CountAsync(),
             };
             return new ApiSuccessResult<UserVm>(userVm);
         }
@@ -343,9 +346,89 @@ namespace BlogProject.Application.System.Users
 				Gender = user.Gender,
 				UserName = user.UserName,
 				Roles = roles,
-				Address = user.Address
+				Address = user.Address,
+                CountFollow = await _dataContext.Follows
+                                    .Where(x=>x.FollowerId == user.Id)
+                                    .CountAsync(),
+                
 			};
 			return new ApiSuccessResult<UserVm>(userVm);
 		}
-	}
+
+		public async Task<ApiResult<bool>> AddFollow(FollowViewModel request)
+		{
+			var getUserId1 = await GetIdByUserName(request.FollowerName);
+			var getUserId2 = await GetIdByUserName(request.FolloweeName);
+            var existingFollow =  _dataContext.Follows.FirstOrDefault(l => l.FolloweeId == getUserId2 && l.FollowerId == getUserId1);
+            if(existingFollow != null)
+            {
+                _dataContext.Follows.Remove(existingFollow);
+                _dataContext.SaveChanges();
+            }
+            else 
+            { 
+                var follow = new Follow()
+				    {
+					    FollowerId = getUserId1,
+					    FolloweeId = getUserId2,
+					    Date = DateTime.UtcNow
+				    };
+                if (follow != null)
+                {
+                    _dataContext.Follows.Add(follow);
+                    await _dataContext.SaveChangesAsync();
+                }
+            }
+            return new ApiSuccessResult<bool>();
+        }
+
+		public async Task<ApiResult<PagedResult<FollowVm>>> GetFollowersPaging(GetUserPagingRequest request)
+		{
+			var getUserId = await GetIdByUserName(request.UserName);
+			var getFollowers = await _dataContext.Follows.Where(x => x.FolloweeId == getUserId).ToListAsync();
+
+			var users = await _dataContext.Users.ToListAsync();
+
+			var query = users
+			.OrderByDescending(x => x.Id)
+			.Where(user => getFollowers.Any(userFollow => userFollow.FollowerId == user.Id))
+			.ToList();
+
+			//3. Paging
+			int totalRow = query.Count();
+
+			var data = query.Skip((request.PageIndex - 1) * request.PageSize)
+				.Take(request.PageSize)
+				.Select(x => new FollowVm()
+				{
+					UserId = x.Id,
+					Image = x.Image,
+					UserName = x.UserName,
+				}).ToList();
+
+			//4. Select and projection
+			var pagedResult = new PagedResult<FollowVm>()
+			{
+				TotalRecords = totalRow,
+				PageIndex = request.PageIndex,
+				PageSize = request.PageSize,
+				Items = data
+			};
+			return new ApiSuccessResult<PagedResult<FollowVm>>(pagedResult);
+		}
+
+        public async Task<ApiResult<bool>> CheckFollow(FollowViewModel request)
+        {
+            var getUserId1 = await GetIdByUserName(request.FollowerName);
+            var getUserId2 = await GetIdByUserName(request.FolloweeName);
+
+            var getUser = await _dataContext.Follows.Where(x => x.FolloweeId == getUserId2 && x.FollowerId == getUserId1).FirstOrDefaultAsync();
+
+            if (getUser != null)
+            {
+                return new ApiSuccessResult<bool>();
+            }
+            return new ApiErrorResult<bool>("Lỗi khi theo dõi người dùng");
+        }
+    }
 }

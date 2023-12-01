@@ -121,6 +121,35 @@ namespace BlogProject.BackendApi.Controllers
             return Ok(result);
         }
 
+		[HttpPost("follow")]
+		public async Task<IActionResult> Follow([FromBody] FollowViewModel request)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
 
-    }
+			var result = await _userService.AddFollow(request);
+			if (!result.IsSuccessed)
+			{
+				return BadRequest(result);
+			}
+			return Ok(result);
+		}
+		[HttpGet("pagingFollowers")]
+		public async Task<IActionResult> GetAllFollowersPaging([FromQuery] GetUserPagingRequest request)
+		{
+			var products = await _userService.GetFollowersPaging(request);
+			return Ok(products);
+		}
+        [HttpGet("CheckFollow")]
+        public async Task<IActionResult> CheckFollow([FromQuery] FollowViewModel  request)
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+            var result = await _userService.CheckFollow(request);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+	}
 }

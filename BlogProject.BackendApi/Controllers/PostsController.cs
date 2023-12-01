@@ -77,9 +77,9 @@ namespace BlogProject.BackendApi.Controllers
 			return Ok(post);
 		}
 		[HttpGet("get-by-user")]
-        public async Task<IActionResult> GetByUserId(string userId)
-        {
-           
+		public async Task<IActionResult> GetByUserId(string userId)
+		{
+
 
 			if (string.IsNullOrEmpty(userId))
 			{
@@ -194,16 +194,29 @@ namespace BlogProject.BackendApi.Controllers
 			return BadRequest();
 
 		}
-        [HttpPost("enable")]
-        public async Task<IActionResult> Enable(PostEnable request)
-        {
-            var result = await _postService.Enable(request);
-            if (!result.IsSuccessed)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
+		[HttpPost("enable")]
+		public async Task<IActionResult> Enable(PostEnable request)
+		{
+			var result = await _postService.Enable(request);
+			if (!result.IsSuccessed)
+			{
+				return BadRequest(result);
+			}
+			return Ok(result);
 
-        }
-    }
+		}
+		[HttpGet("history")]
+		[Authorize]
+		public async Task<IActionResult> HistoryLike(string userName)
+		{
+
+			var result = await _postService.History(userName);
+			if (result == null)
+			{
+				return BadRequest(result);
+			}
+			return Ok(result);
+		}
+
+	}
 }

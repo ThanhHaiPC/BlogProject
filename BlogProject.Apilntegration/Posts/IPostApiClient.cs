@@ -30,5 +30,6 @@ namespace BlogProject.Apilntegration.Posts
 		Task<List<PostVm>> GetPostOfCategory(int categoryId);
         Task<ApiResult<bool>> StatusChange(PostEnable postEnable);
         Task<List<PostVm>> GetByUserId(string userId);
+		Task<List<BlogProject.Data.Entities.Posts>> History(string userName);
     }
 }

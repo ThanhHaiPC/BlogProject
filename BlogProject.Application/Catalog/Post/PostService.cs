@@ -141,6 +141,7 @@ namespace BlogProject.Application.Catalog.Post
 					CategoryId = post.CategoryId,
 					Desprition = post.Desprition,
 					Image = post.Image,
+					CategoryName = post.Categories.Name
 				}).ToList();
 
                 return (postsWithUsernames);
@@ -431,6 +432,7 @@ namespace BlogProject.Application.Catalog.Post
 				UploadDate = post.UploadDate,
 				View = post.View,
 				CategoryId = post.CategoryId,
+				CategoryName = post.Categories.Name,
 				Desprition = post.Desprition,
 				Image = post.Image,
 				CountComment = _context.Comments
@@ -587,6 +589,16 @@ namespace BlogProject.Application.Catalog.Post
             {
                 return new ApiErrorResult<bool>("Post not found");
             }
+        }
+
+        public async Task<List<Posts>> History(string userName)
+        {
+            var likedPosts =await _context.Likes
+           .Where(like => like.User.UserName == userName)
+           .Select(like => like.Post)
+           .ToListAsync();
+
+            return likedPosts;
         }
     }
 

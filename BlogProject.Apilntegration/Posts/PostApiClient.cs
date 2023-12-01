@@ -214,7 +214,19 @@ namespace BlogProject.Admin.Service
 			return users;
 		}
 
-		public async Task<ApiResult<bool>> Like(LikeVm request)
+        public async Task<List<Posts>> History(string userName)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+            var response = await client.GetAsync($"/api/posts/history?userName={userName}");
+            var body = await response.Content.ReadAsStringAsync();
+            var users = JsonConvert.DeserializeObject<List<Posts>>(body);
+            return users;
+        }
+
+        public async Task<ApiResult<bool>> Like(LikeVm request)
 		{
 			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 			var client = _httpClientFactory.CreateClient();

@@ -20,12 +20,14 @@ namespace BlogProject.Application.System.Users
         Task<ApiResult<bool>> Delete(Guid id);
         Task<ApiResult<UserVm>> GetById(Guid id);
         Task<Guid> GetIdByUserName(string username);
-
-        Task<ApiResult<PagedResult<UserVm>>> GetUserPaging(GetUserPagingRequest request);
+		Task<ApiResult<PagedResult<FollowVm>>> GetFollowersPaging(GetUserPagingRequest request);
+		Task<ApiResult<PagedResult<UserVm>>> GetUserPaging(GetUserPagingRequest request);
         Task<string> GetUserNameByIdAsync(Guid Id);
         string GetUserNameById(Guid Id);
         Task<ApiResult<bool>> RoleAssign(RoleAssignRequest request, Guid id);
 		Task<ApiResult<UserVm>> Profile(string? id);
 		Task<ApiResult<UserVm>> GetByUserName(string username);
-	}
+        Task<ApiResult<bool>> AddFollow(FollowViewModel request);
+        Task<ApiResult<bool>> CheckFollow(FollowViewModel request);
+    }
 }

@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231130102341_updateLikeWithPost")]
+    partial class updateLikeWithPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -600,7 +602,7 @@ namespace BlogProject.Data.Migrations
 
                     b.HasIndex("PostID");
 
-                    b.ToTable("LikePosts", (string)null);
+                    b.ToTable("LikePosts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -725,7 +727,7 @@ namespace BlogProject.Data.Migrations
 
                     b.HasIndex("TagID");
 
-                    b.ToTable("PostsTag", (string)null);
+                    b.ToTable("PostsTag");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.Comment", b =>

@@ -13,8 +13,8 @@ namespace BlogProject.Data.Entities
         public int ReplyID { get; set; }
         public Guid UserId { get; set; }
         public string Content { get; set; }
-
-        public int? CommentID { get; set; }
+		//public int? ParentReplyId { get; set; }
+		public int? CommentID { get; set; }
 
         public DateTime Date { get; set; }
 

@@ -6,6 +6,7 @@ using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -46,32 +47,32 @@ namespace BlogProject.Application.System.Users
             _hostingEnvironment = hostingEnvironment;
 
         }
-		public async Task<ApiResult<UserVm>> Profile(string? id)
-		{
+        public async Task<ApiResult<UserVm>> Profile(string? id)
+        {
 
-			var user = await _userManager.FindByIdAsync(id.ToString());
-			if (user == null)
-			{
-				return new ApiErrorResult<UserVm>("User không tồn tại");
-			}
-			var roles = await _userManager.GetRolesAsync(user);
-			var userVm = new UserVm()
-			{
-				Email = user.Email,
-				PhoneNumber = user.PhoneNumber,
-				FirstName = user.FirstName,
-				DateOfBir = user.DateOfBir,
-				Id = user.Id,
-				LastName = user.LastName,
-				UserName = user.UserName,
-				Roles = roles,
-				Image = user.Image,
-				Gender = user.Gender,
-				Address = user.Address,
-			};
-			return new ApiSuccessResult<UserVm>(userVm);
-		}
-		public async Task<ApiResult<string>> Authencate(LoginRequest request)
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return new ApiErrorResult<UserVm>("User không tồn tại");
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            var userVm = new UserVm()
+            {
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                FirstName = user.FirstName,
+                DateOfBir = user.DateOfBir,
+                Id = user.Id,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Roles = roles,
+                Image = user.Image,
+                Gender = user.Gender,
+                Address = user.Address,
+            };
+            return new ApiSuccessResult<UserVm>(userVm);
+        }
+        public async Task<ApiResult<string>> Authencate(LoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null) return null;
@@ -115,7 +116,7 @@ namespace BlogProject.Application.System.Users
         {
             return _dataContext.Users.Where(x => x.Id == Id).Select(x => x.UserName).FirstOrDefault();
         }
-        public async  Task<ApiResult<bool>> Register(RegisterRequest request)
+        public async Task<ApiResult<bool>> Register(RegisterRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user != null)
@@ -154,7 +155,7 @@ namespace BlogProject.Application.System.Users
             return new ApiErrorResult<bool>("Đăng ký không thành công : Mật khẩu không hợp lệ, yêu cầu gồm có ít 6 ký tự bao gồm ký tự: Hoa, thường, số, ký tự đặc biệt ");
         }
 
-        public async  Task<ApiResult<bool>> Update(UserUpdateRequest request, Guid id)
+        public async Task<ApiResult<bool>> Update(UserUpdateRequest request, Guid id)
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == request.Email && x.Id != id))
             {
@@ -242,7 +243,7 @@ namespace BlogProject.Application.System.Users
             return new ApiSuccessResult<bool>();
         }
 
-        public async  Task<ApiResult<UserVm>> GetById(Guid id)
+        public async Task<ApiResult<UserVm>> GetById(Guid id)
         {
 
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -271,7 +272,7 @@ namespace BlogProject.Application.System.Users
             return new ApiSuccessResult<UserVm>(userVm);
         }
 
-        public async Task<ApiResult<PagedResult<UserVm>>>GetUserPaging(GetUserPagingRequest request)
+        public async Task<ApiResult<PagedResult<UserVm>>> GetUserPaging(GetUserPagingRequest request)
         {
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(request.Keyword))
@@ -327,52 +328,52 @@ namespace BlogProject.Application.System.Users
             return "https://localhost:5001/" + "/Images/" + uniqueFileName;
         }
 
-		public async Task<ApiResult<UserVm>> GetByUserName(string username)
-		{
-			var user = await _userManager.FindByNameAsync(username);
-			if (user == null)
-			{
-				return new ApiErrorResult<UserVm>("User không tồn tại");
-			}
-			var roles = await _userManager.GetRolesAsync(user);
-			var userVm = new UserVm()
-			{
-				Id = user.Id,
-				Image = user.Image,
-				Email = user.Email,
-				FirstName = user.FirstName,
+        public async Task<ApiResult<UserVm>> GetByUserName(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return new ApiErrorResult<UserVm>("User không tồn tại");
+            }
+            var roles = await _userManager.GetRolesAsync(user);
+            var userVm = new UserVm()
+            {
+                Id = user.Id,
+                Image = user.Image,
+                Email = user.Email,
+                FirstName = user.FirstName,
                 LastName = user.LastName,
-				DateOfBir = user.DateOfBir,
-				Gender = user.Gender,
-				UserName = user.UserName,
-				Roles = roles,
-				Address = user.Address,
+                DateOfBir = user.DateOfBir,
+                Gender = user.Gender,
+                UserName = user.UserName,
+                Roles = roles,
+                Address = user.Address,
                 CountFollow = await _dataContext.Follows
-                                    .Where(x=>x.FollowerId == user.Id)
+                                    .Where(x => x.FollowerId == user.Id)
                                     .CountAsync(),
-                
-			};
-			return new ApiSuccessResult<UserVm>(userVm);
-		}
 
-		public async Task<ApiResult<bool>> AddFollow(FollowViewModel request)
-		{
-			var getUserId1 = await GetIdByUserName(request.FollowerName);
-			var getUserId2 = await GetIdByUserName(request.FolloweeName);
-            var existingFollow =  _dataContext.Follows.FirstOrDefault(l => l.FolloweeId == getUserId2 && l.FollowerId == getUserId1);
-            if(existingFollow != null)
+            };
+            return new ApiSuccessResult<UserVm>(userVm);
+        }
+
+        public async Task<ApiResult<bool>> AddFollow(FollowViewModel request)
+        {
+            var getUserId1 = await GetIdByUserName(request.FollowerName);
+            var getUserId2 = await GetIdByUserName(request.FolloweeName);
+            var existingFollow = _dataContext.Follows.FirstOrDefault(l => l.FolloweeId == getUserId2 && l.FollowerId == getUserId1);
+            if (existingFollow != null)
             {
                 _dataContext.Follows.Remove(existingFollow);
                 _dataContext.SaveChanges();
             }
-            else 
-            { 
+            else
+            {
                 var follow = new Follow()
-				    {
-					    FollowerId = getUserId1,
-					    FolloweeId = getUserId2,
-					    Date = DateTime.UtcNow
-				    };
+                {
+                    FollowerId = getUserId1,
+                    FolloweeId = getUserId2,
+                    Date = DateTime.UtcNow
+                };
                 if (follow != null)
                 {
                     _dataContext.Follows.Add(follow);
@@ -382,40 +383,40 @@ namespace BlogProject.Application.System.Users
             return new ApiSuccessResult<bool>();
         }
 
-		public async Task<ApiResult<PagedResult<FollowVm>>> GetFollowersPaging(GetUserPagingRequest request)
-		{
-			var getUserId = await GetIdByUserName(request.UserName);
-			var getFollowers = await _dataContext.Follows.Where(x => x.FolloweeId == getUserId).ToListAsync();
+        public async Task<ApiResult<PagedResult<FollowVm>>> GetFollowersPaging(GetUserPagingRequest request)
+        {
+            var getUserId = await GetIdByUserName(request.UserName);
+            var getFollowers = await _dataContext.Follows.Where(x => x.FolloweeId == getUserId).ToListAsync();
 
-			var users = await _dataContext.Users.ToListAsync();
+            var users = await _dataContext.Users.ToListAsync();
 
-			var query = users
-			.OrderByDescending(x => x.Id)
-			.Where(user => getFollowers.Any(userFollow => userFollow.FollowerId == user.Id))
-			.ToList();
+            var query = users
+            .OrderByDescending(x => x.Id)
+            .Where(user => getFollowers.Any(userFollow => userFollow.FollowerId == user.Id))
+            .ToList();
 
-			//3. Paging
-			int totalRow = query.Count();
+            //3. Paging
+            int totalRow = query.Count();
 
-			var data = query.Skip((request.PageIndex - 1) * request.PageSize)
-				.Take(request.PageSize)
-				.Select(x => new FollowVm()
-				{
-					UserId = x.Id,
-					Image = x.Image,
-					UserName = x.UserName,
-				}).ToList();
+            var data = query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new FollowVm()
+                {
+                    UserId = x.Id,
+                    Image = x.Image,
+                    UserName = x.UserName,
+                }).ToList();
 
-			//4. Select and projection
-			var pagedResult = new PagedResult<FollowVm>()
-			{
-				TotalRecords = totalRow,
-				PageIndex = request.PageIndex,
-				PageSize = request.PageSize,
-				Items = data
-			};
-			return new ApiSuccessResult<PagedResult<FollowVm>>(pagedResult);
-		}
+            //4. Select and projection
+            var pagedResult = new PagedResult<FollowVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+            return new ApiSuccessResult<PagedResult<FollowVm>>(pagedResult);
+        }
 
         public async Task<ApiResult<bool>> CheckFollow(FollowViewModel request)
         {
@@ -429,6 +430,55 @@ namespace BlogProject.Application.System.Users
                 return new ApiSuccessResult<bool>();
             }
             return new ApiErrorResult<bool>("Lỗi khi theo dõi người dùng");
+        }
+
+        public async Task<ApiResult<bool>> UpdateUser(UpdateUserRequest request, Guid id)
+        {
+           
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (request.Dob != null)
+            {
+                user.DateOfBir = request.Dob;
+            }
+            user.Email = request.Email;
+            user.FirstName = request.FirstName;
+            user.Gender = request.Gender;
+            user.LastName = request.LastName;
+            user.Address = request.Address;
+            user.PhoneNumber = request.PhoneNumber;
+            if (request.Image != null)
+            {
+                //if (user.Image != null)
+                //{
+                //    RemoveImage(user.Image);
+                //}
+                user.Image = await SaveFile(request.Image);
+            }
+            
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return new ApiSuccessResult<bool>();
+            }
+            return new ApiErrorResult<bool>("Cập nhật không thành công");
+        }
+
+        public async Task<ApiResult<bool>> ChangePassword(ChangePassword request, Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            var passwordCheckResult = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
+            if (!passwordCheckResult)
+            {
+                return new ApiErrorResult<bool>("Mật khẩu hiện tịa không đúng");
+            }
+            request.Id = id;
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.Password);
+            
+            if (changePasswordResult.Succeeded)
+            {
+                return new ApiSuccessResult<bool>();
+            }
+            return new ApiErrorResult<bool>("Mật khẩu hiện tịa không đúng");
         }
     }
 }

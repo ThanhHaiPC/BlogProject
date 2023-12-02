@@ -139,8 +139,80 @@ namespace BlogProject.WebBlog.Controllers
 				return View(result.ResultObj);
 			}
 		}
-      
-		private ClaimsPrincipal ValidateToken(string jwtToken)
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var result = await _userApiClient.GetById(id);
+            if (result.IsSuccessed)
+            {
+                var user = result.ResultObj;
+                var updateRequest = new UpdateUserRequest()
+                {
+                    Id = id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    ImageFileName = user.Image,
+                    Email = user.Email,
+                    Dob = user.DateOfBir,
+                    Gender = user.Gender,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,
+                    
+                };
+                return View(updateRequest);
+            }
+            return RedirectToAction("Error", "Home");
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(UpdateUserRequest request)
+        {
+            if (!ModelState.IsValid)
+                return View();
+
+            var result = await _userApiClient.UserUpdate(request, request.Id);
+            if (result.IsSuccessed)
+            {
+                TempData["result"] = "Cập nhật người dùng thành công";
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError("", result.Message);
+            return View(request);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ChangePass(Guid id)
+        {
+            var result = await _userApiClient.GetById(id);
+            if (result.IsSuccessed)
+            {
+                var user = result.ResultObj;
+                var updateRequest = new ChangePassword()
+                {
+                    Id = id,
+                };
+
+                return View(updateRequest);
+            }
+            return RedirectToAction("Error", "Home");
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePass(ChangePassword request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            var change = await _userApiClient.ChangePass(request, request.Id);
+            if (change.IsSuccessed)
+            {
+                TempData["result"] = "Cập nhật người dùng thành công";
+                return RedirectToAction("AccountSetting");
+            }
+            ModelState.AddModelError("", change.Message);
+            return View(request);
+        }
+        private ClaimsPrincipal ValidateToken(string jwtToken)
         {
             IdentityModelEventSource.ShowPII = true;
 

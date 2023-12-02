@@ -29,5 +29,7 @@ namespace BlogProject.Application.System.Users
 		Task<ApiResult<UserVm>> GetByUserName(string username);
         Task<ApiResult<bool>> AddFollow(FollowViewModel request);
         Task<ApiResult<bool>> CheckFollow(FollowViewModel request);
+        Task<ApiResult<bool>> UpdateUser(UpdateUserRequest request, Guid id);
+        Task<ApiResult<bool>> ChangePassword(ChangePassword request, Guid id);
     }
 }

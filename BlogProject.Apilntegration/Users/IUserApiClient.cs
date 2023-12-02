@@ -18,5 +18,8 @@ namespace BlogProject.Apilntegration.Users
 		Task<ApiResult<UserVm>> GetByUserName(string username);
 		Task<ApiResult<PagedResult<FollowVm>>> GetFollowersPagings(GetUserPagingRequest request);
         Task<ApiResult<bool>> CheckFollow(FollowViewModel request);
+        Task<ApiResult<bool>> UserUpdate(UpdateUserRequest request, Guid id);
+
+        Task<ApiResult<bool>> ChangePass(ChangePassword request, Guid id);
     }
 }

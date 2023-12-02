@@ -1,6 +1,7 @@
 ﻿using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -238,6 +239,84 @@ namespace BlogProject.Apilntegration.Users
             if (response.IsSuccessStatusCode)
                 return new ApiSuccessResult<bool>();
             return new ApiErrorResult<bool>();
+        }
+
+        public async Task<ApiResult<bool>> UserUpdate(UpdateUserRequest request, Guid id)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+
+
+            var requestContent = new MultipartFormDataContent();
+
+            if (request.Image != null)
+            {
+                byte[] data;
+                using (var br = new BinaryReader(request.Image.OpenReadStream()))
+                {
+                    data = br.ReadBytes((int)request.Image.OpenReadStream().Length);
+                }
+                ByteArrayContent bytes = new ByteArrayContent(data);
+                requestContent.Add(bytes, "Image", request.Image.FileName);
+            }
+            if (request.FirstName != null)
+            {
+                requestContent.Add(new StringContent(request.FirstName.ToString()), "FirstName");
+            }
+            if (request.LastName != null)
+            {
+                requestContent.Add(new StringContent(request.LastName.ToString()), "LastName");
+            }
+            requestContent.Add(new StringContent(request.Id.ToString()), "Id");
+
+            string dateOfBirth = request.Dob?.ToString("dd-MM-yyyy") ?? string.Empty;
+            requestContent.Add(new StringContent(dateOfBirth), "Dob");
+
+            requestContent.Add(new StringContent(request.Gender?.ToString()), "Gender");
+
+            requestContent.Add(new StringContent(request.PhoneNumber?.ToString()), "PhoneNumber");
+
+            string UserAddress = request.Address?.ToString() ?? string.Empty;
+            requestContent.Add(new StringContent(UserAddress), "Address");
+
+            requestContent.Add(new StringContent(request.Email.ToString()), "Email");
+
+            string Image = request.ImageFileName?.ToString() ?? string.Empty;
+            requestContent.Add(new StringContent(Image), "ImageFileName");
+
+           
+            var response = await client.PutAsync($"/api/Users/user/{id}", requestContent);
+            var result = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(result);
+
+            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(result);
+        }
+
+        public async Task<ApiResult<bool>> ChangePass(ChangePassword request, Guid id)
+        {
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+            var requestContent = new MultipartFormDataContent();
+
+            
+            requestContent.Add(new StringContent(request.Password.ToString()), "Password");
+
+          
+            requestContent.Add(new StringContent(request.ComfirmPass.ToString()), "ComfirmPass");
+
+            requestContent.Add(new StringContent(request.CurrentPassword?.ToString()), "CurrentPassword");
+
+            var response = await client.PutAsync($"/api/Users/changepass/{id}",requestContent);
+            var body = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
+
+            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
         }
     }
 }

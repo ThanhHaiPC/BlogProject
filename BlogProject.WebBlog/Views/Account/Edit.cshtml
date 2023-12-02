@@ -1,0 +1,244 @@
+﻿@model BlogProject.ViewModel.System.Users.UpdateUserRequest
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+
+    <title>bs4 edit profile page - Bootdey.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            margin-top: 20px;
+            background: #f8f8f8
+        }
+    </style>
+</head>
+<body>
+<style>
+    body {
+        margin-top: 20px;
+        background: #f8f8f8
+    }
+.image-preview {
+        width: 140px; /* Set your desired width */
+        height: 140px; /* Set your desired height */
+        overflow: hidden;
+        position: relative;
+    }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+</style>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<div class="container">
+    <div class="row flex-lg-nowrap">
+        <div class="col-12 col-lg-auto mb-3" style="width: 200px;">
+            <div class="card p-3">
+                <div class="e-navlist e-navlist--active-bg">
+                    <ul class="nav">
+                        <li class="nav-item"><a class="nav-link px-2 active" href="#"><i class="fa fa-fw fa-bar-chart mr-1"></i><span>Overview</span></a></li>
+                        <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-crud-users" target="__blank"><i class="fa fa-fw fa-th mr-1"></i><span>CRUD</span></a></li>
+                        <li class="nav-item"><a class="nav-link px-2" href="https://www.bootdey.com/snippets/view/bs4-edit-profile-page" target="__blank"><i class="fa fa-fw fa-cog mr-1"></i><span>Settings</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row">
+                <div class="col mb-3">
+                    <div class="card">
+                        <form asp-action="Edit" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div class="e-profile">
+                                <div class="row">
+                                    <div class="col-12 col-sm-auto mb-3">
+                                        <div class="mx-auto" style="width: 140px;">
+                                            <div class="d-flex justify-content-center align-items-center rounded" style="height: 140px; background-color: rgb(233, 236, 239);">
+                                                    <span style="color: rgb(166, 168, 170); font: bold 8pt Arial;">
+                                                        <div class="image-preview">
+                                                            <!-- Hiển thị ảnh cũ -->
+                                                            @if (!string.IsNullOrEmpty(Model.ImageFileName))
+                                                            {
+                                                                <img id="selectedImage" src="@Url.Content(Model.ImageFileName)" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <!-- Nếu không có ảnh cũ, bạn có thể hiển thị ảnh mặc định hoặc ẩn phần này -->
+                                                                <img id="selectedImage" style="display:none;" />
+                                                            }
+                                                        </div>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                                        <div class="text-center text-sm-left mb-2 mb-sm-0">
+                                                
+                                                <!-- Profile picture upload button-->
+                                                <input asp-for="Image" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" placeholder="0 ảnh" onchange="displaySelectedImage(event)">
+                                                <span asp-validation-for="Image" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-content pt-3">
+                                    <div class="tab-pane active">
+                                       
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>First Name</label>
+                                                             <input asp-for="FirstName" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Last Name</label>
+                                                            <input asp-for="LastName" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Email</label>
+                                                            <input asp-for="Email" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div><div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Giới Tính</label>
+                                                               
+                                                                @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
+                                                                {
+                                                                new SelectListItem { Value = "2", Text = "Không" },
+                                                                new SelectListItem { Value = "0", Text = "Nam" },
+                                                                new SelectListItem { Value = "1", Text = "Nữ" }
+                                                                }, "Value", "Text"), new { @class = "form-control" })
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col mb-3">
+                                                            <div class="form-group">
+                                                                <label>Ngày Sinh</label>
+                                                                <input asp-for="Dob" class="form-control" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <div class="row">
+                                                    <div class="col mb-3">
+                                                        <div class="form-group">
+                                                            <label>Địa Chỉ</label>
+                                                            <input asp-for="Address" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col mb-3">
+                                                        <div class="form-group">
+                                                            <label>Số điện thoại</label>
+                                                            <input asp-for="PhoneNumber" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12 col-sm-6 mb-3">
+                                                    <div class="mb-2"><b>Change Password</b></div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Current Password</label>
+                                                            @*<input asp-for="CurrentPassword" class="form-control" type="password" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>New Password</label>
+                                                            <input asp-for="Password" class="form-control" type="password" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label>Confirm <span class="d-none d-xl-inline">Password</span></label>
+                                                            <input asp-for="ComfirmPass" class="form-control" />*@
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" type="submit">Save Changes</button>
+                                                </div>
+                                            </div>
+                                       
+                                    </div>
+                                </div>
+                                
+                            
+                        </div>
+                        </form>
+                    </div>
+                </div>
+
+            
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function displaySelectedImage(event) {
+        var input = event.target;
+        var preview = document.getElementById('selectedImage');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                // Hiển thị ảnh mới
+                preview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            // Nếu không chọn ảnh mới, ẩn ảnh cũ
+            preview.style.display = 'none';
+        }
+    }
+</script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

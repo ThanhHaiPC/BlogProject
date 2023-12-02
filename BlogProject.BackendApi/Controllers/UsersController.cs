@@ -151,5 +151,37 @@ namespace BlogProject.BackendApi.Controllers
             }
             return Ok(result);
         }
-	}
+        [HttpPut("user/{id}")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateUser([FromForm] UpdateUserRequest request, Guid id)
+        {
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var result = await _userService.UpdateUser(request, id);
+                if (!result.IsSuccessed)
+                {
+                    return BadRequest(result);
+                }
+                return Ok(result);
+            }
+        }
+        [HttpPut("changepass/{id}")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> ChangePass([FromForm] ChangePassword request, Guid id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _userService.ChangePassword(request, id);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+    }
 }

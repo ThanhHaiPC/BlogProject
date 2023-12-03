@@ -3,6 +3,11 @@
     ViewData["Title"] = "Login";
     Layout = null;
 }
+<script>
+    setTimeout(function () {
+        $('#msgAlert').fadeOut('slow');
+    }, 5000);
+</script>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="~/assets/fonts/icomoon/style.css">
@@ -18,12 +23,21 @@
     <div class="d-lg-flex half">
         <div class="bg order-1 order-md-2" style="background-image: url('/assets/images/viet-blog-3.jpg');">
         </div>
+        
         <div class="contents order-2 order-md-1">
 
             <div class="container">
                 <div class="row align-items-center justify-content-center">
                     <div class="col-md-7">
                         <h4 class="card-title mb-4">Đăng nhập tài khoản của bạn</h4>
+                        <div class="row">
+                            @if (@ViewBag.SuccessMsg != null)
+                            {
+                                <div id="msgAlert" class="alert alert-success" role="alert">
+                                    @ViewBag.SuccessMsg
+                                </div>
+                            }
+                        </div>
                         <form asp-action="Login" asp-controller="Account" method="post">
                             <div class="form-group first">
                                 <input class="form-control" asp-for="UserName" type="text" placeholder="Nhập tên tài khoản" />
@@ -39,7 +53,7 @@
                                     <input type="checkbox" class="custom-control-input" checked="">
                                     <span class="custom-control-label"> Ghi nhớ </span>
                                 </label>
-                                <span class="ml-auto"><a href="#" class="forgot-pass">Quên mật khẩu</a></span>
+                                <span class="ml-auto"><a href="@Url.Action("ForgotPass","Account")" class="forgot-pass">Quên mật khẩu</a></span>
                             </div>
 
                             <div class="form-group">

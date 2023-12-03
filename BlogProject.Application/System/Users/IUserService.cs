@@ -31,5 +31,8 @@ namespace BlogProject.Application.System.Users
         Task<ApiResult<bool>> CheckFollow(FollowViewModel request);
         Task<ApiResult<bool>> UpdateUser(UpdateUserRequest request, Guid id);
         Task<ApiResult<bool>> ChangePassword(ChangePassword request, Guid id);
+        Task<ApiResult<bool>> ForgotPassword (string? email);
+        Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordViewModel request);
+        Task<ApiResult<bool>> ForgotPasswordAdmin(string? email);
     }
 }

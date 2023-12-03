@@ -183,5 +183,39 @@ namespace BlogProject.BackendApi.Controllers
             }
             return Ok(result);
         }
+        [HttpPost("forgotpass/{email}")]
+        public async Task<IActionResult> ForgotPass(string email)
+        {
+            var result = await _userService.ForgotPassword(email);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel request)
+        {
+            
+                var result = await _userService.ResetPasswordAsync(request);
+
+                if (result.IsSuccessed)
+                    return Ok(result);
+
+               return BadRequest(result);
+            
+
+            
+        }
+        [HttpPost("forgotpassadmin/{email}")]
+        public async Task<IActionResult> ForgotPassAdmin(string email)
+        {
+            var result = await _userService.ForgotPasswordAdmin(email);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }

@@ -21,5 +21,9 @@ namespace BlogProject.Apilntegration.Users
         Task<ApiResult<bool>> UserUpdate(UpdateUserRequest request, Guid id);
 
         Task<ApiResult<bool>> ChangePass(ChangePassword request, Guid id);
+
+        Task<ApiResult<bool>> ForgotPass(string email);
+        Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordViewModel request);
+        Task<ApiResult<bool>> ForgotPassAdmin(string email);
     }
 }

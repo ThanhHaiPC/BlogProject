@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -30,13 +31,15 @@ namespace BlogProject.Application.System.Users
         private readonly IConfiguration _config;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IStorageService _storageService;
+        private readonly IMailService _mailService;
 
         public UserService(UserManager<User> userManager,
              SignInManager<User> signInManager,
              RoleManager<Role> roleManager,
              BlogDbContext dataContext,
              IConfiguration config,
-             IHostingEnvironment hostingEnvironment
+             IHostingEnvironment hostingEnvironment,
+             IMailService mailService
             )
         {
             _userManager = userManager;
@@ -45,7 +48,7 @@ namespace BlogProject.Application.System.Users
             _dataContext = dataContext;
             _config = config;
             _hostingEnvironment = hostingEnvironment;
-
+            _mailService = mailService;
         }
         public async Task<ApiResult<UserVm>> Profile(string? id)
         {
@@ -479,6 +482,95 @@ namespace BlogProject.Application.System.Users
                 return new ApiSuccessResult<bool>();
             }
             return new ApiErrorResult<bool>("Mật khẩu hiện tịa không đúng");
+        }
+
+        public async Task<ApiResult<bool>> ForgotPassword(string? email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return new ApiResult<bool>
+                {
+                    IsSuccessed = false,
+                    Message = "No user associated with email",
+                };
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            string url = $"{_config["AppUrl"]}/ResetPass?email={email}&token={validToken}";
+
+            await _mailService.SendEmailAsync(email, "Reset Password", "<h1>Follow the instructions to reset your password</h1>" +
+                $"<p>To reset your password <a href='{url}'>Click here</a></p>");
+
+            return new  ApiResult<bool>
+            {
+                IsSuccessed = true,
+                Message = "Reset password URL has been sent to the email successfully!"
+            };
+        }
+
+        public async Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordViewModel request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+                return new ApiResult<bool>
+                {
+                    IsSuccessed = false,
+                    Message = "No user associated with email",
+                };
+
+            if (request.NewPassword != request.ComfirmPass)
+                return new ApiResult<bool>
+                {
+                    IsSuccessed = false,
+                    Message = "Password doesn't match its confirmation",
+                };
+
+            var decodedToken = WebEncoders.Base64UrlDecode(request.Token);
+            string normalToken = Encoding.UTF8.GetString(decodedToken);
+
+            var result = await _userManager.ResetPasswordAsync(user, normalToken, request.NewPassword);
+
+            if (result.Succeeded)
+                return new ApiResult<bool>
+                {
+                    Message = "Password has been reset successfully!",
+                    IsSuccessed = true,
+                };
+
+            return new ApiResult<bool>
+            {
+                Message = "Something went wrong",
+                IsSuccessed = false,
+                 
+            };
+        }
+
+        public async Task<ApiResult<bool>> ForgotPasswordAdmin(string? email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return new ApiResult<bool>
+                {
+                    IsSuccessed = false,
+                    Message = "No user associated with email",
+                };
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = Encoding.UTF8.GetBytes(token);
+            var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+            string url = $"{_config["AppUrlAdmin"]}/ResetPass?email={email}&token={validToken}";
+
+            await _mailService.SendEmailAsync(email, "Reset Password", "<h1>Follow the instructions to reset your password</h1>" +
+                $"<p>To reset your password <a href='{url}'>Click here</a></p>");
+
+            return new ApiResult<bool>
+            {
+                IsSuccessed = true,
+                Message = "Reset password URL has been sent to the email successfully!"
+            };
         }
     }
 }

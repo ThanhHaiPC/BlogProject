@@ -1,80 +1,90 @@
-﻿@model BlogProject.ViewModel.System.Users.UserVm
-
+﻿@model BlogProject.ViewModel.System.Users.UserVm;
 @{
     ViewData["Title"] = "Thông Tin Tài Khoản";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-    <script>
-        setTimeout(function () {
-            $('#msgAlert').fadeOut('slow');
-        }, 2000);
-    </script>
+<style>
+    /* Style cho card chứa thông tin tài khoản */
+    .user-card {
+        background-color: #19232d;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 50px;
+    }
 
+    /* Style cho ảnh avatar */
+    .user-avatar {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #fff;
+    }
+
+    /* Style cho nút chỉnh sửa */
+    .edit-button {
+        display: inline-block;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        margin: 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        color: white;
+    }
+
+        .edit-button:hover {
+            background-color: #FF5733;
+        }
+</style>
 
 <section class="h-100 gradient-custom-2">
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col col-lg-9 col-xl-7">
-                <div class="card">
-                    <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
-                        <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
-                            <!-- Image -->
-                            @if (!string.IsNullOrEmpty(Model.Image))
-                            {
-                                <img src="@Model.Image"
-                                     alt="Avatar" class="img-fluid img-thumbnail mt-4 mb-2"
-                                     style="width: 150px; height: 150px; object-fit: cover;">
-                            }
-                            else
-                            {
-                                <img src="~/images/AVATAR.png"
-                                     alt="Default Avatar" class="img-fluid img-thumbnail mt-4 mb-2"
-                                     style="width: 150px;">
-                            }
-                            <!-- Edit button -->
-                            @if (User.Identity.Name == Model.UserName)
-                            {
-                                <a href="@Url.Action("Edit", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
-                                   style="z-index: 1;">
-                                    Chỉnh sửa
-                                </a>
-                                <a href="@Url.Action("ChangePass", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
-                                   style="z-index: 1;">
-                                    Chỉnh sửa
-                                </a>
-                            }
-                        </div>
-                        <div class="ms-3" style="margin-top: 130px;">
-                            <!-- Username and Name -->
-                            <h5>
-                                @(Model.FirstName ?? "Đang cập nhập");
-                                @(Model.LastName ?? "")
-                            </h5>
-                            <p style="padding-bottom: 8px;" title="Tên tài khoản">@Model.UserName</p>
-                        </div>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="user-card text-center ">
+                    <div class="mb-4">
+                        <!-- Ảnh avatar -->
+                        @if (!string.IsNullOrEmpty(Model.Image))
+                        {
+                            <img src="@Model.Image" alt="Avatar" class="user-avatar">
+                        }
+                        else
+                        {
+                            <img src="~/images/AVATAR.png" alt="Default Avatar" class="user-avatar">
+                        }
                     </div>
-                    <!-- Additional content -->
-                    <div class="p-3 text-black" style="background-color: #f8f9fa;">
-                        <!-- Statistics -->
-                        <div class="Compatible d-flex justify-content-end text-center py-1">
-                            <!-- Statistics elements -->
-                            <!-- Bạn có thể giữ phần này nếu cần -->
-                        </div>
+                    <!-- Tên người dùng -->
+                    <h4>@(Model.FirstName ?? "Tên") @(Model.LastName ?? "Người dùng")</h4>
+                    <!-- Tên tài khoản -->
+                    <p>@Model.UserName</p>
+                    <!-- Nút chỉnh sửa thông tin và mật khẩu -->
+                    <a href="@Url.Action("Edit", new { id = Model.Id })" class="edit-button btn-danger" data-mdb-ripple-color="dark">
+                        Chỉnh sửa thông tin
+                    </a>
+                    <a href="@Url.Action("ChangePass", new { id = Model.Id })" class="edit-button btn-danger" data-mdb-ripple-color="dark">
+                        Chỉnh sửa mật khẩu
+                    </a>
+                    <!-- Thông tin người dùng -->
+                    <div class="mt-4">
+                        <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+                        <p><strong>Email:</strong> @Model.Email</p>
+                        <p><strong>Ngày sinh:</strong> @(Model.DateOfBir?.ToString("dd-MM-yyyy") ?? "Chưa cập nhật")</p>
+                        <p><strong>Địa chỉ:</strong> @Model.Address</p>
+                        <p><strong>Giới tính:</strong> @(Model.Gender?.ToString() ?? "Chưa cập nhật")</p>
                     </div>
-                    <!-- Success message -->
-                    <div class="row" style="margin: 0 20px;">
+                </div>
+                <!-- Thông báo thành công -->
+                <div class="row mt-3">
+                    <div class="col">
                         @if (ViewBag.SuccessMsg != null)
                         {
                             <div id="msgAlert" class="alert alert-success" role="alert">
                                 @ViewBag.SuccessMsg
                             </div>
                         }
-                    </div>
-                    <!-- Information section -->
-                    <div class="card-body p-4 text-black">
-                        <!-- User information -->
-                        <!-- Bạn có thể giữ phần này nếu cần -->
                     </div>
                 </div>
             </div>

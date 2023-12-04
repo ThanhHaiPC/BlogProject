@@ -14,5 +14,6 @@ namespace BlogProject.ViewModel.System.Users
 		public string UserName { get; set; }
 		[Display(Name = "Ảnh đại diện")]
 		public string? Image { get; set; }
+		public  DateTime DateTime { get; set; }
 	}
 }

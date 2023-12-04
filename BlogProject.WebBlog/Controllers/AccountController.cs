@@ -19,7 +19,7 @@ namespace BlogProject.WebBlog.Controllers
         private readonly IUserApiClient _userApiClient;
         private readonly IConfiguration _configuration;
         private readonly ICategoryApiClient _categoryApiPost;
-        public AccountController(IUserApiClient userApiClient, IConfiguration configuration,ICategoryApiClient categoryApiClient)
+        public AccountController(IUserApiClient userApiClient, IConfiguration configuration, ICategoryApiClient categoryApiClient)
         {
             _userApiClient = userApiClient;
             _configuration = configuration;
@@ -29,6 +29,10 @@ namespace BlogProject.WebBlog.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
             return View();
         }
         [HttpPost]
@@ -105,40 +109,40 @@ namespace BlogProject.WebBlog.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-		[HttpPost]
-		public async Task<IActionResult> Logout()
-		{
-			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-			HttpContext.Session.Remove("Token");
-			return RedirectToAction("Index", "Home");
-		}
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Remove("Token");
+            return RedirectToAction("Index", "Home");
+        }
 
-		[HttpGet]
-		public async Task<IActionResult> AccountSetting(string UserName)
-		{
-			if (UserName != null)
-			{
-				var Category = await _categoryApiPost.GetAll();
-				ViewData["Category"] = Category;
-				var result = await _userApiClient.GetByUserName(UserName);
-				if (TempData["result"] != null)
-				{
-					ViewBag.SuccessMsg = TempData["result"];
-				}
-				ViewBag.UserName = User.Identity.Name;
-				return View(result.ResultObj);
-			}
-			else
-			{
-				var result = await _userApiClient.GetByUserName(User.Identity.Name);
-				if (TempData["result"] != null)
-				{
-					ViewBag.SuccessMsg = TempData["result"];
-				}
-				ViewBag.UserName = User.Identity.Name;
-				return View(result.ResultObj);
-			}
-		}
+        [HttpGet]
+        public async Task<IActionResult> AccountSetting(string UserName)
+        {
+            if (UserName != null)
+            {
+                var Category = await _categoryApiPost.GetAll();
+                ViewData["Category"] = Category;
+                var result = await _userApiClient.GetByUserName(UserName);
+                if (TempData["result"] != null)
+                {
+                    ViewBag.SuccessMsg = TempData["result"];
+                }
+                ViewBag.UserName = User.Identity.Name;
+                return View(result.ResultObj);
+            }
+            else
+            {
+                var result = await _userApiClient.GetByUserName(User.Identity.Name);
+                if (TempData["result"] != null)
+                {
+                    ViewBag.SuccessMsg = TempData["result"];
+                }
+                ViewBag.UserName = User.Identity.Name;
+                return View(result.ResultObj);
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
@@ -157,7 +161,7 @@ namespace BlogProject.WebBlog.Controllers
                     Gender = user.Gender,
                     PhoneNumber = user.PhoneNumber,
                     Address = user.Address,
-                    
+
                 };
                 return View(updateRequest);
             }
@@ -210,6 +214,57 @@ namespace BlogProject.WebBlog.Controllers
                 return RedirectToAction("AccountSetting");
             }
             ModelState.AddModelError("", change.Message);
+            return View(request);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ForgotPass(string email)
+        {
+            return View(new ForgotPassRequest()
+            {
+                Email = email
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPass(ForgotPassRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+            var forgotpass = await _userApiClient.ForgotPass(request.Email);
+            if (forgotpass.IsSuccessed)
+            {
+                TempData["result"] = "Một liên kết đặt lại mật khẩu đã được gửi đến địa chỉ email của bạn.";
+                return RedirectToAction("Login", "Account");
+            }
+            ModelState.AddModelError(string.Empty, "Có lỗi xảy ra. Vui lòng thử lại sau.");
+            return View(request);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPass(string token, string email)
+        {
+            var reset = new ResetPasswordViewModel()
+            {
+                Token = token,
+                Email = email
+            };
+
+            return View(reset);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPass(ResetPasswordViewModel request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+            var result = await _userApiClient.ResetPasswordAsync(request);
+            if (result.IsSuccessed)
+            {
+                TempData["result"] = "Đổi mật khẩu thành công";
+                return RedirectToAction("Login", "Account");
+            }
+            ModelState.AddModelError(string.Empty, "Có lỗi xảy ra. Vui lòng thử lại sau.");
             return View(request);
         }
         private ClaimsPrincipal ValidateToken(string jwtToken)

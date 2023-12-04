@@ -48,6 +48,7 @@ builder.Services.AddTransient<IRepliesService, RepliesService>();
 builder.Services.AddTransient<ILikeService, LikeService>();
 builder.Services.AddTransient<IRatingService, RatingService>();
 builder.Services.AddTransient<ITagService, TagService>();
+builder.Services.AddTransient<IMailService, MailService>();
 
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
 

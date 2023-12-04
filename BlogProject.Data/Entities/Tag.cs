@@ -15,7 +15,6 @@ namespace BlogProject.Data.Entities
         public int View { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime UploadDate { get; set; }
-        public int PostID { get; set; }
 
 
         // RelationShip

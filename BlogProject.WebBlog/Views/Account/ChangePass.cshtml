@@ -5,42 +5,73 @@
     Layout = null;
 }
 
-<h1>ChangePass</h1>
 
-<h4>ChangePassword</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="ChangePass">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Your custom CSS styles here */
+        body {
+            padding-top: 50px; /* Increase top padding */
+            font-family: Arial, sans-serif;
+            background-color: #19232d; /* Change background color */
+            color: white; /* Change text color */
+            background-image: url('/assets/images/viet-blog-3.jpg'); /* Thay đổi đường dẫn tới hình ảnh của bạn */
+            background-size: cover;
+            background-position: center;
+            color: #127bd1; /* Đảm bảo màu chữ phù hợp với nền hình ảnh */
+        }
+
+        .container {
+            max-width: 800px;
+            margin-top: 20px; /* Adjust margin top */
+        }
+
+        .form-group {
+            margin-bottom: 25px; /* Adjust margin bottom */
+        }
+
+        h1 {
+            font-size: 2rem; /* Adjust heading size */
+        }
+
+        /* Additional styles can be added based on your preferences */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Change Password</h1>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form asp-action="ChangePass">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label">New Password</label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ComfirmPass" class="control-label">Confirm New Password</label>
+                        <input asp-for="ComfirmPass" class="form-control" />
+                        <span asp-validation-for="ComfirmPass" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CurrentPassword" class="control-label">Current Password</label>
+                        <input asp-for="CurrentPassword" class="form-control" />
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ComfirmPass" class="control-label"></label>
-                <input asp-for="ComfirmPass" class="form-control" />
-                <span asp-validation-for="ComfirmPass" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CurrentPassword" class="control-label"></label>
-                <input asp-for="CurrentPassword" class="form-control" />
-                <span asp-validation-for="CurrentPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
+        <div class="text-center">
+            <a asp-action="Index" class="text-white">Back to List</a>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+</body>
+</html>

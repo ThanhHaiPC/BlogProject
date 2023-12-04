@@ -34,7 +34,7 @@ namespace BlogProject.Application.Catalog.Tags
             {
                 TagName = request.TagName,
                 UploadDate = DateTime.Now,
-                PostID = request.PostID,
+             
             };
             _dbContext.Tags.Add(add);
             await _dbContext.SaveChangesAsync();
@@ -104,7 +104,7 @@ namespace BlogProject.Application.Catalog.Tags
             {
                 TagId = tag.TagID,
                 TagName = tag.TagName,
-                PostID = tag.PostID,
+             
                 UploadDate = tag.UploadDate,
           
                 // Include other properties here as needed based on your TagVm structure

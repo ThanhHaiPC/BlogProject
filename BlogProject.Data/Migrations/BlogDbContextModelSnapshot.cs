@@ -216,6 +216,8 @@ namespace BlogProject.Data.Migrations
 
                     b.HasKey("LikeID");
 
+                    b.HasIndex("PostID");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Likes", (string)null);
@@ -380,7 +382,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "8a23e094-f1fa-428d-8012-ea4e64e31fe6",
+                            ConcurrencyStamp = "e9682f98-7266-4db6-9309-bf51e5e394c6",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -388,7 +390,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "09d02f72-6775-4873-8f11-1befde025d94",
+                            ConcurrencyStamp = "61bd73fe-d7ab-4bee-bc36-bbdd1c5bce73",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -396,7 +398,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("f76f9568-c479-4b92-958d-b0a8dbe8241e"),
-                            ConcurrencyStamp = "d64a3f67-df02-4cf4-a569-fcaaea32a5f6",
+                            ConcurrencyStamp = "852b8e38-b5d7-4c7a-bbeb-b257bd05ce5a",
                             Description = "Author Role",
                             Name = "author",
                             NormalizedName = "author"
@@ -529,7 +531,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "f8efd35a-08f1-47c5-8ad6-c7578aff55d9",
+                            ConcurrencyStamp = "911cb9a2-a9c7-45a4-8f9e-78027283b177",
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
                             EmailConfirmed = true,
@@ -539,7 +541,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAbdPdyr4LbaHc9nFz96fh1PDkif+keTOVSsRCa/yNEPKx9FmmT2hWkJ7e9FAaQeIg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBsHU6VbKgLBrpNmWtH0RzLlXlqtBIKt9g23c+rq2XHNDk2Mq+z3dvUf8/EITqNR+w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -586,21 +588,6 @@ namespace BlogProject.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Videos", (string)null);
-                });
-
-            modelBuilder.Entity("LikePosts", b =>
-                {
-                    b.Property<int>("LikesLikeID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostID")
-                        .HasColumnType("int");
-
-                    b.HasKey("LikesLikeID", "PostID");
-
-                    b.HasIndex("PostID");
-
-                    b.ToTable("LikePosts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -725,7 +712,7 @@ namespace BlogProject.Data.Migrations
 
                     b.HasIndex("TagID");
 
-                    b.ToTable("PostsTag", (string)null);
+                    b.ToTable("PostsTag");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.Comment", b =>
@@ -768,11 +755,19 @@ namespace BlogProject.Data.Migrations
 
             modelBuilder.Entity("BlogProject.Data.Entities.Like", b =>
                 {
+                    b.HasOne("BlogProject.Data.Entities.Posts", "Post")
+                        .WithMany("Likes")
+                        .HasForeignKey("PostID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BlogProject.Data.Entities.User", "User")
                         .WithMany("Like")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
@@ -851,21 +846,6 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("LikePosts", b =>
-                {
-                    b.HasOne("BlogProject.Data.Entities.Like", null)
-                        .WithMany()
-                        .HasForeignKey("LikesLikeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlogProject.Data.Entities.Posts", null)
-                        .WithMany()
-                        .HasForeignKey("PostID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -947,6 +927,8 @@ namespace BlogProject.Data.Migrations
             modelBuilder.Entity("BlogProject.Data.Entities.Posts", b =>
                 {
                     b.Navigation("Comment");
+
+                    b.Navigation("Likes");
 
                     b.Navigation("Video");
                 });

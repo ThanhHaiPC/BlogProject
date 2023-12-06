@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlogProject.Data.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -27,6 +28,6 @@ namespace BlogProject.ViewModel.Catalog.Posts
 		public int? TagName { get; set; }
 		public string? CategoryName { get; set; }
         public string? Image { get; set; }
-        public bool Active { get; set; }
+        public Active Active { get; set; }
     }
 }

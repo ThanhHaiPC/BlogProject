@@ -27,7 +27,7 @@ namespace BlogProject.Admin.Controllers
 			_commentApiClient = commentApiClient;
 		}
 
-		public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
+		public async Task<IActionResult> Index(int postId,string keyword, int pageIndex = 1, int pageSize = 5)
 		{
 			var sessions = HttpContext.Session.GetString("Token");
 			var request = new GetUserPagingRequest()
@@ -37,7 +37,13 @@ namespace BlogProject.Admin.Controllers
 				PageIndex = pageIndex,
 				PageSize = pageSize
 			};
-			if (TempData["result"] != null)
+			var checkEnable = await _postApiClient.CheckEnable(postId);
+            if (checkEnable.IsSuccessed == true)
+            {
+                ViewBag.checkEnable = true;
+            }
+            else { ViewBag.checkEnable = false; }
+            if (TempData["result"] != null)
 			{
 				ViewBag.SuccessMsg = TempData["result"];
 			}

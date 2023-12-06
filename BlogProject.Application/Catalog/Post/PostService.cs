@@ -94,6 +94,7 @@ namespace BlogProject.Application.Catalog.Post
 				Desprition = request.Desprition,
 				CategoryId = request.CategoryId,
 				Image = await SaveFile(request.Image),
+				Active = Active.yes
 
 			};
 
@@ -125,7 +126,7 @@ namespace BlogProject.Application.Catalog.Post
         {
 			
                 var posts = await _context.Posts
-             .Where(p => p.UserId == Guid.Parse(userId))
+             .Where(p => p.UserId == Guid.Parse(userId) && p.Active == Active.yes)
              .Include(p => p.User)
           
              .Include(p => p.Categories)
@@ -153,8 +154,9 @@ namespace BlogProject.Application.Catalog.Post
 			try
 			{
 				var posts = await _context.Posts
-					.Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm))
+					.Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm) && p.Active == Active.yes)
 					.Include(p => p.User)
+					.Include(p => p.Categories)
 					.ToListAsync();
 
 				var postsWithUsernames = posts.Select(post => new PostVm
@@ -185,13 +187,18 @@ namespace BlogProject.Application.Catalog.Post
 
 			if (!string.IsNullOrEmpty(request.Keyword))
 			{
-				query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword));
+				query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword) && x.p.Active == Active.yes);
 			}
-
-			int totalRow = await query.CountAsync();
+            else
+            {
+                query = query.Where(x => x.p.Active == Active.yes);
+            }
+            
+            int totalRow = await query.CountAsync();
 
 			var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
 				.Take(request.PageSize)
+				
 				.Select(x => new PostVm()
 				{
 
@@ -250,10 +257,13 @@ namespace BlogProject.Application.Catalog.Post
 
 		public async Task<List<PostVm>> TakeTopByQuantity(int quantity)
 		{
-			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.yes).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
 			var post = await _context.Posts
 			.OrderByDescending(p => p.View)
-			.Take(quantity)
+			.Where(x=>x.Active == Active.yes)
+            .Include(p => p.User)
+            .Include(p => p.Categories)
+            .Take(quantity)
 			.ToListAsync();
 
 			List<PostVm> postList = new List<PostVm>();
@@ -281,7 +291,7 @@ namespace BlogProject.Application.Catalog.Post
 			var postId = await _context.Posts
 				.Include(p => p.Categories)
 				.Include(p => p.User)
-				.FirstOrDefaultAsync(p => p.PostID == Id);
+                .FirstOrDefaultAsync(p => p.PostID == Id);
 
 			var postvm = new PostVm()
 			{
@@ -314,7 +324,8 @@ namespace BlogProject.Application.Catalog.Post
 			var postId = await _context.Posts
 				.Include(p => p.Categories)
 				.Include(p => p.User)
-				.FirstOrDefaultAsync(p => p.PostID == Id);
+                .Where(x => x.Active == Active.yes)
+                .FirstOrDefaultAsync(p => p.PostID == Id);
 
 			var postvm = new PostVm()
 			{
@@ -415,9 +426,11 @@ namespace BlogProject.Application.Catalog.Post
 		public async Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request)
 		{
 			var posts = await _context.Posts
-					 .Where(p => p.UserId == Guid.Parse(userId))
+					 .Where(p => p.UserId == Guid.Parse(userId) && p.Active == Active.yes)
 					 .Include(p => p.User)
-					 .ToListAsync();
+           
+					 .Include(p => p.Categories)
+                     .ToListAsync();
 			if (!string.IsNullOrEmpty(request.Keyword))
 			{
 				posts = (List<Posts>)posts.Where(x => x.Title.Contains(request.Keyword) || x.Desprition.Contains(request.Keyword));
@@ -454,10 +467,13 @@ namespace BlogProject.Application.Catalog.Post
 
 		public async Task<List<PostVm>> PostRecent(int quantity)
 		{
-			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Data.Enum.Active.no).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+			if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Active.yes).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
 			var post = await _context.Posts
 			.OrderByDescending(p => p.UploadDate)
-			.Take(quantity)
+            .Where(x => x.Active == Active.yes)
+			.Include(a=>a.User )
+			.Include(a=> a.Categories)
+            .Take(quantity)
 			.ToListAsync();
 
 			List<PostVm> postList = new List<PostVm>();
@@ -485,7 +501,7 @@ namespace BlogProject.Application.Catalog.Post
 			DateTime today = DateTime.Today;
 
 			var post = await _context.Posts
-			.Where(p => p.UploadDate.Date == today)
+			.Where(p => p.UploadDate.Date == today && p.Active == Active.yes)
 			.Include(p => p.Categories)
 			.Include(p => p.User)
 			.ToListAsync();
@@ -512,7 +528,11 @@ namespace BlogProject.Application.Catalog.Post
 
 		public async Task<List<PostVm>> GetPostOfCategory(int categoryId)
 		{
-			var post = await _context.Posts.Include(c => c.Categories).Include(x => x.User).Where(x => x.CategoryId == categoryId).ToListAsync();
+			var post = await _context.Posts
+				.Include(c => c.Categories)
+				.Include(x => x.User)
+				.Where(x => x.CategoryId == categoryId && x.Active ==Active.yes)
+				.ToListAsync();
 
 			List<PostVm> postVms = new List<PostVm>();
 			foreach (var item in post)
@@ -581,6 +601,7 @@ namespace BlogProject.Application.Catalog.Post
                     post.Active = Active.yes;
                 }
 
+
                 _context.Update(post);
                 await _context.SaveChangesAsync();
                 return new ApiSuccessResult<bool>();
@@ -599,6 +620,65 @@ namespace BlogProject.Application.Catalog.Post
            .ToListAsync();
 
             return likedPosts;
+        }
+
+        public async Task<PagedResult<PostVm>> GetPagedAdmin(GetUserPagingRequest request)
+        {
+            var query = from p in _context.Posts
+                        select new { p };
+
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.p.Title.Contains(request.Keyword) || x.p.Desprition.Contains(request.Keyword));
+            }
+            
+
+            int totalRow = await query.CountAsync();
+
+            var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+
+                .Select(x => new PostVm()
+                {
+
+                    Title = x.p.Title,
+                    Content = x.p.Content,
+                    UserName = x.p.User.UserName,
+                    Desprition = x.p.Desprition,
+                    Image = x.p.Image,
+                    View = x.p.View,
+                    UploadDate = x.p.UploadDate,
+                    CategoryName = x.p.Categories.Name,
+                    PostID = x.p.PostID,
+					Active = x.p.Active,
+                    CountComment = _context.Comments
+                       .Where(c => c.PostID == x.p.PostID)
+                       .Count(),
+                    CountLike = _context.Likes
+                        .Where(c => c.PostID == x.p.PostID)
+                        .Count()
+                }).ToListAsync();
+            //4. Select and projection
+            var pagedResult = new PagedResult<PostVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+            return pagedResult;
+        }
+
+        public async Task<ApiResult<bool>> CheckEnable(int postId)
+        {
+            var post = await _context.Posts.FindAsync(postId);
+            
+            if (post != null && post.Active == Active.yes)
+            {
+                return new ApiSuccessResult<bool>(); 
+            }
+
+            return new ApiErrorResult<bool>();
         }
     }
 

@@ -15,7 +15,8 @@ namespace BlogProject.Application.Catalog.Post
 	{
 		Task<ApiResult<List<Posts>>> GetAll();
 		Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request);
-		Task<ApiResult<bool>> Create(PostRequest request, string userId);
+        Task<PagedResult<PostVm>> GetPagedAdmin(GetUserPagingRequest request);
+        Task<ApiResult<bool>> Create(PostRequest request, string userId);
 		Task<ApiResult<bool>> Update(PostUpdateRequest request, int Id);
 		Task<ApiResult<bool>> Delete(int Id);
         Task<List<PostVm>> GetByUserId(string userId);
@@ -29,6 +30,7 @@ namespace BlogProject.Application.Catalog.Post
 		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);
 		Task<ApiResult<bool>> Like(LikeVm request, string userId);
 		Task<Like> CheckLike(string UserName, int Id);
+        Task<ApiResult<bool>> CheckEnable(int postId);
         Task<ApiResult<bool>> Enable(PostEnable request);
         Task<List<Posts>> History(string userId);
         /* Task<ApiResult<PagedResult<PostVm>>> GetPostFollowPaging(GetUserPagingRequest request);*/

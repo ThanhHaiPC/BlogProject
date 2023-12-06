@@ -1,9 +1,12 @@
 ﻿using BlogProject.Application.Catalog.Post;
+using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Catalog.Like;
 using BlogProject.ViewModel.Catalog.Posts;
+using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -17,10 +20,11 @@ namespace BlogProject.BackendApi.Controllers
 		private readonly IPostService _postService;
 
 		private readonly IHttpContextAccessor _httpContextAccessor;
-		public PostsController(IPostService postService, IHttpContextAccessor httpContextAccessor)
+		private readonly UserManager<User> _userManager;
+		public PostsController(IPostService postService, IHttpContextAccessor httpContextAccessor, UserManager<User> userManager)
 		{
 			_postService = postService;
-
+			_userManager = userManager;
 			_httpContextAccessor = httpContextAccessor;
 		}
 
@@ -73,7 +77,7 @@ namespace BlogProject.BackendApi.Controllers
 		public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
 		{
 
-			var post = await _postService.GetPaged(request);
+			var post = await _postService.GetPagedAdmin(request);
 			return Ok(post);
 		}
 		[HttpGet("get-by-user")]
@@ -128,7 +132,7 @@ namespace BlogProject.BackendApi.Controllers
 
 			var articles = userId != null && User.IsInRole("author")
 		   ? await _postService.GetByUserId(userId, request)
-		   : await _postService.GetPaged(request);
+		   : await _postService.GetPagedAdmin(request);
 
 
 			return Ok(articles);
@@ -217,6 +221,15 @@ namespace BlogProject.BackendApi.Controllers
 			}
 			return Ok(result);
 		}
-
+		[HttpGet("check-enable")]
+		public async Task<IActionResult> CheckEnable(int postId)
+		{
+			var result = await _postService.CheckEnable(postId);
+			if(result == null)
+			{
+				return BadRequest(result);
+			}
+			return Ok(result);
+		}
 	}
 }

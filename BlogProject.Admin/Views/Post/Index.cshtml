@@ -19,8 +19,8 @@
             $(document).on('click', '.toggle-status', function (event) {
                 var button = $(this); // Reference to the clicked button
                 var postId = button.attr('data-postId'); // Lấy postId từ thuộc tính data của nút
-                var currentStatus = button.attr('number'); // Lấy trạng thái hiện tại từ thuộc tính data
-                var check = currentStatus ? 0 : 1; // Đảo trạng thái
+                var currentStatus = button.attr('data-number'); // Lấy trạng thái hiện tại từ thuộc tính data
+                var check = currentStatus === "1" ? 0 : 1;  // Đảo trạng thái
 
                 $.ajax({
                     type: 'POST',
@@ -28,12 +28,15 @@
                     data: { postId: postId, number: check }, // Sửa đổi dòng này
                    
                     success: function (response) {
-                        console.log('Post status updated successfully!');
+                        console.log(currentStatus);
 
                         button.text(check === 0 ? "Enable" : "Disable");
                         // Update the data attribute for the next click
-                        button.data('active', check === 0);
-                    },
+                        button.attr('data-number', check.toString());
+
+                        // Update the button text based on the new status
+                        button.text(check === 0 ? "Enable" : "Disable");
+                    }
                     
                 });
             });
@@ -174,7 +177,9 @@
                                 </td>
                                 <td>
                                     <!-- Display enable/disable toggle button -->
-                                    <button class="toggle-status" data-postId= "@item.PostID" data-number="@item.Active">@(item.Active ? "Disable" : "Enable")</button>
+                                    <button class="toggle-status" data-postId="@item.PostID" data-number="@((int)item.Active)">@(item.Active == BlogProject.Data.Enum.Active.yes ? "Disable" : "Enable")</button>
+                                    
+                                    
                                 </td>
                                 <td>
                                     @Html.ActionLink("Edit", "Edit", new {  id=item.PostID  }) |

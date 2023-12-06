@@ -14,6 +14,7 @@ namespace BlogProject.Apilntegration.Posts
     public interface IPostApiClient
     {
 		Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request);
+
 		Task<PagedResult<PostVm>> GetAllPaging(GetUserPagingRequest request);
 		Task<ApiResult<bool>> UpdatePost(PostUpdateRequest request, int id);
 		Task<ApiResult<bool>> CreatePost(PostRequest request);
@@ -29,6 +30,7 @@ namespace BlogProject.Apilntegration.Posts
 		Task<ApiResult<bool>> Check(LikeVm request);
 		Task<List<PostVm>> GetPostOfCategory(int categoryId);
         Task<ApiResult<bool>> StatusChange(PostEnable postEnable);
+        Task<ApiResult<bool>> CheckEnable(int postId);
         Task<List<PostVm>> GetByUserId(string userId);
 		Task<List<BlogProject.Data.Entities.Posts>> History(string userName);
     }

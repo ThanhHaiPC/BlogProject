@@ -31,7 +31,7 @@ namespace BlogProject.Admin.Controllers
             _configuration = configuration;
             _roleApiClient = roleApiClient;
         }
-		//[Authorize(Roles = "admin")]
+		[Authorize(Roles = "admin")]
 		public async Task<IActionResult> Index(string keyword, int pageIndex = 1, int pageSize = 5)
 		{
 			var sessions = HttpContext.Session.GetString("Token");
@@ -46,7 +46,25 @@ namespace BlogProject.Admin.Controllers
 			{
 				ViewBag.SuccessMsg = TempData["result"];
 			}
-			var data = await _userApiClient.GetUserPaging(request);
+			var data = await _userApiClient.GetUserAuthor(request);
+			return View(data.ResultObj);
+		}
+		[Authorize(Roles = "admin")]
+		public async Task<IActionResult> ListUser(string keyword, int pageIndex = 1, int pageSize = 5)
+		{
+			var sessions = HttpContext.Session.GetString("Token");
+			var request = new GetUserPagingRequest()
+			{
+
+				Keyword = keyword,
+				PageIndex = pageIndex,
+				PageSize = pageSize
+			};
+			if (TempData["result"] != null)
+			{
+				ViewBag.SuccessMsg = TempData["result"];
+			}
+			var data = await _userApiClient.GetUserUser(request);
 			return View(data.ResultObj);
 		}
 		[HttpGet]
@@ -195,7 +213,41 @@ namespace BlogProject.Admin.Controllers
 			var profile = await _userApiClient.Profile(id);
 			return View(profile.ResultObj);
 		}
-		private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid id)
+		[HttpGet]
+		[Authorize(Roles = "admin")]
+		public async Task<IActionResult> GetMonthlyStats()
+		{
+			return View();
+
+		}
+
+		[HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetMonthlyStats(int? month, int? year,string keyword, int pageIndex = 1, int pageSize = 5)
+		{
+            var request = new GetUserPagingRequest()
+            {
+
+                Keyword = keyword,
+                PageIndex = pageIndex,
+                PageSize = pageSize
+            };
+            ViewBag.SelectedMonth = month;
+            ViewBag.SelectedYear = year;
+            ViewBag.Keyword = keyword;
+         
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
+            var data = await _userApiClient.GetMonthlyStats(request, month, year);
+            
+            return PartialView("_UserListPartial", data.ResultObj); // Trả về một partial view
+            
+
+        }
+
+        private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid id)
 		{
 			var userObj = await _userApiClient.GetById(id);
 			var roleObj = await _roleApiClient.GetAll();
@@ -211,6 +263,7 @@ namespace BlogProject.Admin.Controllers
 			}
 			return roleAssignRequest;
 		}
+
 
 	}
 }

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Ocsp;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -139,7 +141,8 @@ namespace BlogProject.Application.System.Users
                 LastName = request.LastName,
                 UserName = request.UserName,
                 Gender = request.Gender,
-                PhoneNumber = request.PhoneNumber
+                PhoneNumber = request.PhoneNumber,
+                CreatedAt = DateTime.Now
             };
 
             // Lưu mật khẩu
@@ -488,22 +491,44 @@ namespace BlogProject.Application.System.Users
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
+            {
                 return new ApiResult<bool>
                 {
                     IsSuccessed = false,
                     Message = "No user associated with email",
                 };
+            }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var creationTime = DateTimeOffset.UtcNow;
+            var expireTime = creationTime.AddSeconds(30); // Thời gian hết hạn là 24 giờ kể từ khi tạo
+
+            // Lưu token và thời gian tạo vào cơ sở dữ liệu
+            var passwordResetToken = new PasswordResetToken
+            {
+                UserId = user.Id,
+                Token = token,
+                CreationTime = creationTime,
+                ExpireTime = expireTime
+            };
+
+            // Giả sử _context là đối tượng DbContext của bạn
+            _dataContext.PasswordResetTokens.Add(passwordResetToken);
+            await _dataContext.SaveChangesAsync();
+
+            // Mã hóa token để gửi qua email
             var encodedToken = Encoding.UTF8.GetBytes(token);
             var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+           
+                // Cấu hình URL reset mật khẩu
+                string url = $"{_config["AppUrl"]}/ResetPass?email={email}&token={validToken}";
+           
 
-            string url = $"{_config["AppUrl"]}/ResetPass?email={email}&token={validToken}";
-
-            await _mailService.SendEmailAsync(email, "Reset Password", "<h1>Follow the instructions to reset your password</h1>" +
-                $"<p>To reset your password <a href='{url}'>Click here</a></p>");
-
-            return new  ApiResult<bool>
+            // Gửi email
+                 await _mailService.SendEmailAsync(email, "Reset Password", $"<h1>BẠN CẦN TẠO LẠI MẬT KHẨU MỚI</h1><p>Để đặt lại password thì bạn cần bấm vào đây trong vòng 30 giây <a href='{url}'>Click here</a></p>");
+            
+            
+			return new ApiResult<bool>
             {
                 IsSuccessed = true,
                 Message = "Reset password URL has been sent to the email successfully!"
@@ -514,36 +539,61 @@ namespace BlogProject.Application.System.Users
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
+            {
                 return new ApiResult<bool>
                 {
                     IsSuccessed = false,
                     Message = "No user associated with email",
                 };
+            }
 
             if (request.NewPassword != request.ComfirmPass)
+            {
                 return new ApiResult<bool>
                 {
                     IsSuccessed = false,
                     Message = "Password doesn't match its confirmation",
                 };
+            }
 
+            // Giải mã token từ yêu cầu
             var decodedToken = WebEncoders.Base64UrlDecode(request.Token);
             string normalToken = Encoding.UTF8.GetString(decodedToken);
 
+            // Kiểm tra token có hợp lệ và chưa hết hạn
+            var storedToken = await _dataContext.PasswordResetTokens
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Token == normalToken && t.UserId == user.Id);
+
+            if (storedToken == null || storedToken.ExpireTime < DateTimeOffset.UtcNow)
+            {
+                return new ApiResult<bool>
+                {
+                    IsSuccessed = false,
+                    Message = "The token is invalid or has expired.",
+                };
+            }
+
+            // Thực hiện reset mật khẩu
             var result = await _userManager.ResetPasswordAsync(user, normalToken, request.NewPassword);
 
             if (result.Succeeded)
+            {
+                // Có thể xóa token sau khi đã sử dụng để đảm bảo nó không thể được sử dụng lại
+                _dataContext.PasswordResetTokens.Remove(storedToken);
+                await _dataContext.SaveChangesAsync();
+
                 return new ApiResult<bool>
                 {
                     Message = "Password has been reset successfully!",
                     IsSuccessed = true,
                 };
+            }
 
             return new ApiResult<bool>
             {
                 Message = "Something went wrong",
                 IsSuccessed = false,
-                 
             };
         }
 
@@ -551,20 +601,40 @@ namespace BlogProject.Application.System.Users
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
+            {
                 return new ApiResult<bool>
                 {
                     IsSuccessed = false,
                     Message = "No user associated with email",
                 };
+            }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var creationTime = DateTimeOffset.UtcNow;
+            var expireTime = creationTime.AddSeconds(30); // Thời gian hết hạn là 24 giờ kể từ khi tạo
+
+            // Lưu token và thời gian tạo vào cơ sở dữ liệu
+            var passwordResetToken = new PasswordResetToken
+            {
+                UserId = user.Id,
+                Token = token,
+                CreationTime = creationTime,
+                ExpireTime = expireTime
+            };
+
+            // Giả sử _context là đối tượng DbContext của bạn
+            _dataContext.PasswordResetTokens.Add(passwordResetToken);
+            await _dataContext.SaveChangesAsync();
+
+            // Mã hóa token để gửi qua email
             var encodedToken = Encoding.UTF8.GetBytes(token);
             var validToken = WebEncoders.Base64UrlEncode(encodedToken);
 
+            // Cấu hình URL reset mật khẩu
             string url = $"{_config["AppUrlAdmin"]}/ResetPass?email={email}&token={validToken}";
 
-            await _mailService.SendEmailAsync(email, "Reset Password", "<h1>Follow the instructions to reset your password</h1>" +
-                $"<p>To reset your password <a href='{url}'>Click here</a></p>");
+            // Gửi email
+            await _mailService.SendEmailAsync(email, "Reset Password", $"<h1>BẠN CẦN TẠO LẠI MẬT KHẨU MỚI</h1><p>Để đặt lại password thì bạn cần bấm vào đây trong vòng 30 giây <a href='{url}'>Click here</a></p>");
 
             return new ApiResult<bool>
             {
@@ -572,5 +642,124 @@ namespace BlogProject.Application.System.Users
                 Message = "Reset password URL has been sent to the email successfully!"
             };
         }
-    }
+
+		public async Task<ApiResult<PagedResult<UserVm>>> GetUsersIsAuthorRole(GetUserPagingRequest request)
+		{
+			var query = await _userManager.GetUsersInRoleAsync("author");
+			if (!string.IsNullOrEmpty(request.Keyword))
+			{
+				query = (IList<User>)query.Where(x => x.UserName.Contains(request.Keyword)
+				 || x.PhoneNumber.Contains(request.Keyword));
+			}
+			
+			//3. Paging
+			int totalRow =  query.Count();
+			var data =  query.Skip((request.PageIndex - 1) * request.PageSize)
+			.Take(request.PageSize)
+				.Select(x => new UserVm()
+				{
+					Id = x.Id,
+					Email = x.Email,
+					FirstName = x.FirstName,
+					LastName = x.LastName,
+					DateOfBir = x.DateOfBir,
+					Gender = x.Gender,
+					UserName = x.UserName,
+					Image = x.Image,
+					PhoneNumber = x.PhoneNumber,
+				}).ToList();
+
+			//4. Select and projection
+			var pagedResult = new PagedResult<UserVm>()
+			{
+				TotalRecords = totalRow,
+				PageIndex = request.PageIndex,
+				PageSize = request.PageSize,
+				Items = data
+			};
+			return new ApiSuccessResult<PagedResult<UserVm>>(pagedResult);
+		}
+
+		public async Task<ApiResult<PagedResult<UserVm>>> GetUsersIsUserRole(GetUserPagingRequest request)
+		{
+			var query = await _userManager.GetUsersInRoleAsync("user");
+			if (!string.IsNullOrEmpty(request.Keyword))
+			{
+				query = (IList<User>)query.Where(x => x.UserName.Contains(request.Keyword)
+				 || x.PhoneNumber.Contains(request.Keyword));
+			}
+
+			//3. Paging
+			int totalRow = query.Count();
+			var data = query.Skip((request.PageIndex - 1) * request.PageSize)
+			.Take(request.PageSize)
+				.Select(x => new UserVm()
+				{
+					Id = x.Id,
+					Email = x.Email,
+					FirstName = x.FirstName,
+					LastName = x.LastName,
+					DateOfBir = x.DateOfBir,
+					Gender = x.Gender,
+					UserName = x.UserName,
+					Image = x.Image,
+					PhoneNumber = x.PhoneNumber,
+				}).ToList();
+
+			//4. Select and projection
+			var pagedResult = new PagedResult<UserVm>()
+			{
+				TotalRecords = totalRow,
+				PageIndex = request.PageIndex,
+				PageSize = request.PageSize,
+				Items = data
+			};
+			return new ApiSuccessResult<PagedResult<UserVm>>(pagedResult);
+		}
+
+		public async Task<ApiResult<PagedResult<UserVm>>> GetMonthlyStats(GetUserPagingRequest request,int month, int year)
+		{
+			
+
+			var startDate = new DateTime(year, month, 1);
+			var endDate = startDate.AddMonths(1).AddDays(-1);
+            var role = await _userManager.GetUsersInRoleAsync("user");
+            var query = role.Where(x => x.CreatedAt >= startDate && x.CreatedAt <= endDate);
+
+            // Additional filter for keyword, if provided
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.UserName.Contains(request.Keyword) || x.PhoneNumber.Contains(request.Keyword));
+            }
+            //3. Paging
+            int totalRow = query.Count();
+            var data = query.Skip((request.PageIndex - 1) * request.PageSize)
+            .Take(request.PageSize)
+                .Select(x => new UserVm()
+                {
+                    Id = x.Id,
+                    Email = x.Email,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    DateOfBir = x.DateOfBir,
+                    Gender = x.Gender,
+                    UserName = x.UserName,
+                    Image = x.Image,
+                    PhoneNumber = x.PhoneNumber,
+                }).ToList();
+
+            //4. Select and projection
+            var pagedResult = new PagedResult<UserVm>()
+            {
+                TotalRecords = totalRow,
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                Items = data
+            };
+            return new ApiSuccessResult<PagedResult<UserVm>>(pagedResult);
+            // Xử lý thống kê
+
+           
+		}
+	}
 }

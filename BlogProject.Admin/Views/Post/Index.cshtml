@@ -1,6 +1,6 @@
 ﻿@using BlogProject.ViewModel.Common;
 @model PagedResult<BlogProject.ViewModel.Catalog.Posts.PostVm>
-
+@using BlogProject.ViewModel.Catalog.Posts;
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,7 +12,33 @@
             $('#msgAlert').fadeOut('slow');
         }, 2000);
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+       
+        $(document).ready(function () {
+            $(document).on('click', '.toggle-status', function (event) {
+                var button = $(this); // Reference to the clicked button
+                var postId = button.attr('data-postId'); // Lấy postId từ thuộc tính data của nút
+                var currentStatus = button.attr('number'); // Lấy trạng thái hiện tại từ thuộc tính data
+                var check = currentStatus ? 0 : 1; // Đảo trạng thái
 
+                $.ajax({
+                    type: 'POST',
+                    url: '/Post/StatusChange',
+                    data: { postId: postId, number: check }, // Sửa đổi dòng này
+                   
+                    success: function (response) {
+                        console.log('Post status updated successfully!');
+
+                        button.text(check === 0 ? "Enable" : "Disable");
+                        // Update the data attribute for the next click
+                        button.data('active', check === 0);
+                    },
+                    
+                });
+            });
+        });
+    </script>
 }
 <style>
     .image-preview {
@@ -115,7 +141,7 @@
                         @foreach (var item in Model.Items)
                         {
                             <tr>
-
+                                
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </td>
@@ -148,7 +174,7 @@
                                 </td>
                                 <td>
                                     <!-- Display enable/disable toggle button -->
-                                    <button class="toggle-status"  data-id="@item.PostID"  data-active="@item.Active">@(item.Active ? "Disable" : "Enable")</button>
+                                    <button class="toggle-status" data-postId= "@item.PostID" data-number="@item.Active">@(item.Active ? "Disable" : "Enable")</button>
                                 </td>
                                 <td>
                                     @Html.ActionLink("Edit", "Edit", new {  id=item.PostID  }) |
@@ -160,37 +186,11 @@
                     </tbody>
                 </table>
             </div>
-            @await Component.InvokeAsync("Pager", Model)
+          @await Component.InvokeAsync("Pager", Model)
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $(document).on('click', '.toggle-status', function () {
-            var button = $(this); // Reference to the clicked button
-            var postId = button.data('id');
-            var currentStatus = button.data('active');
-            var check = currentStatus ? 0 : 1;
-            var request = { IdPost: item.PostID, Number: check };
 
-            $.ajax({
-                type: 'POST',
-                url: '/Post/StatusChange',
-                data: { IdPost: item.PostID, Number: check },
-                contentType: 'application/json',
-                success: function (response) {
-                    console.log('Post status updated successfully!');
-                 
-                    button.text(check === 0 ? "Enable" : "Disable");
-                    // Update the data attribute for the next click
-                    button.data('active', check === 0);
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr.responseText);
-                    
-                }
-            });
-        });
-    });
-</script>
+
+
+

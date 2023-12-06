@@ -2,6 +2,7 @@
 using BlogProject.ViewModel.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -217,5 +218,42 @@ namespace BlogProject.BackendApi.Controllers
             }
             return Ok(result);
         }
-    }
+        [HttpGet("get-user-author")]
+        public async Task<IActionResult> GetUserAuthor([FromQuery] GetUserPagingRequest request)
+        {
+            var result = await _userService.GetUsersIsAuthorRole(request);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+		[HttpGet("get-user-user")]
+		public async Task<IActionResult> GetUserUser([FromQuery] GetUserPagingRequest request)
+		{
+			var result = await _userService.GetUsersIsUserRole(request);
+			if (!result.IsSuccessed)
+			{
+				return BadRequest(result);
+			}
+			return Ok(result);
+		}
+        [HttpGet("stats-user")]
+		public async Task<IActionResult> GetMonthlyStats([FromQuery]GetUserPagingRequest request,int year, int month)
+		{
+			if (month < 1 || month > 12 || year < 1)
+			{
+				return BadRequest("Tháng hoặc năm không hợp lệ.");
+			}
+
+			var result = await _userService.GetMonthlyStats(request,month, year);
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result);
+            }
+			// Xử lý thống kê
+
+			return Ok(result);
+		}
+	}
 }

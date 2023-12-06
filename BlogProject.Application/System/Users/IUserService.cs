@@ -1,6 +1,7 @@
 ﻿using BlogProject.Data.Entities;
 using BlogProject.ViewModel.Common;
 using BlogProject.ViewModel.System.Users;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,5 +35,9 @@ namespace BlogProject.Application.System.Users
         Task<ApiResult<bool>> ForgotPassword (string? email);
         Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordViewModel request);
         Task<ApiResult<bool>> ForgotPasswordAdmin(string? email);
-    }
+        Task<ApiResult<PagedResult<UserVm>>> GetUsersIsAuthorRole(GetUserPagingRequest request);
+		Task<ApiResult<PagedResult<UserVm>>> GetUsersIsUserRole(GetUserPagingRequest request);
+
+        Task<ApiResult<PagedResult<UserVm>>> GetMonthlyStats(GetUserPagingRequest request,int month, int year);
+	}
 }

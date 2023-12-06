@@ -11,7 +11,7 @@ using BlogProject.Apilntegration.Users;
     using BlogProject.ViewModel.System.Users;
     using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
     var builder = WebApplication.CreateBuilder(args);
 
@@ -71,7 +71,7 @@ using BlogProject.Apilntegration.Users;
     app.UseAuthentication();
 
     app.UseRouting();
-
+    
     app.UseAuthorization();
     app.UseSession();
 

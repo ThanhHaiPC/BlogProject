@@ -25,5 +25,9 @@ namespace BlogProject.Apilntegration.Users
         Task<ApiResult<bool>> ForgotPass(string email);
         Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordViewModel request);
         Task<ApiResult<bool>> ForgotPassAdmin(string email);
+		Task<ApiResult<PagedResult<UserVm>>> GetUserAuthor(GetUserPagingRequest request);
+		Task<ApiResult<PagedResult<UserVm>>> GetUserUser(GetUserPagingRequest request);
+		
+        Task<ApiResult<PagedResult<UserVm>>> GetMonthlyStats(GetUserPagingRequest request, int? month, int? year);
     }
 }

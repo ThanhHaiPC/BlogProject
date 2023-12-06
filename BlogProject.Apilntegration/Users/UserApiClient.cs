@@ -375,5 +375,45 @@ namespace BlogProject.Apilntegration.Users
 
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(result);
         }
-    }
+
+		public async Task<ApiResult<PagedResult<UserVm>>> GetUserAuthor(GetUserPagingRequest request)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/users/get-user-author?pageIndex=" +
+				$"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
+			var body = await response.Content.ReadAsStringAsync();
+			var users = JsonConvert.DeserializeObject<ApiSuccessResult<PagedResult<UserVm>>>(body);
+			return users;
+		}
+
+		public async Task<ApiResult<PagedResult<UserVm>>> GetUserUser(GetUserPagingRequest request)
+		{
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/users/get-user-user?pageIndex=" +
+				$"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
+			var body = await response.Content.ReadAsStringAsync();
+			var users = JsonConvert.DeserializeObject<ApiSuccessResult<PagedResult<UserVm>>>(body);
+			return users;
+		}
+
+		public async Task<ApiResult<PagedResult<UserVm>>> GetMonthlyStats(GetUserPagingRequest request, int? month, int? year)
+        {
+			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+			var response = await client.GetAsync($"/api/Users/stats-user?PageIndex={request.PageIndex}&PageSize={request.PageSize}&year={year}&month={month}");
+			var body = await response.Content.ReadAsStringAsync();
+			if (response.IsSuccessStatusCode)
+				return JsonConvert.DeserializeObject< ApiSuccessResult<PagedResult<UserVm>>> (body);
+
+			return JsonConvert.DeserializeObject<ApiErrorResult<PagedResult<UserVm>>>(body);
+		}
+	}
 }

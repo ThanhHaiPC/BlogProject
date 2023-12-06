@@ -168,18 +168,23 @@ namespace BlogProject.Admin.Controllers
 			return View(data);
 		}
         [HttpPost]
-        public async Task<IActionResult> StatusChange([FromBody] PostEnable post)
+        public async Task<IActionResult> StatusChange( int postId , string number)
         {
 
-            if (post.IdPost == 0)
+            if (postId == 0)
             {
                 return BadRequest();
             }
-            var data = await _postApiClient.StatusChange(post);
+			var enable = new PostEnable()
+			{
+				IdPost = postId,
+				Number = number
+			};
+            var data = await _postApiClient.StatusChange(enable);
             if (data.IsSuccessed)
             {
 
-                return Ok();
+                return Ok(data.ResultObj);
             }
             return BadRequest();
         }

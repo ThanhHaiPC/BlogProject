@@ -4,6 +4,7 @@ using BlogProject.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogProject.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205183157_updatePassToken")]
+    partial class updatePassToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,16 +246,9 @@ namespace BlogProject.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1")
-                        .IsUnique()
-                        .HasFilter("[UserId1] IS NOT NULL");
 
                     b.ToTable("Token", (string)null);
                 });
@@ -417,7 +412,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "61a1386d-0986-40ab-8e28-dd916aa976d2",
+                            ConcurrencyStamp = "a78f561f-f7bf-4e25-9b48-0fc273ee4505",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -425,7 +420,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "87a0391a-af7e-493f-b44c-1082c4821b41",
+                            ConcurrencyStamp = "b47d7a68-48bb-48c6-acca-6f5182ddf9e9",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -433,7 +428,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("f76f9568-c479-4b92-958d-b0a8dbe8241e"),
-                            ConcurrencyStamp = "43e56821-3516-44cb-823e-e06fd8f9e5cb",
+                            ConcurrencyStamp = "895d3447-c963-4fb8-8310-42a4d8294eb4",
                             Description = "Author Role",
                             Name = "author",
                             NormalizedName = "author"
@@ -569,7 +564,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "a633ca37-8519-45f9-aa80-3e5619212fd7",
+                            ConcurrencyStamp = "228e5647-49f3-46a4-b791-4fe9a00b4965",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
@@ -580,7 +575,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEB/hSHdcESrZbxIeEPGupRtLJsEHOgX6dLGhvnjk2yhb67dRS4fizTB1tScikuet6Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJVhTOryI488Li+3awPbu5Qr0dsx7vdOtqJtMvQrBr/yb/NVfPfPAGxpXq4QXMB0AA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -814,14 +809,10 @@ namespace BlogProject.Data.Migrations
             modelBuilder.Entity("BlogProject.Data.Entities.PasswordResetToken", b =>
                 {
                     b.HasOne("BlogProject.Data.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("PasswordResetToken")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("BlogProject.Data.Entities.User", null)
-                        .WithOne("PasswordResetToken")
-                        .HasForeignKey("BlogProject.Data.Entities.PasswordResetToken", "UserId1");
 
                     b.Navigation("User");
                 });
@@ -997,8 +988,7 @@ namespace BlogProject.Data.Migrations
 
                     b.Navigation("Like");
 
-                    b.Navigation("PasswordResetToken")
-                        .IsRequired();
+                    b.Navigation("PasswordResetToken");
 
                     b.Navigation("Rating");
 

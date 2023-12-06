@@ -26,6 +26,10 @@ namespace BlogProject.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
             return View();
         }
 
@@ -34,8 +38,8 @@ namespace BlogProject.Admin.Controllers
         {
             if (!ModelState.IsValid)
                 return View(ModelState);
-
-            var result = await _userApiClient.Authencate(request);
+			
+			var result = await _userApiClient.Authencate(request);
 
             var userPrincipal = this.ValidateToken(result.ResultObj);
             var authProperties = new AuthenticationProperties
@@ -69,7 +73,7 @@ namespace BlogProject.Admin.Controllers
             var forgotpass = await _userApiClient.ForgotPassAdmin(request.Email);
             if (forgotpass.IsSuccessed)
             {
-                TempData["result"] = "Một liên kết đặt lại mật khẩu đã được gửi đến địa chỉ email của bạn.";
+                TempData["result"] = "Đã gửi vào mail của bạn.";
                 return RedirectToAction("Index", "Login");
             }
             ModelState.AddModelError(string.Empty, "Có lỗi xảy ra. Vui lòng thử lại sau.");
@@ -99,7 +103,7 @@ namespace BlogProject.Admin.Controllers
                 TempData["result"] = "Đổi mật khẩu thành công";
                 return RedirectToAction("Index", "Login");
             }
-            ModelState.AddModelError(string.Empty, "Có lỗi xảy ra. Vui lòng thử lại sau.");
+            ModelState.AddModelError(string.Empty, "Token đã hết hạn");
             return View(request);
         }
         private ClaimsPrincipal ValidateToken(string jwtToken)

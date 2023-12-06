@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\User\ListUser.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.18" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
@@ -22,6 +26,18 @@
     <ProjectReference Include="..\BlogProject.Data\BlogProject.Data.csproj" />
     <ProjectReference Include="..\BlogProject.Utilities\BlogProject.Utilities.csproj" />
     <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\User\ListUser.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\User\ListUser.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\User\ListUser.cshtml" />
   </ItemGroup>
 
 </Project>

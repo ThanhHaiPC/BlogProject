@@ -30,7 +30,7 @@ namespace BlogProject.Data.EF
             modelBuilder.ApplyConfiguration(new ReplyConfiguration());
             modelBuilder.ApplyConfiguration(new RatingConfiguration());
             modelBuilder.ApplyConfiguration(new FollowingConfiguration());
-
+            modelBuilder.ApplyConfiguration(new PasswordResetTokenConfiguration());
 
             modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AppUserClaims");
             modelBuilder.Entity<IdentityUserRole<Guid>>().ToTable("AppUserRoles").HasKey(x => new { x.UserId, x.RoleId });
@@ -54,8 +54,8 @@ namespace BlogProject.Data.EF
 
         public DbSet<Reply> Replies { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }       
-
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         public DbSet<AppConfig> AppConfigs { get; set; }
     }
 }

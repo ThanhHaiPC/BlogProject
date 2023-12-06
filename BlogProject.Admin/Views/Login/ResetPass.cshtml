@@ -5,33 +5,75 @@
     Layout = null;
 }
 
-<h1>ResetPass</h1>
 
-<h4>ResetPasswordViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Recovery</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .recovery-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        input[type="email"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="recovery-form">
         <form asp-action="ResetPass">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input asp-for="Token" type="hidden" value="@Model.Token" />
             <input asp-for="Email" type="hidden" value="@Model.Email" />
-            <div class="form-group">
-                <label asp-for="NewPassword" class="control-label"></label>
-                <input asp-for="NewPassword" class="form-control" />
-                <span asp-validation-for="NewPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ComfirmPass" class="control-label"></label>
-                <input asp-for="ComfirmPass" class="form-control" />
-                <span asp-validation-for="ComfirmPass" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <label for="newPassword">Nhập mật khẩu mới</label>            
+            <input asp-for="NewPassword" placeholder="Nhập mật khẩu mới" />
+            <label for="ComfirmPassword">Xác nhận lại khẩu mới</label>
+            <input asp-for="ComfirmPass" placeholder="Nhập lại mật khẩu mới" />
+            <button type="submit" value="Create">Xác Nhận</button>
         </form>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+</body>
+</html>

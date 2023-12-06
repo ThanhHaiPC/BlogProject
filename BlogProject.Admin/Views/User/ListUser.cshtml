@@ -2,11 +2,11 @@
 @model PagedResult<BlogProject.ViewModel.System.Users.UserVm>
 
 @{
-    ViewData["Title"] = "Danh sách User ";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Danh sách User ";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-	
+
 
 	/* USER LIST TABLE */
 	.user-list tbody td > img {
@@ -214,21 +214,12 @@
 		color: #a75d54;
 	}
 </style>
-@{
-	ViewData["Title"] = "Monthly User Statistics";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-
-
-
-
 <h1>Danh Sách Người Dùng</h1>
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <div class="container">
 	<div class="row">
 		<div class="col-lg-12">
-			
+
 			<div class="main-box clearfix">
 				<div class="table-responsive">
 					<table class="table user-list">
@@ -241,14 +232,15 @@
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
-						@foreach (var item in Model.Items){
+						@foreach (var item in Model.Items)
+						{
 							<tbody>
 								<tr>
 									<td>
 										<img src="@item.Image" alt="">
 										<a style=" text-decoration: none" href="@Url.Action("Details", new { id = item.Id })" class="user-link">@Html.DisplayFor(modelItem => item.UserName)</a>
 										<span class="user-subhead">
-											
+
 										</span>
 									</td>
 									<td>
@@ -276,9 +268,9 @@
 										<button type="button" class="btn btn-success" onclick="location.href='@Url.Action("RoleAssign", new { id = item.Id })'">
 											Roles
 										</button>
-										
+
 									</td>
-								</tr>								
+								</tr>
 							</tbody>
 						}
 					</table>
@@ -287,12 +279,11 @@
 					<a class="btn btn-success" asp-action="Create" asp-controller="User">Tạo mới</a>
 				</div>
 				<ul class="pagination pull-right">
-                    @await Component.InvokeAsync("Pager", Model)
+					@await Component.InvokeAsync("Pager", Model)
 
-                   
+
 				</ul>
 			</div>
 		</div>
 	</div>
 </div>
-

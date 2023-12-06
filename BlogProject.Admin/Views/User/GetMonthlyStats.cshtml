@@ -1,0 +1,69 @@
+﻿
+@{
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<form id="userFilterForm">
+	<div class="form-group">
+		<label for="month">Month:</label>
+		<select id="month" name="month" class="form-control">
+			@for (int i = 1; i <= 12; i++)
+			{
+				if (ViewBag.SelectedMonth != null && (int)ViewBag.SelectedMonth == i)
+				{
+					<option value="@i" selected="selected">@i</option>
+				}
+				else
+				{
+					<option value="@i">@i</option>
+				}
+
+			}
+		</select>
+	</div>
+
+	<div class="form-group">
+		<label for="year">Year:</label>
+		<select id="year" name="year" class="form-control">
+			@for (int i = DateTime.Now.Year; i <= DateTime.Now.Year; i++)
+			{
+				if (ViewBag.SelectedYear != null && (int)ViewBag.SelectedYear == i)
+				{
+					<option value="@i" selected="selected">@i</option>
+				}
+				else
+				{
+					<option value="@i">@i</option>
+				}
+			}
+		</select>
+	</div>
+
+
+	<button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<div id="usersList">
+	<!-- Nơi hiển thị danh sách người dùng -->
+</div>
+@section Scripts {
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$("#userFilterForm").submit(function (event) {
+				event.preventDefault();
+				var form = $(this);
+				$.ajax({
+					url: 'GetMonthlyStats', // URL của action trong controller
+					type: 'POST',
+					data: form.serialize(), // Dữ liệu gửi đi
+					success: function (result) {
+						console.log(result);
+						$('#usersList').html(result); // Cập nhật HTML của phần tử có id 'usersList'
+					}
+				});
+			});
+		});
+	</script>
+}

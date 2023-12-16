@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Comment\**" />
+    <Content Remove="Views\Comment\**" />
+    <EmbeddedResource Remove="Views\Comment\**" />
+    <None Remove="Views\Comment\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.18" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
   </ItemGroup>
@@ -15,10 +22,6 @@
     <ProjectReference Include="..\BlogProject.Apilntegration\BlogProject.Apilntegration.csproj" />
     <ProjectReference Include="..\BlogProject.Utilities\BlogProject.Utilities.csproj" />
     <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Comment\" />
   </ItemGroup>
 
   <ItemGroup>

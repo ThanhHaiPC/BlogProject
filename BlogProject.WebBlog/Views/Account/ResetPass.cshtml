@@ -1,38 +1,101 @@
 ﻿@model BlogProject.ViewModel.System.Users.ResetPasswordViewModel
-
 @{
     ViewData["Title"] = "ResetPass";
     Layout = null;
 }
 
-<h1>ResetPass</h1>
 
-<h4>ResetPasswordViewModel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="ResetPass">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="Token" type="hidden" value="@Model.Token"/>
-            <input asp-for="Email" type="hidden" value="@Model.Email"/>
-            <div class="form-group">
-                <label asp-for="NewPassword" class="control-label"></label>
-                <input asp-for="NewPassword" class="form-control" />
-                <span asp-validation-for="NewPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ComfirmPass" class="control-label"></label>
-                <input asp-for="ComfirmPass" class="form-control" />
-                <span asp-validation-for="ComfirmPass" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResetPass</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+           
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .recovery-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="recovery-form">
+            <form asp-action="ResetPass">
+                <h2>Password Recovery</h2>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="Token" type="hidden" value="@Model.Token" />
+                <input asp-for="Email" type="hidden" value="@Model.Email" />
+                <div class="form-group">
+                    <label for="newPassword">Nhập mật khẩu mới</label>
+                    <input asp-for="NewPassword" type="password" placeholder="Nhập mật khẩu mới" />
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Xác nhận lại mật khẩu mới</label>
+                    <input asp-for="ComfirmPass" type="password" placeholder="Nhập lại mật khẩu mới" />
+                </div>
+                <button type="submit">Xác Nhận</button>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+</body>
+</html>

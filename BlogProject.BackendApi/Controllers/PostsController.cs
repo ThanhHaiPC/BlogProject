@@ -27,12 +27,18 @@ namespace BlogProject.BackendApi.Controllers
 			_userManager = userManager;
 			_httpContextAccessor = httpContextAccessor;
 		}
+		[HttpGet("get-all")]
+		public async Task<IActionResult> GetAll()
+		{
+			var posts = await _postService.GetAll();
+			return Ok(posts);
+		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllPost()
+		public async Task<IActionResult> GetAllPost([FromQuery]GetUserPagingRequest request)
 		{
 
-			var post = await _postService.GetAll();
+			var post = await _postService.GetPaged(request);
 			return Ok(post);
 		}
 		[HttpPost]
@@ -112,8 +118,13 @@ namespace BlogProject.BackendApi.Controllers
 			var user = await _postService.TakeTopByQuantity(quantity);
 			return Ok(user);
 		}
-
-		[HttpGet("{id}")]
+        [HttpGet("post-trending/{quantity}")]
+        public async Task<IActionResult> PostTrending(int quantity)
+        {
+            var user = await _postService.PostTrending(quantity);
+            return Ok(user);
+        }
+        [HttpGet("{id}")]
 		public async Task<IActionResult> GetById(int id)
 		{
 			var posts = await _postService.GetById(id);

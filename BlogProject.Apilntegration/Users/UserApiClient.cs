@@ -31,12 +31,13 @@ namespace BlogProject.Apilntegration.Users
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
             var response = await client.PostAsync("/api/users/authenticate", httpContent);
+            var body = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<ApiSuccessResult<string>>(await response.Content.ReadAsStringAsync());
+                return JsonConvert.DeserializeObject<ApiSuccessResult<string>>(body);
             }
 
-            return JsonConvert.DeserializeObject<ApiErrorResult<string>>(await response.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<ApiErrorResult<string>>(body);
         }
 
         public async Task<ApiResult<bool>> DeleteUser(Guid id)

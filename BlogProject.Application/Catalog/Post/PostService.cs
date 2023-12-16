@@ -20,6 +20,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Internal;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -113,12 +114,32 @@ namespace BlogProject.Application.Catalog.Post
 			return new ApiSuccessResult<bool>();
 		}
 
-		public async Task<ApiResult<List<Posts>>> GetAll()
+		public async Task<List<PostVm>> GetAll()
 		{
-			var posts = await _context.Posts.Include(p => p.User).ToListAsync();
+			
+
+			var posts = await _context.Posts.Include(p => p.User).Include(p => p.Categories).Where(x=>x.Active == Active.yes).ToListAsync();
+			var postsWithUsernames = posts.Select(post => new PostVm
+			{
+				PostID = post.PostID,
+				UserName = post.User.UserName,
+				Title = post.Title,
+				Content = post.Content,
+				UploadDate = post.UploadDate,
+				View = post.View,
+				CategoryId = post.CategoryId,
+				Desprition = post.Desprition,
+				Image = post.Image,
+				CategoryName = post.Categories.Name,
+				Avatar = post.User.Image,
+				UserId = post.UserId
+				
+			}).ToList();
+
+			return (postsWithUsernames);
 
 
-			return new ApiSuccessResult<List<Posts>>(posts);
+			
 		}
 
 
@@ -127,8 +148,7 @@ namespace BlogProject.Application.Catalog.Post
 			
                 var posts = await _context.Posts
              .Where(p => p.UserId == Guid.Parse(userId) && p.Active == Active.yes)
-             .Include(p => p.User)
-          
+             .Include(p => p.User)         
              .Include(p => p.Categories)
              .ToListAsync();
                 var postsWithUsernames = posts.Select(post => new PostVm
@@ -154,7 +174,7 @@ namespace BlogProject.Application.Catalog.Post
 			try
 			{
 				var posts = await _context.Posts
-					.Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm) && p.Active == Active.yes)
+					.Where(p => p.Title.Contains(searchTerm) || p.Desprition.Contains(searchTerm) || p.Categories.Name.Contains(searchTerm) && p.Active == Active.yes)
 					.Include(p => p.User)
 					.Include(p => p.Categories)
 					.ToListAsync();
@@ -170,6 +190,8 @@ namespace BlogProject.Application.Catalog.Post
 					CategoryId = post.CategoryId,
 					Desprition = post.Desprition,
 					Image = post.Image,
+					Avatar = post.User.Image,
+					
 				}).ToList();
 
 				return new ApiSuccessResult<List<PostVm>>(postsWithUsernames);
@@ -210,13 +232,15 @@ namespace BlogProject.Application.Catalog.Post
 					View = x.p.View,
 					UploadDate = x.p.UploadDate,
 					CategoryName = x.p.Categories.Name,
+					CategoryId = x.p.CategoryId,
 					PostID = x.p.PostID,
 					CountComment = _context.Comments
 					   .Where(c => c.PostID == x.p.PostID)
 					   .Count(),
 					CountLike = _context.Likes
 						.Where(c => c.PostID == x.p.PostID)
-						.Count()
+						.Count(),
+					Avatar = x.p.User.Image
 				}).ToListAsync();
 			//4. Select and projection
 			var pagedResult = new PagedResult<PostVm>()
@@ -300,6 +324,7 @@ namespace BlogProject.Application.Catalog.Post
 				Content = postId.Content,
 				UserName = postId.User.UserName,
 				CategoryName = postId.Categories.Name,
+				CategoryId = postId.CategoryId,
 				Image = postId.Image,
 				UploadDate = postId.UploadDate,
 				UserId = postId.UserId,
@@ -347,6 +372,7 @@ namespace BlogProject.Application.Catalog.Post
 				CountLike = _context.Likes
 					   .Where(c => c.PostID == postId.PostID)
 					   .Count(),
+				
 			};
 			_context.SaveChanges();
 			return new ApiSuccessResult<PostVm>(postvm);
@@ -489,7 +515,7 @@ namespace BlogProject.Application.Catalog.Post
 				postVm.UserName = item.User.UserName;
 				postVm.Image = item.Image;
 				postVm.CategoryName = item.Categories.Name;
-
+				postVm.CategoryId = item.CategoryId;
 				postList.Add(postVm);
 			}
 
@@ -618,6 +644,7 @@ namespace BlogProject.Application.Catalog.Post
            .Where(like => like.User.UserName == userName)
            .Select(like => like.Post)
            .ToListAsync();
+			
 
             return likedPosts;
         }
@@ -651,7 +678,9 @@ namespace BlogProject.Application.Catalog.Post
                     CategoryName = x.p.Categories.Name,
                     PostID = x.p.PostID,
 					Active = x.p.Active,
-                    CountComment = _context.Comments
+					Avatar = x.p.User.Image,
+
+					CountComment = _context.Comments
                        .Where(c => c.PostID == x.p.PostID)
                        .Count(),
                     CountLike = _context.Likes
@@ -680,6 +709,39 @@ namespace BlogProject.Application.Catalog.Post
 
             return new ApiErrorResult<bool>();
         }
+
+        public async Task<List<PostVm>> PostTrending(int quantity)
+        {
+            if (_context.Posts.Include(c => c.User).Include(c => c.Categories).Where(x => x.Active == Active.yes).ToList().Count < quantity) { quantity = _context.Posts.ToList().Count; }
+            var post = await _context.Posts
+            .OrderByDescending(x=>x.Comment.Count() + x.Likes.Count()+x.View)
+            .Where(x => x.Active == Active.yes)
+            .Include(a => a.User)
+            .Include(a => a.Categories)
+            .Take(quantity)
+            .ToListAsync();
+
+            List<PostVm> postList = new List<PostVm>();
+            foreach (var item in post)
+            {
+                PostVm postVm = new PostVm();
+                postVm.Title = item.Title;
+                postVm.UserId = item.UserId;
+                postVm.PostID = item.PostID;
+                postVm.UploadDate = item.UploadDate;
+                postVm.View = item.View;
+                postVm.Content = item.Content;
+                postVm.UserName = item.User.UserName;
+                postVm.Image = item.Image;
+                postVm.CategoryName = item.Categories.Name;
+				postVm.Avatar = item.User.Image;
+				postVm.CategoryId = item.CategoryId;
+                postList.Add(postVm);
+            }
+
+            return postList;
+        }
+      
     }
 
 }

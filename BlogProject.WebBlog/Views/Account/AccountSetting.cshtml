@@ -12,14 +12,33 @@
     </script>
 
 
-<section class="h-100 gradient-custom-2">
+
+<style>
+    .gradient-custom {
+        /* fallback for old browsers */
+        background: #f6d365;
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+    }
+</style>
+<section class="vh-100" style="background-color: #f4f5f7;">
+    <div class="row" style="margin: 0 20px;">
+        @if (ViewBag.SuccessMsg != null)
+        {
+            <div id="msgAlert" class="alert alert-success" role="alert">
+                @ViewBag.SuccessMsg
+            </div>
+        }
+    </div>
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col col-lg-9 col-xl-7">
-                <div class="card">
-                    <div class="rounded-top text-white d-flex flex-row" style="background-color: #000; height:200px;">
-                        <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
-                            <!-- Image -->
+            <div class="col col-lg-6 mb-4 mb-lg-0">
+                <div class="card mb-3" style="border-radius: .5rem;">
+                    <div class="row g-0">
+                        <div class="col-md-5 gradient-custom text-center text-white"
+                             style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                             @if (!string.IsNullOrEmpty(Model.Image))
                             {
                                 <img src="@Model.Image"
@@ -32,52 +51,61 @@
                                      alt="Default Avatar" class="img-fluid img-thumbnail mt-4 mb-2"
                                      style="width: 150px;">
                             }
-                            <!-- Edit button -->
-                            @if (User.Identity.Name == Model.UserName)
-                            {
-                                <a href="@Url.Action("Edit", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
-                                   style="z-index: 1;">
-                                    Chỉnh sửa
-                                </a>
-                                <a href="@Url.Action("ChangePass", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
-                                   style="z-index: 1;">
-                                    Chỉnh sửa
-                                </a>
-                            }
+                            <h5>@Html.DisplayFor(model => model.UserName)</h5>
+                            <p>@Html.DisplayFor(model => model.Gender)</p>
+                            <a href="@Url.Action("Edit", new { id = Model.Id })" type="button" class="btn btn-danger" data-mdb-ripple-color="dark"
+                               style="z-index: 1;">
+                                Chỉnh sửa
+                            </a>
+                            <a href="@Url.Action("ChangePass", new { id = Model.Id })" type="button" class="btn btn-primary" data-mdb-ripple-color="dark"
+                               style="z-index: 1;">
+                                Đổi mât khẩu
+                            </a>
                         </div>
-                        <div class="ms-3" style="margin-top: 130px;">
-                            <!-- Username and Name -->
-                            <h5>
-                                @(Model.FirstName ?? "Đang cập nhập");
-                                @(Model.LastName ?? "")
-                            </h5>
-                            <p style="padding-bottom: 8px;" title="Tên tài khoản">@Model.UserName</p>
-                        </div>
-                    </div>
-                    <!-- Additional content -->
-                    <div class="p-3 text-black" style="background-color: #f8f9fa;">
-                        <!-- Statistics -->
-                        <div class="Compatible d-flex justify-content-end text-center py-1">
-                            <!-- Statistics elements -->
-                            <!-- Bạn có thể giữ phần này nếu cần -->
-                        </div>
-                    </div>
-                    <!-- Success message -->
-                    <div class="row" style="margin: 0 20px;">
-                        @if (ViewBag.SuccessMsg != null)
-                        {
-                            <div id="msgAlert" class="alert alert-success" role="alert">
-                                @ViewBag.SuccessMsg
+                        <div class="col-md-7">
+                            <div class="card-body p-4">
+                                <h6>Thông Tin</h6>
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6>First Name</h6>
+                                        <p class="text-muted"> @Html.DisplayFor(model => model.FirstName)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6>Last Name</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.LastName)</p>
+                                    </div>
+                                </div>
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6>Email</h6>
+                                        <p class="text-muted"> @Html.DisplayFor(model => model.Email)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6>Phone</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.PhoneNumber)</p>
+                                    </div>
+                                </div>
+
+                                <hr class="mt-0 mb-4">
+                                <div class="row pt-1">
+                                    <div class="col-6 mb-3">
+                                        <h6>Ngày Sinh</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.DateOfBir)</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <h6>Địa Chỉ</h6>
+                                        <p class="text-muted">@Html.DisplayFor(model => model.Address)</p>
+                                    </div>
+                                </div>
+
                             </div>
-                        }
-                    </div>
-                    <!-- Information section -->
-                    <div class="card-body p-4 text-black">
-                        <!-- User information -->
-                        <!-- Bạn có thể giữ phần này nếu cần -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
+

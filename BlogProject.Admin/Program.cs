@@ -6,7 +6,7 @@
 
 using BlogProject.Apilntegration.Tags;
 using BlogProject.Apilntegration.Users;
-    using BlogProject.Application.Common;
+    
     using BlogProject.Data.EF;
     using BlogProject.ViewModel.System.Users;
     using FluentValidation.AspNetCore;
@@ -41,7 +41,7 @@ using Microsoft.EntityFrameworkCore;
 
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddTransient<IUserApiClient, UserApiClient>();
-    builder.Services.AddTransient<IStorageService, FileStorageService>();
+  
     builder.Services.AddTransient<IRoleApiClient, RoleApiClient>();
     builder.Services.AddTransient<IPostApiClient, PostApiClient>();
     builder.Services.AddTransient<ICategoryApiClient, CategoryApiClient>();

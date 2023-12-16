@@ -30,14 +30,13 @@ namespace BlogProject.BackendApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Authencate([FromBody] LoginRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            
 
             var result = await _userService.Authencate(request);
 
             if (!result.IsSuccessed)
             {
-                return BadRequest("Username or password is incorrect.");
+                return BadRequest(result);
             }
             return Ok(result);
         }

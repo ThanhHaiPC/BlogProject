@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlogProject.Apilntegration\BlogProject.Apilntegration.csproj" />
-    <ProjectReference Include="..\BlogProject.Application\BlogProject.Application.csproj" />
     <ProjectReference Include="..\BlogProject.Data\BlogProject.Data.csproj" />
     <ProjectReference Include="..\BlogProject.Utilities\BlogProject.Utilities.csproj" />
     <ProjectReference Include="..\BlogProject.ViewModel\BlogProject.ViewModel.csproj" />

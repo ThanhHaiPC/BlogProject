@@ -12,5 +12,6 @@ namespace BlogProject.Data.Entities
         public string? Name { get; set; }
         // Relationship
         public List<Posts>? Posts { get; set; }
+        public List<Video>? Videos { get; set; }
     }
 }

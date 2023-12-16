@@ -21,8 +21,8 @@ namespace BlogProject.Data.Configurations
             builder.Property(x => x.Description).IsRequired(false).HasMaxLength(3000);
 
 
-            // Relationship
-            builder.HasOne(x => x.Post).WithMany(x => x.Video).HasForeignKey(x => x.PostID);
+      
+            
         }
     }
 }

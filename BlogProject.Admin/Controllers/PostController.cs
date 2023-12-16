@@ -4,6 +4,7 @@ using BlogProject.Apilntegration.Posts;
 using BlogProject.Data.EF;
 using BlogProject.ViewModel.Catalog.Posts;
 using BlogProject.ViewModel.System.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using System.Drawing.Printing;
 
 namespace BlogProject.Admin.Controllers
 {
+	[Authorize(Roles ="admin,author")]
 	public class PostController : Controller
 	{
 		private readonly IPostApiClient _postApiClient;

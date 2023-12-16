@@ -8,6 +8,7 @@ using System.Drawing.Printing;
 using BlogProject.Apilntegration.Category;
 using BlogProject.Data.Entities;
 using BlogProject.Apilntegration.Tags;
+using BlogProject.ViewModel.System.Users;
 
 namespace BlogProject.WebBlog.Controllers
 {
@@ -30,17 +31,21 @@ namespace BlogProject.WebBlog.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-
+		
 			var PostList = await _postApiClient.RecentPost(1);
 			ViewData["ObjectList"] = PostList;
 			var Popular = await _postApiClient.TakeTopByQuantity(3);
 			ViewData["PostPopular"] = Popular;
-			var PostRecent = await _postApiClient.RecentPost(3);
+            var Trending = await _postApiClient.PostTrending(5);
+            ViewData["PostTending"] = Trending;
+            var PostRecent = await _postApiClient.RecentPost(3);
 			ViewData["PostRecent"] = PostRecent;
 			var Category = await _categoryApiClient.GetAll();
 			ViewData["Category"] = Category;
-			var Tag = await _tagApiClient.GetAll();
-			ViewData["Tag"] = Tag;
+			var PostInDay = await _postApiClient.GetPostInDay();
+			ViewData["PostInDay"] = PostInDay;
+			var posts = await _postApiClient.GetAll();
+			ViewData["posts"] = posts;
 			var user = User.Identity.Name;
 			var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
 
@@ -54,12 +59,19 @@ namespace BlogProject.WebBlog.Controllers
 			return View();
 		}
 
-		public IActionResult Privacy()
+		public async Task<IActionResult> AboutUs()
 		{
+			var Category = await _categoryApiClient.GetAll();
+			ViewData["Category"] = Category;
 			return View();
 		}
-
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public async Task<IActionResult> Contact()
+        {
+            var Category = await _categoryApiClient.GetAll();
+            ViewData["Category"] = Category;
+            return View();
+        }
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 		public IActionResult Error()
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

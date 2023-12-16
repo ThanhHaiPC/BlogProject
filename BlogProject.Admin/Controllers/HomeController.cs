@@ -1,4 +1,5 @@
 ﻿using BlogProject.Admin.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -12,7 +13,7 @@ namespace BlogProject.Admin.Controllers
         {
             _logger = logger;
         }
-
+        [Authorize(Roles ="admin,author")]
         public IActionResult Index()
         {
             return View();

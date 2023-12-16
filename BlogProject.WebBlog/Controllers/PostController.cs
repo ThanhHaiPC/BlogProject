@@ -107,6 +107,7 @@ namespace BlogProject.WebBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string keyword, int pageIndex = 1, int pageSize = 5)
         {
+
             var Category = await _categoryApiClient.GetAll();
             ViewData["Category"] = Category;
             var request = new GetUserPagingRequest()
@@ -117,6 +118,29 @@ namespace BlogProject.WebBlog.Controllers
             };
 
             var data = await _postApiClient.GetAllPaging(request);
+            return View(data);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllPage(string keyword, int pageIndex = 1, int pageSize = 5)
+        {
+			var Popular = await _postApiClient.TakeTopByQuantity(3);
+			ViewData["PostPopular"] = Popular;
+			var PostRecent = await _postApiClient.RecentPost(3);
+			ViewData["PostRecent"] = PostRecent;
+			var PostInDay = await _postApiClient.GetPostInDay();
+			ViewData["PostInDay"] = PostInDay;
+			var Category = await _categoryApiClient.GetAll();
+            ViewData["Category"] = Category;
+			var user = User.Identity.Name;
+			var request = new GetUserPagingRequest()
+            {
+                Keyword = keyword,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+				UserName = user
+            };
+
+            var data = await _postApiClient.GetPagingUser(request);
             return View(data);
         }
         [HttpGet]

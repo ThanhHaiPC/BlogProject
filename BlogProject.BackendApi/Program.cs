@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -114,7 +115,20 @@ builder.Services.AddAuthentication(opt =>
 
 
 var app = builder.Build();
-
+app.Use(async (context, next) =>
+{
+    //
+    context.Response.Headers.Add("Access-Control-Allow-Origin", "https://localhost:5003");
+    context.Response.Headers.Add("Access-Control-Allow-Methods", "GET , DELETE, POST");
+    context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 200;
+        await context.Response.CompleteAsync();
+        return;
+    }
+    await next.Invoke();
+});
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

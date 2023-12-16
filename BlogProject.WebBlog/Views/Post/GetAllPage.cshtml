@@ -1,0 +1,185 @@
+﻿@using BlogProject.ViewModel.Common;
+@model PagedResult<BlogProject.ViewModel.Catalog.Posts.PostVm>
+
+﻿@using BlogProject.ViewModel.Catalog.Posts;
+@using BlogProject.ViewModel.Catalog.Tags;
+@{
+    ViewData["Title"] = "GetAllPage";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@{
+
+	List<PostVm> recentPost = ViewData["PostRecent"] as List<PostVm>;
+	List<PostVm> popularPost = ViewData["PostPopular"] as List<PostVm>;
+	List<PostVm> postInDay = ViewData["PostInDay"] as List<PostVm>;
+
+
+}
+
+@{
+	ViewData["Trang chủ"] = "Home Page";
+}
+<!-- hero section -->
+
+<style>
+	.post-image {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
+	.avatar-image {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+</style>
+
+
+<section class="main-content">
+	<div class="container-xl">
+
+		<div class="row gy-4">
+
+			<div class="col-lg-8">
+
+				<div class="row gy-4">
+					@foreach (var item in Model.Items)
+					{
+					<div class="col-sm-6">
+						<!-- post -->
+						
+						<div class="post post-grid rounded bordered">
+							<div class="thumb top-rounded">
+									<a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@item.CategoryId" class="category-badge position-absolute">@Html.DisplayFor(modelItem => item.CategoryName)</a>
+
+								
+									<a asp-action="Detail" asp-controller="Post" asp-route-id="@item.PostID">
+										<div class="inner">
+											<img style="width:356px ; height:237px" src="@Html.DisplayFor(modelItem => item.Image)" alt="post-title" />
+										</div>
+									</a>
+							</div>
+								<div class="details">
+									<ul class="meta list-inline mb-0">
+										<li class="list-inline-item"><a asp-action="UserPost" asp-controller="Post" asp-route-userId="@item.UserId"><img class="avatar-image" src="@Html.DisplayFor(modelItem => item.Avatar)" class="author" alt="author" />@Html.DisplayFor(modelItem => item.UserName)</a></li>
+										<li class="list-inline-item">@Html.DisplayFor(modelItem => item.UploadDate)</li>
+									</ul>
+									<h5 class="post-title mb-3 mt-3"><a asp-action="Detail" asp-controller="Post" asp-route-id="@item.PostID">@Html.DisplayFor(modelItem => item.Title)</a></h5>
+									<p class="excerpt mb-0">@Html.DisplayFor(modelItem => item.Desprition)</p>
+								</div>
+								<div class="post-bottom clearfix d-flex align-items-center">
+
+									<div class="more-button float-end">
+										<a href="@Url.Action("Detail", "Post", new { postId = item.PostID })"><span class="icon-options"></span></a>
+									</div>
+								</div>
+							
+						</div>
+					
+					</div>
+					}
+
+
+				</div>
+
+
+			</div>
+			<div class="col-lg-4">
+
+				<!-- sidebar -->
+				<div class="sidebar">
+
+
+					<!-- widget popular posts -->
+					<div class="widget rounded">
+						<div class="widget-header text-center">
+							<h3 class="widget-title">Popular Posts</h3>
+							
+						</div>
+						<div class="widget-content">
+							<!-- post -->
+							@for (int i = 0; i < popularPost.Count; i++)
+							{
+								<div class="post post-list-sm circle">
+									<div class="thumb circle">
+										<span class="number">@(i + 1)</span>
+										<a asp-action="Detail" asp-controller="Post" asp-route-ID="@popularPost[i].PostID">
+											<div class="inner">
+												<img src="@popularPost[i].Image" class="post-image" alt="post-title" />
+											</div>
+										</a>
+									</div>
+									<div class="details clearfix">
+										<h6 class="post-title my-0"><a asp-action="Detail" asp-controller="Post" asp-route-ID="@popularPost[i].PostID">@popularPost[i].Title</a></h6>
+										<ul class="meta list-inline mt-1 mb-0">
+											<li class="list-inline-item">@popularPost[i].UploadDate.ToString("dd/MM/yyyy")</li>
+										</ul>
+									</div>
+								</div>
+
+							}
+						
+						</div>
+					</div>
+
+
+
+
+					<!-- widget post carousel -->
+					<div class="widget rounded">
+						<div class="widget-header text-center">
+							<h3 class="widget-title">Các Tin Tức Trong Ngày</h3>
+							<img src="~/images/wave.svg" class="wave" alt="wave" />
+						</div>
+						<div class="widget-content">
+							<div class="post-carousel-widget">
+								<!-- post -->
+								@foreach (var items in postInDay)
+								{
+									<div class="post post-carousel">
+										<div class="thumb rounded">
+											<a asp-action="ListPostOfCategory" asp-controller="Post" asp-route-categoryId="@items.CategoryId" class="category-badge position-absolute">@items.CategoryName</a>
+											<a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">
+												<div class="inner">
+													<img src="@items.Image" alt="post-title" />
+												</div>
+											</a>
+										</div>
+										<h5 class="post-title mb-0 mt-4"><a asp-action="Detail" asp-controller="Post" asp-route-ID="@items.PostID">@items.Title</a></h5>
+										<ul class="meta list-inline mt-2 mb-0">
+											<li class="list-inline-item"><a asp-action="UserPost" asp-controller="Post" asp-route-userId="@items.UserId">@items.UserName</a></li>
+											<li class="list-inline-item">@items.UploadDate.ToString("dd/MM/yyyy")</li>
+										</ul>
+									</div>
+								}
+
+							</div>
+							<!-- carousel arrows -->
+							<div class="slick-arrows-bot">
+								<button type="button" data-role="none" class="carousel-botNav-prev slick-custom-buttons" aria-label="Previous"><i class="icon-arrow-left"></i></button>
+								<button type="button" data-role="none" class="carousel-botNav-next slick-custom-buttons" aria-label="Next"><i class="icon-arrow-right"></i></button>
+							</div>
+						</div>
+					</div>
+
+
+
+
+
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+</section>
+
+

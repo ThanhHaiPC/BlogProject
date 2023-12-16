@@ -10,6 +10,7 @@ namespace BlogProject.Data.Entities
     {
         public int CommentID { get; set; }
         public int PostID { get; set; }
+        public int VideoID { get; set; }
         public Guid UserId { get; set; }
         public string Content { get; set; }
         public int Like { get; set; }
@@ -17,6 +18,7 @@ namespace BlogProject.Data.Entities
 
         // Relationship
         public Posts Post { get; set; }
+        public Video Video { get; set; }
         public User User { get; set; }
         public ICollection<Reply> Replies { get; set; }
 

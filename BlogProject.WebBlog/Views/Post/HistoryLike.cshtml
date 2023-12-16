@@ -5,63 +5,57 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>HistoryLike</h1>
+<h1>Cách Bài Viết Đã Thích</h1>
+<section class="main-content">
+    <div class="container-xl">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-    
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TagId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Desprition)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Active)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UploadDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.View)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Like)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <div class="row gy-4">
+
+            <div class="col-lg-8">
+
+                <div class="row gy-4">
+                    @foreach (var item in Model)
+                    {
+
+                        <div class="col-sm-6">
+                            <!-- post -->
+                            <div class="post post-grid rounded bordered">
+                                <div class="thumb top-rounded">
+                              
+
+                                    <a asp-action="Detail" asp-controller="Post" asp-route-id="@item.PostID">
+                                        <div class="inner">
+                                            <img style="width:356px ; height:237px" src="@Html.DisplayFor(modelItem => item.Image)" alt="post-title" />
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="details">
+                                    <ul class="meta list-inline mb-0">
+                               
+                                        <li class="list-inline-item">@Html.DisplayFor(modelItem => item.UploadDate)</li>
+                                    </ul>
+                                    <h5 class="post-title mb-3 mt-3"><a asp-action="Detail" asp-controller="Post" asp-route-id="@item.PostID">@Html.DisplayFor(modelItem => item.Title)</a></h5>
+                                    <p class="excerpt mb-0">@Html.DisplayFor(modelItem => item.Desprition)</p>
+                                </div>
+                                <div class="post-bottom clearfix d-flex align-items-center">
+
+                                    <div class="more-button float-end">
+                                        <a href="@Url.Action("Detail", "Post", new { postId = item.PostID })"><span class="icon-options"></span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+</section>

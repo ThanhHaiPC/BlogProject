@@ -5,7 +5,160 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .container-fluid {
+        padding: 15px;
+    }
 
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+    }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        color: #212529;
+        text-align: center;
+        vertical-align: middle;
+        user-select: none;
+        background-color: transparent;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-success {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .image-preview {
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+    /* Base style for toggle-status button */
+    .toggle-status {
+        padding: 8px 12px; /* Padding around the text */
+        border-radius: 5px; /* Rounded corners */
+        border: none; /* Remove default border */
+        color: white; /* Text color */
+        font-size: 14px; /* Font size */
+        cursor: pointer; /* Change cursor to pointer */
+        transition: background-color 0.3s; /* Smooth transition for background color */
+    }
+
+        /* Style for enabled state (data-number="1") */
+        .toggle-status[data-number="1"] {
+            background-color: #28a745; /* Red background for enabled */
+        }
+
+        /* Style for disabled state (data-number="0") */
+        .toggle-status[data-number="0"] {
+            background-color: #dc3545; /* Green background for disabled */
+        }
+    /* General style for action button links */
+    .action-button {
+        display: inline-block; /* Display as block-level inline element */
+        padding: 8px; /* Padding around the text */
+        width: 80px; /* Fixed width for all buttons */
+        text-align: center; /* Center the text inside the button */
+        margin: 0 5px; /* Margin between buttons */
+        background-color: #007bff; /* Background color */
+        color: white; /* Text color */
+        border-radius: 5px; /* Rounded corners */
+        text-decoration: none; /* Remove underline */
+        font-size: 14px; /* Font size */
+        transition: background-color 0.3s; /* Smooth background color transition on hover */
+        overflow: hidden; /* Hide overflow */
+        white-space: nowrap; /* Prevent wrapping of text */
+    }
+
+        .action-button:hover, .action-button:focus {
+            background-color: #0056b3; /* Darker shade on hover */
+            color: white; /* Maintain text color on hover */
+            text-decoration: none; /* Remove underline on hover */
+        }
+
+    /* Specific styles for different types of actions */
+    .edit-button {
+        background-color: ##007bff; /* Green background for edit */
+    }
+
+    .details-button {
+        background-color: ##007bff; /* Blue background for details */
+    }
+
+    .delete-button {
+        background-color: #dc3545; /* Red background for delete */
+    }
+
+    .comment-count-container {
+        display: flex; /* Use flexbox for layout */
+        align-items: center; /* Align items vertically in the center */
+        gap: 10px; /* Space between count and button */
+    }
+
+    /* Styling for the comment count display */
+    .comment-count {
+        font-weight: bold; /* Make the count bold for emphasis */
+        color: #555; /* Color for the comment count */
+    }
+
+    /* General style for comment action button */
+    .comment-action-button {
+        padding: 8px 5px; /* Padding around the text */
+        background-color: #17a2b8; /* Background color */
+        color: white; /* Text color */
+        border-radius: 5px; /* Rounded corners */
+        text-decoration: none; /* Remove underline */
+        font-size: 14px; /* Font size */
+        transition: background-color 0.3s; /* Smooth background color transition on hover */
+    }
+
+        .comment-action-button:hover, .comment-action-button:focus {
+            background-color: #135970; /* Darker shade on hover */
+            color: white; /* Maintain text color on hover */
+            text-decoration: none; /* Remove underline on hover */
+        }
+</style>
 @section Scripts{
     <script>
         setTimeout(function () {
@@ -14,7 +167,7 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-       
+
         $(document).ready(function () {
             $(document).on('click', '.toggle-status', function (event) {
                 var button = $(this); // Reference to the clicked button
@@ -26,10 +179,9 @@
                     type: 'POST',
                     url: '/Post/StatusChange',
                     data: { postId: postId, number: check }, // Sửa đổi dòng này
-                   
+
                     success: function (response) {
                         console.log(currentStatus);
-
                         button.text(check === 0 ? "Enable" : "Disable");
                         // Update the data attribute for the next click
                         button.attr('data-number', check.toString());
@@ -37,7 +189,7 @@
                         // Update the button text based on the new status
                         button.text(check === 0 ? "Enable" : "Disable");
                     }
-                    
+
                 });
             });
         });
@@ -64,7 +216,7 @@
         }
 </style>
 <div class="container-fluid">
-    <h1 class="mt-4">Danh sách sản phẩm</h1>
+    <h1 class="mt-4">Danh sách </h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
         <li class="breadcrumb-item active">Danh sách bài viết</li>
@@ -108,9 +260,9 @@
                                 Tiêu đề
                             </th>
 
-                            <th>
-                                Mô tả
-                            </th>
+                            @*  <th>
+                            Mô tả
+                            </th> *@
                             <th>
                                 Tên tác giả
                             </th>
@@ -144,13 +296,13 @@
                         @foreach (var item in Model.Items)
                         {
                             <tr>
-                                
+
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Title)
                                 </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Desprition)
-                                </td>
+                                @*  <td>
+                            @Html.DisplayFor(modelItem => item.Desprition)
+                            </td> *@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.UserName)
                                 </td>
@@ -160,8 +312,10 @@
                                     @Html.DisplayFor(modelItem => item.CountLike)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(modelItem => item.CountComment)
-                                    @Html.ActionLink("Chi Tiết", "GetComment", new {  id=item.PostID  })
+                                    <div class="comment-count-container">
+                                        <span class="comment-count">@Html.DisplayFor(modelItem => item.CountComment)</span>
+                                        @Html.ActionLink("Chi Tiết", "GetComment", new { id = item.PostID }, new { @class = "comment-action-button" })
+                                    </div>
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.UploadDate)
@@ -177,25 +331,21 @@
                                 </td>
                                 <td>
                                     <!-- Display enable/disable toggle button -->
-                                    <button class="toggle-status" data-postId="@item.PostID" data-number="@((int)item.Active)">@(item.Active == BlogProject.Data.Enum.Active.yes ? "Disable" : "Enable")</button>
-                                    
-                                    
+                                    <button class="toggle-status" data-postId="@item.PostID" data-number="@((int)item.Active)">
+                                        @(item.Active == BlogProject.Data.Enum.Active.yes ? "Disable" : "Enable")
+                                    </button>
                                 </td>
                                 <td>
-                                    @Html.ActionLink("Edit", "Edit", new {  id=item.PostID  }) |
-                                    @Html.ActionLink("Details", "Details", new {  id=item.PostID }) |
-                                    @Html.ActionLink("Delete", "Delete", new {  id=item.PostID })
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.PostID }, new { @class = "action-button edit-button" })
+                                    @Html.ActionLink("Details", "Details", new { id = item.PostID }, new { @class = "action-button details-button" })
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.PostID }, new { @class = "action-button delete-button" })
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
-          @await Component.InvokeAsync("Pager", Model)
+            @await Component.InvokeAsync("Pager", Model)
         </div>
     </div>
 </div>
-
-
-
-

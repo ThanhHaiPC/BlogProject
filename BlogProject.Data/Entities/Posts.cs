@@ -38,7 +38,7 @@ namespace BlogProject.Data.Entities
         public List<Comment> Comment { get; set; }
 
         public List<Like> Likes { get; set; }
-        public List<Video> Video { get; set; }
+
         public List<Tag> Tag { get; set; }
         
 

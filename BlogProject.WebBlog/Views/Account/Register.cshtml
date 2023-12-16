@@ -3,185 +3,114 @@
     ViewData["Title"] = "Register";
     Layout = null;
 }
-<!-- MATERIAL DESIGN ICONIC FONT -->
-<link rel="stylesheet" href="~/assets1/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
 
-<!-- STYLE CSS -->
-<link rel="stylesheet" href="~/assets1/css/style.css">
 
-@* <section class="wrap__section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- register -->
-                <!-- Form Register -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>RegistrationForm_v9 by Colorlib</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-                <div class="card mx-auto" style="max-width:520px;">
-                    <article class="card-body">
-                        <header class="mb-4">
-                            <h4 class="card-title">Sign up</h4>
-                        </header>
-                        <form asp-action="Register" asp-controller="Account" method="post" class="form-horizontal">
-                            <div class="control-group">
-                                <label class="control-label" for="inputFname1">First name <sup>*</sup></label>
-                                <div class="controls">
-                                    <input type="text" asp-for="FirstName" placeholder="First Name">
-                                    <span asp-validation-for="FirstName" class="text-error"></span>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="inputLnam">Last name <sup>*</sup></label>
-                                <div class="controls">
-                                    <input type="text" asp-for="LastName" placeholder="Last Name">
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="input_email">Email <sup>*</sup></label>
-                                <div class="controls">
-                                    <input type="email" asp-for="Email" placeholder="Email">
-                                    <span asp-validation-for="Email" class="text-error"></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <h6 style="padding-top: 12px;">Giới tính</h6>
-                                @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
-                                {
-                                new SelectListItem { Value = "2", Text = "Không" },
-                                new SelectListItem { Value = "0", Text = "Nam" },
-                                new SelectListItem { Value = "1", Text = "Nữ" }
-                                }, "Value", "Text"), "Chọn Danh mục", new { @class = "form-control" })
+    <!-- LINEARICONS -->
+    <link rel="stylesheet" href="~/resgister/fonts/linearicons/style.css">
 
-                            </div>
-                            <div class="form-group">
-                                <h6 style="padding-top: 12px;">Ngày sinh</h6>
-                                <input asp-for="DateOfBir" class="form-control" />
-                                <span asp-validation-for="DateOfBir" class="text-danger"></span>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="inputPassword1">User Name <sup>*</sup></label>
-                                <div class="controls">
-                                    <input type="text" asp-for="UserName" placeholder="User Name">
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="inputPassword1">Password <sup>*</sup></label>
-                                <div class="controls">
-                                    <input type="password" asp-for="Password" placeholder="Password">
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="inputPassword1">Confirm Password <sup>*</sup></label>
-                                <div class="controls">
-                                    <input type="password" asp-for="ConfirmPassword" placeholder="Confirm Password">
-                                </div>
-                            </div>
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet" href="~/resgister/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css">
 
-                            <div class="control-group">
-                                <label class="control-label" for="mobile">Mobile Phone </label>
-                                <div class="controls">
-                                    <input type="text" asp-for="PhoneNumber" placeholder="Mobile Phone" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block"> Register </button>
-                            </div> <!-- form-group// -->
-                            <div class="form-group">
-                                <label class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" checked="">
-                                    <span class="custom-control-label"> I am agree with <a href="#">terms and contitions</a> </span>
-                                </label>
-                            </div> <!-- form-group end.// -->
-                        </form>
-                    </article><!-- card-body.// -->
-                </div>
-                <!-- end register -->
-            </div>
-        </div>
-    </div>
-</section> *@
-<section class="wrap__section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="wrapper" style="background-image: url('/assets1/images/1.jpg');">
-                    <div class="inner">
-                        <div class="image-holder">
-                            <img src="~/assets1/images/1.jpg" alt="">
-                        </div>
-                        <form asp-action="Register" asp-controller="Account" method="post" class="form-horizontal">
-                            <h3>Registration Form</h3>
-                            <div class="control-group">
-                                <div class="controls">
-                                    <input type="text" asp-for="FirstName" placeholder="First Name" class="form-control">
-                                    <span asp-validation-for="FirstName" class="text-error"></span>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                @*  <label class="control-label" for="inputLnam">Last name <sup>*</sup></label> *@
-                                <div class="controls">
-                                    <input type="text" asp-for="LastName" placeholder="Last Name" class="form-control">
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                @* <label class="control-label" for="input_email">Email <sup>*</sup></label> *@
-                                <div class="controls">
-                                    <input type="email" asp-for="Email" placeholder="Email" class="form-control">
-                                    <span asp-validation-for="Email" class="text-error"></span>
-                                </div>
-                            </div>
-                            <label class="control-label" for="input_email">Giới tính <sup>*</sup></label>
-                            <div class="form-group">
-                                @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
-                                {
-                                new SelectListItem { Value = "2", Text = "Không" },
-                                new SelectListItem { Value = "0", Text = "Nam" },
-                                new SelectListItem { Value = "1", Text = "Nữ" }
-                                }, "Value", "Text"), "Chọn", new { @class = "form-control" })
+    <!-- DATE-PICKER -->
+    <link rel="stylesheet" href="~/resgister/vendor/date-picker/css/datepicker.min.css">
 
-                            </div>
-                            <label class="control-label" for="input_email">Ngày sinh <sup>*</sup></label>
-                            <div class="form-group">
+    <!-- STYLE CSS -->
+    <link rel="stylesheet" href="~/resgister/css/style.css">
+</head>
 
-                                <input asp-for="DateOfBir" class="form-control" />
-                                <span asp-validation-for="DateOfBir" class="text-danger"></span>
-                            </div>
-                            <div class="control-group">
+<body>
 
-                                <div class="controls">
-                                    <input type="text" asp-for="UserName" placeholder="User Name" class="form-control">
-                                </div>
-                            </div>
-                            <div class="control-group">
-
-                                <div class="controls">
-                                    <input type="password" asp-for="Password" placeholder="Password" class="form-control">
-                                </div>
-                            </div>
-                            <div class="control-group">
-
-                                <div class="controls">
-                                    <input type="password" asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control">
-                                </div>
-                            </div>
-                            <div class="control-group">
-
-                                <div class="controls">
-                                    <input type="text" asp-for="PhoneNumber" placeholder="Mobile Phone" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block"> Register </button>
-                            </div> <!-- form-group// -->
-                            @*   <div class="form-group">
-                            <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" checked="">
-                            <span class="custom-control-label"> I am agree with <a href="#">terms and contitions</a> </span>
-                            </label>
-                            </div> <!-- form-group end.// --> *@
-                        </form>
+    <div class="wrapper">
+        <div class="inner">
+            <form asp-action="Register" asp-controller="Account" method="post" class="form-horizontal">
+                <h3>Registration Form</h3>
+                <div class="control-group">
+                    <div class="controls">
+                        <label for="">FirstName</label>
+                        <input type="text" asp-for="FirstName" placeholder="" class="form-control">
+                        <span asp-validation-for="FirstName" class="text-error"></span>
                     </div>
                 </div>
-            </div>
+                <div class="control-group">
+                    @*  <label class="control-label" for="inputLnam">Last name <sup>*</sup></label> *@
+                    <div class="controls">
+                        <label for="">Last Name</label>
+                        <input type="text" asp-for="LastName" placeholder="" class="form-control">
+                        <span asp-validation-for="FirstName" class="text-error"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    @* <label class="control-label" for="input_email">Email <sup>*</sup></label> *@
+                    <div class="controls">
+                        <label for="">Email</label>
+                        <input type="email" asp-for="Email" placeholder="Email" class="form-control">
+                        <span asp-validation-for="Email" class="text-error"></span>
+                    </div>
+                </div>
+                <label class="control-label" for="input_email">Giới tính <sup>*</sup></label>
+                <div class="form-group">
+                    @Html.DropDownListFor(model => model.Gender, new SelectList(new[]
+                    {
+                    new SelectListItem { Value = "2", Text = "Không" },
+                    new SelectListItem { Value = "0", Text = "Nam" },
+                    new SelectListItem { Value = "1", Text = "Nữ" }
+                    }, "Value", "Text"), "Chọn", new { @class = "form-control" })
+
+                </div>
+                <label class="control-label" for="input_email">Ngày sinh <sup>*</sup></label>
+                <div class="form-group">
+                    <input asp-for="DateOfBir" class="form-control" />
+                    <span asp-validation-for="DateOfBir" class="text-danger"></span>
+                </div>
+                <div class="control-group">
+
+                    <div class="controls">
+                        <label for="">UserName</label>
+                        <input type="text" asp-for="UserName" placeholder="User Name" class="form-control">
+                    </div>
+                </div>
+                <div class="control-group">
+
+                    <div class="controls">
+                        <label for="">Password</label>
+                        <input type="password" asp-for="Password" placeholder="Password" class="form-control">
+                    </div>
+                </div>
+                <div class="control-group">
+
+                    <div class="controls">
+                        <label for="">Password</label>
+                        <input type="password" asp-for="ConfirmPassword" placeholder="Confirm Password" class="form-control">
+                    </div>
+                </div>
+                <div class="control-group">
+
+                    <div class="controls">
+                        <label for="">PhoneNumber</label>
+                        <input type="text" asp-for="PhoneNumber" placeholder="Mobile Phone" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block"> Register </button>
+                </div> <!-- form-group// -->
+
+            </form>
         </div>
     </div>
-</section>
+
+    <script src="~/resgister/js/jquery-3.3.1.min.js"></script>
+
+    <!-- DATE-PICKER -->
+    <script src="~/resgister/vendor/date-picker/js/datepicker.js"></script>
+    <script src="~/resgister/vendor/date-picker/js/datepicker.en.js"></script>
+
+    <script src="~/resgister/js/main.js"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>

@@ -1,10 +1,12 @@
 ﻿using BlogProject.Apilntegration.Category;
 using BlogProject.ViewModel.Catalog.Categories;
 using BlogProject.ViewModel.System.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogProject.Admin.Controllers
 {
+    [Authorize(Roles ="admin")]
     public class CategoriesController : Controller
     {
         private readonly ICategoryApiClient _categoryApiClient;

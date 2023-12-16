@@ -24,6 +24,7 @@ namespace BlogProject.Data.Configurations
             // Relationship
             builder.HasOne(x => x.User).WithMany(x => x.Comment).HasForeignKey(x => x.UserId);
             builder.HasOne(x => x.Post).WithMany(x => x.Comment).HasForeignKey(x => x.PostID).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Video).WithMany(x => x.Comment).HasForeignKey(x => x.VideoID).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

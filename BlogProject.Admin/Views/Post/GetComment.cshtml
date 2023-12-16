@@ -1,53 +1,70 @@
-﻿﻿﻿@using BlogProject.ViewModel.Common;
+﻿@using BlogProject.ViewModel.Common;
 @model PagedResult<BlogProject.ViewModel.Catalog.Comments.CommentVm>
 
 @{
     ViewData["Title"] = "GetComment";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .comment-table-container {
+        overflow-x: auto;
+    }
 
-<h1>GetComment</h1>
+    .comment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-
-            <th>
-                Tên tài khoản
-            </th>
-            <th>
-                Nội dung bình luận
-            </th>
-            <th>
-                Ngày bình luận
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
-            <tr>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Content)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateTime)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
+        .comment-table, .comment-table th, .comment-table td {
+            border: 1px solid #ddd;
         }
-    </tbody>
-    @await Component.InvokeAsync("Pager", Model)
-</table>
+
+            .comment-table th, .comment-table td {
+                padding: 8px;
+                text-align: left;
+            }
+
+            .comment-table th {
+                background-color: #f2f2f2;
+                color: #333;
+            }
+
+    .create-link {
+        display: inline-block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-bottom: 20px;
+    }
+</style>
+<h1>Danh sách bình luận</h1>
+
+@* <p>
+    <a href="@Url.Action("Create")" class="create-link">Tạo mới</a>
+</p>
+ *@
+<div class="comment-table-container">
+    <table class="comment-table">
+        <thead>
+            <tr>
+                <th>Tên tài khoản</th>
+                <th>Nội dung bình luận</th>
+                <th>Ngày bình luận</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Content)</td>
+                    <td>@Html.DisplayFor(modelItem => item.DateTime)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@await Component.InvokeAsync("Pager", Model)    

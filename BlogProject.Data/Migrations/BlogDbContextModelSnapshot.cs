@@ -168,11 +168,16 @@ namespace BlogProject.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("VideoID")
+                        .HasColumnType("int");
+
                     b.HasKey("CommentID");
 
                     b.HasIndex("PostID");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VideoID");
 
                     b.ToTable("Comments", (string)null);
                 });
@@ -214,11 +219,16 @@ namespace BlogProject.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("VideoID")
+                        .HasColumnType("int");
+
                     b.HasKey("LikeID");
 
                     b.HasIndex("PostID");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VideoID");
 
                     b.ToTable("Likes", (string)null);
                 });
@@ -417,7 +427,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("e208aeb8-558d-4796-bb3a-b010a6504c4f"),
-                            ConcurrencyStamp = "61a1386d-0986-40ab-8e28-dd916aa976d2",
+                            ConcurrencyStamp = "b7043360-56c1-4898-8efd-e949fc9a6edf",
                             Description = "Administrator Role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -425,7 +435,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("cbcf8873-71a9-4fd2-b0d3-d16243a77ce8"),
-                            ConcurrencyStamp = "87a0391a-af7e-493f-b44c-1082c4821b41",
+                            ConcurrencyStamp = "b467ac98-e2ab-4f04-9bdb-683735416618",
                             Description = "User Role",
                             Name = "user",
                             NormalizedName = "user"
@@ -433,7 +443,7 @@ namespace BlogProject.Data.Migrations
                         new
                         {
                             Id = new Guid("f76f9568-c479-4b92-958d-b0a8dbe8241e"),
-                            ConcurrencyStamp = "43e56821-3516-44cb-823e-e06fd8f9e5cb",
+                            ConcurrencyStamp = "eca5e24d-e7c5-4c11-99ea-f359350f7f76",
                             Description = "Author Role",
                             Name = "author",
                             NormalizedName = "author"
@@ -569,7 +579,7 @@ namespace BlogProject.Data.Migrations
                             Id = new Guid("c8c8ba75-93dc-4e6e-8dc2-aff296f3baea"),
                             AccessFailedCount = 0,
                             Address = "Biên Hòa Đồng Nai",
-                            ConcurrencyStamp = "a633ca37-8519-45f9-aa80-3e5619212fd7",
+                            ConcurrencyStamp = "5f8392bd-d4a0-48b3-84ef-1e7779339ec6",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBir = new DateTime(2002, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "abcd@gmail.com",
@@ -580,7 +590,7 @@ namespace BlogProject.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "abcd@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEB/hSHdcESrZbxIeEPGupRtLJsEHOgX6dLGhvnjk2yhb67dRS4fizTB1tScikuet6Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIU4AS09BEyibnP9mUSzViwmLPv1TIpdR+FuWNWohK5DpQ8gn2MAIkD0389cxOWTwQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -596,8 +606,11 @@ namespace BlogProject.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VideoID"), 1L, 1);
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Active")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoriesID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasMaxLength(3000)
@@ -607,9 +620,6 @@ namespace BlogProject.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrderNo")
-                        .HasColumnType("int");
-
                     b.Property<int>("PostID")
                         .HasColumnType("int");
 
@@ -617,10 +627,15 @@ namespace BlogProject.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("UpDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("VideoID");
+
+                    b.HasIndex("CategoriesID");
 
                     b.HasIndex("PostID");
 
@@ -768,9 +783,17 @@ namespace BlogProject.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BlogProject.Data.Entities.Video", "Video")
+                        .WithMany("Comment")
+                        .HasForeignKey("VideoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Post");
 
                     b.Navigation("User");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.Follow", b =>
@@ -806,9 +829,17 @@ namespace BlogProject.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BlogProject.Data.Entities.Video", "Video")
+                        .WithMany("Likes")
+                        .HasForeignKey("VideoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Post");
 
                     b.Navigation("User");
+
+                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.PasswordResetToken", b =>
@@ -885,8 +916,14 @@ namespace BlogProject.Data.Migrations
 
             modelBuilder.Entity("BlogProject.Data.Entities.Video", b =>
                 {
+                    b.HasOne("BlogProject.Data.Entities.Category", "Categories")
+                        .WithMany("Videos")
+                        .HasForeignKey("CategoriesID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BlogProject.Data.Entities.Posts", "Post")
-                        .WithMany("Video")
+                        .WithMany()
                         .HasForeignKey("PostID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -896,6 +933,8 @@ namespace BlogProject.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Categories");
 
                     b.Navigation("Post");
 
@@ -971,6 +1010,8 @@ namespace BlogProject.Data.Migrations
             modelBuilder.Entity("BlogProject.Data.Entities.Category", b =>
                 {
                     b.Navigation("Posts");
+
+                    b.Navigation("Videos");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.Comment", b =>
@@ -983,8 +1024,6 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Comment");
 
                     b.Navigation("Likes");
-
-                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("BlogProject.Data.Entities.User", b =>
@@ -1005,6 +1044,13 @@ namespace BlogProject.Data.Migrations
                     b.Navigation("Reply");
 
                     b.Navigation("Video");
+                });
+
+            modelBuilder.Entity("BlogProject.Data.Entities.Video", b =>
+                {
+                    b.Navigation("Comment");
+
+                    b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618
         }

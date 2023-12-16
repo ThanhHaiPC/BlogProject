@@ -45,10 +45,10 @@ namespace BlogProject.WebBlog.Controllers
 
            
             var result = await _userApiClient.Authencate(request);
-            if (result.ResultObj == null)
+            if (!result.IsSuccessed )
             {
-                ModelState.AddModelError("", result.Message);
-                return View(request);
+                ModelState.AddModelError("Tên đăng nhập hoặc mật khẩu không đúng.", result.Message);
+               
             }
             var userPrincipal = this.ValidateToken(result.ResultObj);
 
@@ -107,7 +107,7 @@ namespace BlogProject.WebBlog.Controllers
                         userPrincipal,
                         authProperties);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 		[HttpPost]
 		public async Task<IActionResult> Logout()
@@ -135,9 +135,12 @@ namespace BlogProject.WebBlog.Controllers
 			else
 			{
 				var result = await _userApiClient.GetByUserName(User.Identity.Name);
-				if (TempData["result"] != null)
+                var Category = await _categoryApiPost.GetAll();
+                ViewData["Category"] = Category;
+                if (TempData["result"] != null)
 				{
-					ViewBag.SuccessMsg = TempData["result"];
+                    
+                    ViewBag.SuccessMsg = TempData["result"];
 				}
 				ViewBag.UserName = User.Identity.Name;
 				return View(result.ResultObj);
@@ -178,7 +181,8 @@ namespace BlogProject.WebBlog.Controllers
             if (result.IsSuccessed)
             {
                 TempData["result"] = "Cập nhật người dùng thành công";
-                return RedirectToAction("Index");
+                
+                return RedirectToAction("AccountSetting");
             }
 
             ModelState.AddModelError("", result.Message);
@@ -187,7 +191,9 @@ namespace BlogProject.WebBlog.Controllers
         [HttpGet]
         public async Task<IActionResult> ChangePass(Guid id)
         {
-            var result = await _userApiClient.GetById(id);
+			var Category = await _categoryApiPost.GetAll();
+			ViewData["Category"] = Category;
+			var result = await _userApiClient.GetById(id);
             if (result.IsSuccessed)
             {
                 var user = result.ResultObj;
@@ -211,7 +217,7 @@ namespace BlogProject.WebBlog.Controllers
             if (change.IsSuccessed)
             {
                 TempData["result"] = "Cập nhật người dùng thành công";
-                return RedirectToAction("AccountSetting");
+                return RedirectToAction("AccountSetting","Account");
             }
             ModelState.AddModelError("", change.Message);
             return View(request);

@@ -186,10 +186,7 @@
 
 							</div>
 							<div class="col-md-6 col-12 text-center text-md-start">
-								<!-- tags -->
-								<a href="#" class="tag">#Trending</a>
-								<a href="#" class="tag">#Video</a>
-								<a href="#" class="tag">#Featured</a>
+								
 							</div>
 							
 						</div>
@@ -335,17 +332,7 @@
 
 					
 
-					<!-- widget tags -->
-					<div class="widget rounded">
-						<div class="widget-header text-center">
-							<h3 class="widget-title">Tag Clouds</h3>
-							<img src="~/images/wave.svg" class="wave" alt="wave" />
-						</div>
-						@foreach (var items in tags)
-						{
-						<li><a asp-action="ListPostOfTag" asp-controller="Tag" asp-route-categoryId="@items.TagId">@items.TagName</a></li>
-						}
-					</div>
+					
 
 				</div>
 

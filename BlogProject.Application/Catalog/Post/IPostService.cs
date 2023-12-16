@@ -13,7 +13,7 @@ namespace BlogProject.Application.Catalog.Post
 {
 	public interface IPostService
 	{
-		Task<ApiResult<List<Posts>>> GetAll();
+		Task<List<PostVm>> GetAll();
 		Task<PagedResult<PostVm>> GetPaged(GetUserPagingRequest request);
         Task<PagedResult<PostVm>> GetPagedAdmin(GetUserPagingRequest request);
         Task<ApiResult<bool>> Create(PostRequest request, string userId);
@@ -26,7 +26,8 @@ namespace BlogProject.Application.Catalog.Post
 		Task<List<PostVm>> GetPostInDay();
 		Task<List<PostVm>> GetPostOfCategory(int categoryId);
 		Task<List<PostVm>> PostRecent(int quantity);
-		Task<List<PostVm>> TakeTopByQuantity(int quantity);
+        Task<List<PostVm>> PostTrending(int quantity);
+        Task<List<PostVm>> TakeTopByQuantity(int quantity);
 		Task<PagedResult<PostVm>> GetByUserId(string userId, GetUserPagingRequest request);
 		Task<ApiResult<bool>> Like(LikeVm request, string userId);
 		Task<Like> CheckLike(string UserName, int Id);

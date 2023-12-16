@@ -85,7 +85,7 @@ namespace BlogProject.Application.System.Users
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
             if (!result.Succeeded)
             {
-                return null;
+                return new ApiErrorResult<string>("Mật khẩu hoặc tài khoản sai!!!!");
             }
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new[]
@@ -354,6 +354,8 @@ namespace BlogProject.Application.System.Users
                 UserName = user.UserName,
                 Roles = roles,
                 Address = user.Address,
+                PhoneNumber = user.PhoneNumber,
+                
                 CountFollow = await _dataContext.Follows
                                     .Where(x => x.FollowerId == user.Id)
                                     .CountAsync(),
@@ -423,7 +425,7 @@ namespace BlogProject.Application.System.Users
             };
             return new ApiSuccessResult<PagedResult<FollowVm>>(pagedResult);
         }
-
+       
         public async Task<ApiResult<bool>> CheckFollow(FollowViewModel request)
         {
             var getUserId1 = await GetIdByUserName(request.FollowerName);
@@ -475,7 +477,7 @@ namespace BlogProject.Application.System.Users
             var passwordCheckResult = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
             if (!passwordCheckResult)
             {
-                return new ApiErrorResult<bool>("Mật khẩu hiện tịa không đúng");
+                return new ApiErrorResult<bool>("Mật khẩu hiện tại không đúng");
             }
             request.Id = id;
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.Password);
@@ -484,7 +486,7 @@ namespace BlogProject.Application.System.Users
             {
                 return new ApiSuccessResult<bool>();
             }
-            return new ApiErrorResult<bool>("Mật khẩu hiện tịa không đúng");
+            return new ApiErrorResult<bool>("Mật khẩu hiện tại không đúng");
         }
 
         public async Task<ApiResult<bool>> ForgotPassword(string? email)

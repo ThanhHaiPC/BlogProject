@@ -12,18 +12,14 @@ namespace BlogProject.ViewModel.System.Users
     {
         public RegisterRequestValidator()
         {
-            RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required")
-                .MaximumLength(200).WithMessage("First name can not over 200 characters");
-
-            RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required")
-                .MaximumLength(200).WithMessage("Last name can not over 200 characters");
+            
 
             RuleFor(x => x.UserName).NotEmpty().WithMessage("Tên tài khoản không được để trống")
               .MaximumLength(20).WithMessage("Tên tài khoản không được quá 20 ký tự")
               .MinimumLength(6).WithMessage("Tên tài khoản không được ít hơn 6 ký tự")
               .WithName("Tên tài khoản");
 
-            RuleFor(x => x.DateOfBir).GreaterThan(DateTime.Now.AddYears(-120)).WithMessage("Ngày sinh không được quá 120 tuổi");
+            
 
             RuleFor(x => x.Email).NotEmpty().WithMessage("Email không được để trống")
                 .Matches(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$")

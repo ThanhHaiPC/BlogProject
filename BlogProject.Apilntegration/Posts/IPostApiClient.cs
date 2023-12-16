@@ -14,15 +14,15 @@ namespace BlogProject.Apilntegration.Posts
     public interface IPostApiClient
     {
 		Task<PagedResult<PostVm>> GetPagings(GetUserPagingRequest request);
-
-		Task<PagedResult<PostVm>> GetAllPaging(GetUserPagingRequest request);
+        Task<PagedResult<PostVm>> GetPagingUser(GetUserPagingRequest request);
+        Task<PagedResult<PostVm>> GetAllPaging(GetUserPagingRequest request);
 		Task<ApiResult<bool>> UpdatePost(PostUpdateRequest request, int id);
 		Task<ApiResult<bool>> CreatePost(PostRequest request);
 		Task<ApiResult<bool>> DeletePost(int id);
 		Task<List<PostVm>> TakeTopByQuantity(int quantity);
 		Task<List<BlogProject.Data.Entities.Posts>> PopularPost();
 		Task<List<PostVm>> RecentPost(int quatity);
-		Task<List<BlogProject.Data.Entities.Posts>> GetAll();
+		Task<List<PostVm>> GetAll();
 		Task<ApiResult<PostVm>> GetById(int id);
 		Task<ApiResult<PostVm>> Detial(int id);
 		Task<List<PostVm>> GetPostInDay();
@@ -33,5 +33,6 @@ namespace BlogProject.Apilntegration.Posts
         Task<ApiResult<bool>> CheckEnable(int postId);
         Task<List<PostVm>> GetByUserId(string userId);
 		Task<List<BlogProject.Data.Entities.Posts>> History(string userName);
+        Task<List<PostVm>> PostTrending(int quantity);
     }
 }
